@@ -1,3 +1,3 @@
 interface Effect{
-    fun apply(environment: Environment, eventHandler:EventHandler)
+    fun apply(environment: Environment, model: Model, renderableLookup: RenderableLookup, eventHandler: EventHandler)
 }

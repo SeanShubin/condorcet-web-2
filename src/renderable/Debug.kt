@@ -1,3 +1,4 @@
+import MyHtmlApi.createLink
 import MyHtmlApi.createParagraph
 import MyHtmlApi.wrapInDivWithClass
 import org.w3c.dom.HTMLElement
@@ -11,7 +12,11 @@ class Debug : Renderable {
             val value = window.localStorage.getItem(key) ?: "<null>"
             createParagraph("$key = $value")
         }
-        val list = listOf(length) + entries
+        val logout = createLink("logout")
+        logout.onclick = { _ ->
+            eventHandler.handleEvent(EventLogout)
+        }
+        val list = listOf(length) + entries + listOf(logout)
         return wrapInDivWithClass(list, "single-column-flex")
     }
 }

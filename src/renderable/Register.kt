@@ -5,7 +5,6 @@ import MyHtmlApi.createLink
 import MyHtmlApi.createPassword
 import MyHtmlApi.wrapInDivWithClass
 import org.w3c.dom.HTMLElement
-import kotlin.browser.window
 
 class Register : Renderable {
     override fun render(eventHandler: EventHandler): HTMLElement {
@@ -16,8 +15,8 @@ class Register : Renderable {
         val confirmPassword = createPassword(placeholder = "confirm password")
         val register = createButton("Register")
         val login = createLink("login")
-        register.onclick = { _ -> window.localStorage.setItem("pageName", "login") }
-        login.onclick = { _ -> window.localStorage.setItem("pageName", "login") }
+        register.onclick = { _ -> eventHandler.handleEvent(NavigateTo("home")) }
+        login.onclick = { _ -> eventHandler.handleEvent(NavigateTo("login")) }
         val list = listOf(header, name, email, password, confirmPassword, register, login)
         return wrapInDivWithClass(list, "single-column-flex")
     }

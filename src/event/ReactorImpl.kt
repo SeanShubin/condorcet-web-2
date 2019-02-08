@@ -1,17 +1,17 @@
-class ReactorImpl(private val renderableLookup: RenderableLookup) : Reactor {
+class ReactorImpl : Reactor {
     override fun react(model: Model, event: EventInterface): Result {
         return when (event) {
             is EventInitialize -> {
-                Result(model.copy(currentPage = "login"), listOf(EffectRender(renderableLookup.byName("login"))))
+                Result(model.copy(currentPage = "login"), listOf(EffectRender))
             }
             is EventLogin -> {
-                Result(model.copy(currentPage = "home"), listOf(EffectRender(renderableLookup.byName("home"))))
+                Result(model.copy(currentPage = "home"), listOf(EffectRender))
             }
             is NavigateTo -> {
-                Result(model.copy(currentPage = event.pageName), listOf(EffectRender(renderableLookup.byName(event.pageName))))
+                Result(model.copy(currentPage = event.pageName), listOf(EffectRender))
             }
             else -> {
-                Result(model.copy(errorMessage = "unsupported event $event"), listOf(EffectRender(renderableLookup.byName("debug"))))
+                Result(model.copy(currentPage = "debug", errorMessage = "unsupported event $event"), listOf(EffectRender))
             }
         }
     }
