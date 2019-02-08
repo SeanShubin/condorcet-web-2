@@ -1,5 +1,13 @@
+* {
+    box-sizing: border-box;
+}
+
 .single-column-flex {
     display:flex;
     flex-direction: column;
     width: 200px;
+}
+
+.single-column-flex > * {
+    margin: 5px;
 }
