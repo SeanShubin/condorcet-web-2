@@ -15,14 +15,12 @@ class Login:Renderable{
         val button = createButton("Login")
         val register = createLink("register")
         button.onclick = { _ ->
-            println("login button pressed, name = ${name.value}, password = ${password.value}")
             eventHandler.handleEvent(EventLogin(nameOrEmail = name.value, password=  password.value))
         }
         register.onclick = {_ ->
-            window.localStorage.setItem("pageName", "register")
+            eventHandler.handleEvent(NavigateTo("register"))
         }
         val list = listOf(header, name, password, button, register)
         return wrapInDivWithClass(list, "single-column-flex")
-
     }
 }
