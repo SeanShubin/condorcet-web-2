@@ -1,3 +1,5 @@
-import org.w3c.dom.HTMLElement
+import org.w3c.dom.Document
+import org.w3c.dom.Window
 
-class EnvironmentImpl(override val body:HTMLElement):Environment
+class EnvironmentImpl(override val document: Document,
+                      override val window: Window) : Environment

@@ -1,10 +1,9 @@
-import org.w3c.dom.HTMLElement
 import kotlin.browser.document
+import kotlin.browser.window
 
 fun main() {
-    val body: HTMLElement = document.body!!
-    val modelRepository = ModelRepositoryImpl
-    val environment = EnvironmentImpl(body)
+    val environment = EnvironmentImpl(document, window)
+    val modelRepository = ModelRepositoryImpl(environment)
     val renderableLookup = RenderableLookupImpl()
     val reactor = ReactorImpl(renderableLookup)
     val eventHandler = EventHandlerImpl(modelRepository, environment, reactor)

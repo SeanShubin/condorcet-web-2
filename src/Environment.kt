@@ -1,5 +1,7 @@
-import org.w3c.dom.HTMLElement
+import org.w3c.dom.Document
+import org.w3c.dom.Window
 
-interface Environment{
-    val body: HTMLElement
+interface Environment {
+    val document: Document
+    val window: Window
 }
