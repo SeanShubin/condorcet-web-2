@@ -1,7 +1,7 @@
 data class Model(val currentPage:String, val errorMessage:String?){
     fun toState():String = JSON.stringify(this)
     companion object {
-        private val default = Model(
+        val default = Model(
                 currentPage = "login",
                 errorMessage = null
         )

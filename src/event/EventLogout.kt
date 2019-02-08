@@ -1,1 +1,3 @@
-object EventLogout:EventInterface
+object EventLogout : EventInterface {
+    override fun toString(): String = "EventLogout"
+}

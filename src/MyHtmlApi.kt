@@ -28,7 +28,7 @@ object MyHtmlApi {
     fun createLink(caption:String):HTMLAnchorElement {
         val link = document.createElement("a") as HTMLAnchorElement
         link.textContent = caption
-        link.href=""
+        link.href = "#"
         return link
     }
     fun createHeader(caption:String):HTMLElement {
