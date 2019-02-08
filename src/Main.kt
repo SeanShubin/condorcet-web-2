@@ -6,6 +6,7 @@ fun main() {
     val modelRepository = ModelRepositoryImpl(environment)
     val renderableLookup = RenderableLookupImpl()
     val reactor = ReactorImpl()
-    val eventHandler = EventHandlerImpl(modelRepository, environment, reactor, renderableLookup)
+    val renderer = RendererImpl(environment.document.body!!, renderableLookup)
+    val eventHandler = EventHandlerImpl(modelRepository, environment, reactor, renderer)
     eventHandler.handleEvent(EventInitialize)
 }
