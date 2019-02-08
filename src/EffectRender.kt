@@ -1,9 +1,8 @@
 import kotlin.dom.clear
 
-object EffectRender:Effect {
-    override fun apply(model:Model, environment:Environment){
+class EffectRender(private val renderable:Renderable):Effect {
+    override fun apply(environment:Environment, eventHandler:EventHandler){
         environment.body.clear()
-        val renderable = RenderableLookup.fromModel(model)
-        environment.body.appendChild(renderable.render())
+        environment.body.appendChild(renderable.render(eventHandler))
     }
 }

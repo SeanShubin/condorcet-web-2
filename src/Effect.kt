@@ -1,3 +1,3 @@
 interface Effect{
-    fun apply(model:Model, environment: Environment)
+    fun apply(environment: Environment, eventHandler:EventHandler)
 }

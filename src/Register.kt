@@ -8,7 +8,7 @@ import org.w3c.dom.HTMLElement
 import kotlin.browser.window
 
 class Register : Renderable {
-    override fun render(): HTMLElement {
+    override fun render(eventHandler: EventHandler): HTMLElement {
         val header = createHeader("Register")
         val name = createInput(placeholder = "name")
         val email = createInput(placeholder = "email")
