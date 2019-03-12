@@ -1,0 +1,40 @@
+npx create-react-kotlin-app condorcet-web-2
+npx: installed 63 in 19.035s
+Creating a new React Kotlin app in d:\keep\github\sean\condorcet-web-2.
+
+Installing packages. This might take a couple minutes.
+Installing react, react-dom, and react-scripts-kotlin...
+
+npm notice created a lockfile as package-lock.json. You should commit this file.
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.2.7 (node_modules\fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.2.7: wanted {"os":"darwin","arch":"any"} (current: {"os":"win32","arch":"x64"})
+
++ react-scripts-kotlin@3.0.3
++ react-dom@16.8.4
++ react@16.8.4
+added 752 packages from 384 contributors and audited 10176 packages in 59.479s
+found 0 vulnerabilities
+
+
+Success! Created condorcet-web-2 at d:\keep\github\sean\condorcet-web-2
+Inside that directory, you can run several commands:
+
+  npm start
+    Starts the development server.
+
+  npm run build
+    Bundles the app into static files for production.
+
+  npm test
+    Starts the test runner.
+
+  npm run eject
+    Removes this tool and copies build dependencies, configuration files
+    and scripts into the app directory. If you do this, you can’t go back!
+
+We suggest that you begin by typing:
+
+  cd condorcet-web-2
+  npm start
+
+Happy hacking!
