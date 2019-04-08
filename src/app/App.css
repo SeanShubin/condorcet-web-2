@@ -25,3 +25,10 @@ body {
 .single-column-flex > * {
     margin: 5px;
 }
+
+.two-column-grid {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+}

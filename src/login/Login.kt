@@ -13,6 +13,9 @@ class Login : RComponent<RProps, RState>() {
             h1 { +"Login" }
             input {
                 attrs["placeholder"] = "name or email"
+            }
+            input {
+                attrs["placeholder"] = "password"
                 attrs["type"] = "password"
             }
             button(type = ButtonType.button) { +"Login" }

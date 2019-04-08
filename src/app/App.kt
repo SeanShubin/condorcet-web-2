@@ -1,13 +1,17 @@
 package app
 
+import ballot.ballot
 import login.login
 import react.*
 import react.dom.*
 import logo.*
+import register.register
+import sample.Sample
 import ticker.*
 
 class App : RComponent<RProps, RState>() {
     override fun RBuilder.render() {
+        val sample = Sample()
         div("App-header") {
             logo()
             h2 {
@@ -23,6 +27,8 @@ class App : RComponent<RProps, RState>() {
             ticker()
         }
         login()
+        register()
+        ballot(sample.ballot())
     }
 }
 
