@@ -5,6 +5,7 @@ import login.login
 import react.*
 import react.dom.*
 import logo.*
+import multiselect.multiSelect
 import register.register
 import sample.Sample
 import ticker.*
@@ -29,6 +30,7 @@ class App : RComponent<RProps, RState>() {
         login()
         register()
         ballot(sample.ballot())
+        multiSelect()
     }
 }
 
