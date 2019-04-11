@@ -16,13 +16,13 @@ class Ballot : RComponent<BallotProps, RState>() {
                     +"Election"
                 }
                 input {
-
+                    attrs["value"] = "Election A"
                 }
                 span {
                     +"Voter"
                 }
                 input {
-
+                    attrs["value"] = "Voter A"
                 }
             }
             table {
@@ -41,10 +41,13 @@ class Ballot : RComponent<BallotProps, RState>() {
                     for (ranking in props.rankings) {
                         tr {
                             td {
-                                input{}
+                                input {
+                                    attrs["value"] = ranking.rank
+                                    attrs["size"] = 3
+                                }
                             }
                             td {
-                                ranking.candidateName
+                                +ranking.candidateName
                             }
                         }
                     }
