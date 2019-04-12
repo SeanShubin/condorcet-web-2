@@ -2,9 +2,12 @@ package sample
 
 import ballot.BallotProps
 import ballot.RankingProps
+import ballots.BallotsProps
 import elections.ElectionsProps
+import model.Ballot
 import model.Election
 import model.Election.ElectionStatus
+import model.Ranking
 import kotlin.js.Date
 
 class Sample {
@@ -29,18 +32,32 @@ class Sample {
         return index
     }
 
-    fun ranking():RankingProps = object:RankingProps{
+    fun rankingProps(): RankingProps = object : RankingProps {
             override val rank: Int = rank()
             override val candidateName: String = candidateName()
     }
 
-    fun rankings(howMany:Int):List<RankingProps> = (1..howMany).map{ranking()}
+    fun rankings(howMany: Int): List<Ranking> = ((1..howMany).map { ranking() })
+    fun ranking(): Ranking =
+            Ranking(createInt(), candidateName())
 
-    fun ballot():BallotProps =object:BallotProps{
+    fun rankingsProps(howMany: Int): List<RankingProps> = (1..howMany).map { rankingProps() }
+
+    fun ballotProps(): BallotProps = object : BallotProps {
         override var electionName: String = electionName()
         override var voterName: String = voterName()
-        override var rankings: List<RankingProps> = rankings(3)
+        override var rankings: List<RankingProps> = rankingsProps(3)
     }
+
+    fun ballots(): BallotsProps = object : BallotsProps {
+        override var voterName: String = voterName()
+        override var ballots: List<Ballot> = ballots(3)
+    }
+
+    fun ballot(): Ballot =
+            Ballot(electionName(), voterName(), rankings(3), ballotAction())
+
+    fun ballots(howMany: Int): List<Ballot> = ((1..howMany).map { ballot() })
 
     fun elections(): ElectionsProps = elections(3)
     fun elections(howMany: Int): ElectionsProps = object : ElectionsProps {
@@ -59,6 +76,16 @@ class Sample {
     }
 
     fun electionStatus(): ElectionStatus {
+        index++
+        return enumValue(index)
+    }
+
+    fun createInt(): Int {
+        index++
+        return index
+    }
+
+    fun ballotAction(): Ballot.Action {
         index++
         return enumValue(index)
     }
