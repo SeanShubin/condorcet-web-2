@@ -1,13 +1,20 @@
 package app
 
 import ballot.ballot
+import elections.elections
 import login.login
-import react.*
-import react.dom.*
-import logo.*
+import logo.logo
+import react.RBuilder
+import react.RComponent
+import react.RProps
+import react.RState
+import react.dom.code
+import react.dom.div
+import react.dom.h2
+import react.dom.p
 import register.register
 import sample.Sample
-import ticker.*
+import ticker.ticker
 
 class App : RComponent<RProps, RState>() {
     override fun RBuilder.render() {
@@ -29,6 +36,7 @@ class App : RComponent<RProps, RState>() {
         login()
         register()
         ballot(sample.ballot())
+        elections(sample.elections())
     }
 }
 
