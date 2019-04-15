@@ -1,47 +1,48 @@
-package candidates
+package voters
 
 import kotlinx.html.ButtonType
-import model.ElectionAndCandidates
+import model.ElectionAndVoters
 import react.RBuilder
 import react.RComponent
 import react.RState
 import react.dom.*
 
-class CandidatesComponent : RComponent<CandidatesProps, RState>() {
+class VotersComponent : RComponent<VotersProps, RState>() {
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
-            h1 { +"Candidates" }
+            h1 { +"Voters" }
             div(classes = "two-column-grid") {
                 span {
                     +"Election"
                 }
                 input {
-                    attrs["value"] = props.electionAndCandidates.electionName
+                    attrs["value"] = props.electionAndVoters.electionName
                 }
             }
             table {
                 thead {
                     tr {
                         th {
-                            +"candidate"
+                            +"eligible voters"
                         }
                     }
                 }
                 tbody {
-                    for (candidate in props.electionAndCandidates.candidates) {
+                    for (voter in props.electionAndVoters.voters) {
                         tr {
                             td {
-                                +candidate
+                                +voter
                             }
                         }
                     }
                 }
             }
             a(href = "#") {
-                +"View candidates as text"
+                +"View voters as text"
             }
             textArea {}
-            button(type = ButtonType.button) { +"Update Candidates" }
+            button(type = ButtonType.button) { +"Update Voters" }
+            button(type = ButtonType.button) { +"Add All Voters" }
             a(href = "#") {
                 +"Election"
             }
@@ -55,6 +56,6 @@ class CandidatesComponent : RComponent<CandidatesProps, RState>() {
     }
 }
 
-fun RBuilder.candidates(electionAndCandidates: ElectionAndCandidates) = child(CandidatesComponent::class) {
-    attrs.electionAndCandidates = electionAndCandidates
+fun RBuilder.voters(electionAndVoters: ElectionAndVoters) = child(VotersComponent::class) {
+    attrs.electionAndVoters = electionAndVoters
 }

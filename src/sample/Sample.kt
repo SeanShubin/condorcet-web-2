@@ -1,10 +1,7 @@
 package sample
 
-import model.Ballot
-import model.Election
+import model.*
 import model.Election.ElectionStatus
-import model.Ranking
-import model.VoterAndBallots
 import kotlin.js.Date
 
 class Sample {
@@ -53,8 +50,13 @@ class Sample {
             electionStatus(),
             candidateCount = 3,
             voterCount = 20)
+
+    fun electionAndCandidates(): ElectionAndCandidates = ElectionAndCandidates(electionName(), candidates())
+    fun electionAndVoters(): ElectionAndVoters = ElectionAndVoters(electionName(), voters())
     fun candidates(): List<String> = candidates(3)
+    fun voters(): List<String> = voters(3)
     fun candidates(howMany: Int): List<String> = ((1..howMany).map { candidateName() })
+    fun voters(howMany: Int): List<String> = ((1..howMany).map { voterName() })
     fun date(): Date {
         index++
         return Date(Date.UTC(2019, 1, index))

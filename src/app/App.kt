@@ -19,6 +19,7 @@ import react.dom.p
 import register.register
 import sample.Sample
 import ticker.ticker
+import voters.voters
 
 class App : RComponent<RProps, RState>() {
     override fun RBuilder.render() {
@@ -42,10 +43,10 @@ class App : RComponent<RProps, RState>() {
         home()
         elections(sample.elections())
         election(sample.election())
-        candidates(sample.candidates())
+        candidates(sample.electionAndCandidates())
+        voters(sample.electionAndVoters())
         ballot(sample.ballot())
         ballots(sample.voterAndBallots())
-
     }
 }
 
