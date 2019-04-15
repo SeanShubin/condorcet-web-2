@@ -17,13 +17,13 @@ class BallotComponent : RComponent<BallotProps, RState>() {
                     +"Election"
                 }
                 input {
-                    attrs["value"] = "Election A"
+                    attrs["value"] = props.ballot.electionName
                 }
                 span {
                     +"Voter"
                 }
                 input {
-                    attrs["value"] = "Voter A"
+                    attrs["value"] = props.ballot.voterName
                 }
             }
             table {
