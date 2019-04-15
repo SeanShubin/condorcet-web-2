@@ -7,7 +7,7 @@ import react.RProps
 import react.RState
 import react.dom.*
 
-class Login : RComponent<RProps, RState>() {
+class LoginComponent : RComponent<RProps, RState>() {
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
             h1 { +"Login" }
@@ -26,4 +26,4 @@ class Login : RComponent<RProps, RState>() {
     }
 }
 
-fun RBuilder.login() = child(Login::class) {}
+fun RBuilder.login() = child(LoginComponent::class) {}

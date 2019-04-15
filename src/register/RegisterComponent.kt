@@ -7,7 +7,7 @@ import react.RProps
 import react.RState
 import react.dom.*
 
-class Register : RComponent<RProps, RState>() {
+class RegisterComponent : RComponent<RProps, RState>() {
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
             h1 { +"Register" }
@@ -33,4 +33,4 @@ class Register : RComponent<RProps, RState>() {
     }
 }
 
-fun RBuilder.register() = child(Register::class) {}
+fun RBuilder.register() = child(RegisterComponent::class) {}

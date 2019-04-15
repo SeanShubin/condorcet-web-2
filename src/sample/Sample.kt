@@ -1,6 +1,5 @@
 package sample
 
-import ballot.BallotProps
 import ballot.RankingProps
 import ballots.BallotsProps
 import model.Ballot
@@ -41,12 +40,6 @@ class Sample {
             Ranking(createInt(), candidateName())
 
     fun rankingsProps(howMany: Int): List<RankingProps> = (1..howMany).map { rankingProps() }
-
-    fun ballotProps(): BallotProps = object : BallotProps {
-        override var electionName: String = electionName()
-        override var voterName: String = voterName()
-        override var rankings: List<RankingProps> = rankingsProps(3)
-    }
 
     fun ballots(): BallotsProps = object : BallotsProps {
         override var voterName: String = voterName()

@@ -5,7 +5,7 @@ import react.RComponent
 import react.RState
 import react.dom.*
 
-class Ballots : RComponent<BallotsProps, RState>() {
+class BallotsComponent : RComponent<BallotsProps, RState>() {
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
             h1 {
@@ -55,7 +55,7 @@ class Ballots : RComponent<BallotsProps, RState>() {
     }
 }
 
-fun RBuilder.ballots(props: BallotsProps) = child(Ballots::class) {
+fun RBuilder.ballots(props: BallotsProps) = child(BallotsComponent::class) {
     attrs.voterName = props.voterName
     attrs.ballots = props.ballots
 }

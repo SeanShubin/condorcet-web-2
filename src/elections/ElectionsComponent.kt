@@ -6,7 +6,7 @@ import react.RComponent
 import react.RState
 import react.dom.*
 
-class Elections : RComponent<ElectionsProps, RState>() {
+class ElectionsComponent : RComponent<ElectionsProps, RState>() {
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
             h1 { +"Elections" }
@@ -93,6 +93,6 @@ class Elections : RComponent<ElectionsProps, RState>() {
     }
 }
 
-fun RBuilder.elections(elections: List<Election>) = child(Elections::class) {
+fun RBuilder.elections(elections: List<Election>) = child(ElectionsComponent::class) {
     attrs.elections = elections
 }

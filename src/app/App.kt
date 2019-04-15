@@ -39,7 +39,7 @@ class App : RComponent<RProps, RState>() {
         register()
         elections(sample.elections())
         candidates(sample.candidates())
-        ballot(sample.ballotProps())
+        ballot(sample.ballot())
         ballots(sample.ballots())
 
     }

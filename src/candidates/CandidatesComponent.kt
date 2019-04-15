@@ -1,16 +1,15 @@
-package ballot
+package candidates
 
+import kotlinx.html.ButtonType
 import react.RBuilder
 import react.RComponent
 import react.RState
 import react.dom.*
 
-class Ballot : RComponent<BallotProps, RState>() {
+class CandidatesComponent : RComponent<CandidatesProps, RState>() {
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
-            h1 {
-                +"Ballot"
-            }
+            h1 { +"Candidates" }
             div(classes = "two-column-grid") {
                 span {
                     +"Election"
@@ -18,43 +17,37 @@ class Ballot : RComponent<BallotProps, RState>() {
                 input {
                     attrs["value"] = "Election A"
                 }
-                span {
-                    +"Voter"
-                }
-                input {
-                    attrs["value"] = "Voter A"
-                }
             }
             table {
                 thead {
                     tr {
                         th {
-                            +"rank"
+                            +"candidate"
                         }
                         th {
-
-                            +"candidate"
+                            +"remove"
                         }
                     }
                 }
                 tbody {
-                    for (ranking in props.rankings) {
+                    for (candidate in props.candidates) {
                         tr {
                             td {
-                                input {
-                                    attrs["value"] = ranking.rank
-                                    attrs["size"] = 3
-                                }
+                                +candidate
                             }
                             td {
-                                +ranking.candidateName
+                                button {
+                                    +"remove"
+                                }
                             }
                         }
                     }
                 }
             }
-            button {
-                +"Cast Ballot"
+            textArea {}
+            button(type = ButtonType.button) { +"Add Candidates" }
+            a(href = "#") {
+                +"Election"
             }
             a(href = "#") {
                 +"Home"
@@ -66,8 +59,6 @@ class Ballot : RComponent<BallotProps, RState>() {
     }
 }
 
-fun RBuilder.ballot(props: BallotProps) = child(Ballot::class) {
-    attrs.electionName = props.electionName
-    attrs.voterName = props.voterName
-    attrs.rankings = props.rankings
+fun RBuilder.candidates(candidates: List<String>) = child(CandidatesComponent::class) {
+    attrs.candidates = candidates
 }
