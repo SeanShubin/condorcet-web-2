@@ -1,5 +1,6 @@
 package elections
 
+import model.Election
 import react.RBuilder
 import react.RComponent
 import react.RState
@@ -92,6 +93,6 @@ class Elections : RComponent<ElectionsProps, RState>() {
     }
 }
 
-fun RBuilder.elections(props: ElectionsProps) = child(Elections::class) {
-    attrs.elections = props.elections
+fun RBuilder.elections(elections: List<Election>) = child(Elections::class) {
+    attrs.elections = elections
 }

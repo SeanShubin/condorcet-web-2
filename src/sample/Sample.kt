@@ -3,7 +3,6 @@ package sample
 import ballot.BallotProps
 import ballot.RankingProps
 import ballots.BallotsProps
-import elections.ElectionsProps
 import model.Ballot
 import model.Election
 import model.Election.ElectionStatus
@@ -12,29 +11,29 @@ import kotlin.js.Date
 
 class Sample {
     private var index = 0
-    fun electionName():String {
+    fun electionName(): String {
         index++
         return "Election $index"
     }
 
-    fun voterName():String{
+    fun voterName(): String {
         index++
         return "Voter $index"
     }
 
-    fun candidateName():String{
+    fun candidateName(): String {
         index++
         return "Candidate $index"
     }
 
-    fun rank():Int {
+    fun rank(): Int {
         index++
         return index
     }
 
     fun rankingProps(): RankingProps = object : RankingProps {
-            override val rank: Int = rank()
-            override val candidateName: String = candidateName()
+        override val rank: Int = rank()
+        override val candidateName: String = candidateName()
     }
 
     fun rankings(howMany: Int): List<Ranking> = ((1..howMany).map { ranking() })
@@ -59,10 +58,8 @@ class Sample {
 
     fun ballots(howMany: Int): List<Ballot> = ((1..howMany).map { ballot() })
 
-    fun elections(): ElectionsProps = elections(3)
-    fun elections(howMany: Int): ElectionsProps = object : ElectionsProps {
-        override var elections: List<Election> = ((1..howMany).map { election() })
-    }
+    fun elections(): List<Election> = elections(3)
+    fun elections(howMany: Int): List<Election> = (1..howMany).map { election() }
     fun election(): Election = Election(voterName(), electionName(), date(), date(), boolean(), electionStatus())
     fun candidates(): List<String> = candidates(3)
     fun candidates(howMany: Int): List<String> = ((1..howMany).map { candidateName() })
