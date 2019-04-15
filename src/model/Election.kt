@@ -14,11 +14,13 @@ data class Election(val owner: String,
     val endString get() = dateToString(end)
     val secretBallotString get() = booleanToString(secretBallot)
 
-    enum class ElectionStatus {
-        EDITING, // may still change, not started yet
-        PENDING, // closed for changes, not started yet
-        RUNNING, // ballots may be cast
-        CONCLUDED; // election is over
+    enum class ElectionStatus(val description: String) {
+        EDITING("Editing, will not go live"),
+        PENDING_SCHEDULE("Locked for edits, will go live at scheduled time"),
+        PENDING_MANUAL("Locked for edits, must be manually started"),
+        RUNNING_SCHEDULE("Live, will end at scheduled time"),
+        RUNNING_MANUAL("Live, must be manually closed"),
+        CONCLUDED("Concluded");
 
         override fun toString(): String = this.name.toLowerCase()
     }

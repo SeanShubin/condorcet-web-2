@@ -3,6 +3,7 @@ package app
 import ballot.ballot
 import ballots.ballots
 import candidates.candidates
+import election.election
 import elections.elections
 import login.login
 import logo.logo
@@ -38,6 +39,7 @@ class App : RComponent<RProps, RState>() {
         login()
         register()
         elections(sample.elections())
+        election(sample.election())
         candidates(sample.candidates())
         ballot(sample.ballot())
         ballots(sample.voterAndBallots())
