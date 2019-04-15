@@ -1,5 +1,6 @@
 package ballots
 
+import model.VoterAndBallots
 import react.RBuilder
 import react.RComponent
 import react.RState
@@ -7,6 +8,7 @@ import react.dom.*
 
 class BallotsComponent : RComponent<BallotsProps, RState>() {
     override fun RBuilder.render() {
+        val (voter, ballots) = props.voterAndBallots
         div(classes = "single-column-flex") {
             h1 {
                 +"Ballots"
@@ -16,7 +18,7 @@ class BallotsComponent : RComponent<BallotsProps, RState>() {
                     +"Voter"
                 }
                 input {
-                    attrs["value"] = "Voter A"
+                    attrs["value"] = voter
                 }
             }
             table {
@@ -31,7 +33,7 @@ class BallotsComponent : RComponent<BallotsProps, RState>() {
                     }
                 }
                 tbody {
-                    props.ballots.forEach {
+                    ballots.forEach {
                         tr {
                             td {
                                 button {
@@ -55,7 +57,6 @@ class BallotsComponent : RComponent<BallotsProps, RState>() {
     }
 }
 
-fun RBuilder.ballots(props: BallotsProps) = child(BallotsComponent::class) {
-    attrs.voterName = props.voterName
-    attrs.ballots = props.ballots
+fun RBuilder.ballots(voterAndBallots: VoterAndBallots) = child(BallotsComponent::class) {
+    attrs.voterAndBallots = voterAndBallots
 }
