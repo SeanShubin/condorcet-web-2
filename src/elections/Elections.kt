@@ -51,7 +51,7 @@ class Elections : RComponent<ElectionsProps, RState>() {
                             +"end"
                         }
                         th {
-                            +"secret ballotProps"
+                            +"secret ballot"
                         }
                     }
                 }

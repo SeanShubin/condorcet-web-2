@@ -63,8 +63,9 @@ class Sample {
     fun elections(howMany: Int): ElectionsProps = object : ElectionsProps {
         override var elections: List<Election> = ((1..howMany).map { election() })
     }
-
     fun election(): Election = Election(voterName(), electionName(), date(), date(), boolean(), electionStatus())
+    fun candidates(): List<String> = candidates(3)
+    fun candidates(howMany: Int): List<String> = ((1..howMany).map { candidateName() })
     fun date(): Date {
         index++
         return Date(Date.UTC(2019, 1, index))
