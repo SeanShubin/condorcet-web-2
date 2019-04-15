@@ -1,8 +1,7 @@
 package ticker
 
 import react.*
-import react.dom.*
-import kotlin.browser.*
+import kotlin.browser.window
 
 interface TickerProps : RProps {
     var startFrom: Int

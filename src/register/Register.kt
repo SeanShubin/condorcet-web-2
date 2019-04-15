@@ -1,14 +1,13 @@
 package register
 
 import kotlinx.html.ButtonType
-import login.Login
 import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
 import react.dom.*
 
-class Register: RComponent<RProps, RState>(){
+class Register : RComponent<RProps, RState>() {
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
             h1 { +"Register" }

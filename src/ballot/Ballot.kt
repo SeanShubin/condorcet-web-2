@@ -7,7 +7,7 @@ import react.dom.*
 
 class Ballot : RComponent<BallotProps, RState>() {
     override fun RBuilder.render() {
-        div(classes = "single-column-flex"){
+        div(classes = "single-column-flex") {
             h1 {
                 +"Ballot"
             }
@@ -56,17 +56,17 @@ class Ballot : RComponent<BallotProps, RState>() {
             button {
                 +"Cast Ballot"
             }
-            a(href="#") {
+            a(href = "#") {
                 +"Home"
             }
-            a(href="#") {
+            a(href = "#") {
                 +"Logout"
             }
         }
     }
 }
 
-fun RBuilder.ballot(props:BallotProps) = child(Ballot::class) {
+fun RBuilder.ballot(props: BallotProps) = child(Ballot::class) {
     attrs.electionName = props.electionName
     attrs.voterName = props.voterName
     attrs.rankings = props.rankings

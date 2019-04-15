@@ -1,9 +1,9 @@
 package logo
 
-import react.*
-import react.dom.*
-import kotlinext.js.*
-import kotlinx.html.style
+import react.RBuilder
+import react.dom.div
+import react.dom.img
+import react.dom.jsStyle
 
 @JsModule("src/logo/react.svg")
 external val reactLogo: dynamic
