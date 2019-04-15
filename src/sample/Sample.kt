@@ -44,7 +44,15 @@ class Sample {
 
     fun elections(): List<Election> = elections(3)
     fun elections(howMany: Int): List<Election> = (1..howMany).map { election() }
-    fun election(): Election = Election(voterName(), electionName(), date(), date(), boolean(), electionStatus())
+    fun election(): Election = Election(
+            voterName(),
+            electionName(),
+            date(),
+            date(),
+            boolean(),
+            electionStatus(),
+            candidateCount = 3,
+            voterCount = 20)
     fun candidates(): List<String> = candidates(3)
     fun candidates(howMany: Int): List<String> = ((1..howMany).map { candidateName() })
     fun date(): Date {

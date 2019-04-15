@@ -5,6 +5,6 @@ data class Ballot(val electionName: String,
                   val rankings: List<Ranking>,
                   val action: Action) {
     enum class Action(val displayName: String) {
-        CAST("Cast"), EDIT("Edit"), VIEW("View")
+        CAST("cast"), EDIT("edit"), VIEW("view")
     }
 }

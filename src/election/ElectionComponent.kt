@@ -40,6 +40,12 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                 input(type = InputType.checkBox) {}
                 +"Secret Ballot"
             }
+            a(href = "#") {
+                +"Candidates (${props.election.candidateCount})"
+            }
+            a(href = "#") {
+                +"Voters (${props.election.voterCount})"
+            }
             button {
                 +"Done Editing"
             }
@@ -48,12 +54,6 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
             }
             button {
                 +"End Now"
-            }
-            a(href = "#") {
-                +"Candidates"
-            }
-            a(href = "#") {
-                +"Voters"
             }
             a(href = "#") {
                 +"Home"

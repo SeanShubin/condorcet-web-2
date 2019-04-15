@@ -36,7 +36,7 @@ class BallotsComponent : RComponent<BallotsProps, RState>() {
                     ballots.forEach {
                         tr {
                             td {
-                                button {
+                                a(href = "#") {
                                     +it.action.displayName
                                 }
                             }

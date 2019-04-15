@@ -60,7 +60,7 @@ class ElectionsComponent : RComponent<ElectionsProps, RState>() {
                     for (election in props.elections) {
                         tr {
                             td {
-                                button {
+                                a(href = "#") {
                                     +"edit"
                                 }
                             }

@@ -9,7 +9,9 @@ data class Election(val owner: String,
                     val start: Date? = null,
                     val end: Date? = null,
                     val secretBallot: Boolean = true,
-                    val status: ElectionStatus = ElectionStatus.EDITING) {
+                    val status: ElectionStatus = ElectionStatus.EDITING,
+                    val candidateCount: Int,
+                    val voterCount: Int) {
     val startString get() = dateToString(start)
     val endString get() = dateToString(end)
     val secretBallotString get() = booleanToString(secretBallot)
