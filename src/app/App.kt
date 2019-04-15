@@ -5,6 +5,7 @@ import ballots.ballots
 import candidates.candidates
 import election.election
 import elections.elections
+import home.home
 import login.login
 import logo.logo
 import react.RBuilder
@@ -38,6 +39,7 @@ class App : RComponent<RProps, RState>() {
         }
         login()
         register()
+        home()
         elections(sample.elections())
         election(sample.election())
         candidates(sample.candidates())
