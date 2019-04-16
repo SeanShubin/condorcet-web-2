@@ -21,7 +21,11 @@ import sample.Sample
 import ticker.ticker
 import voters.voters
 
-class PrototypeComponent : RComponent<RProps, RState>() {
+interface PrototypeProps : RProps {
+    var navigateTo: (String) -> Unit
+}
+
+class PrototypeComponent : RComponent<PrototypeProps, RState>() {
     override fun RBuilder.render() {
         val sample = Sample()
         div("App-header") {
@@ -38,9 +42,9 @@ class PrototypeComponent : RComponent<RProps, RState>() {
         p("App-ticker") {
             ticker()
         }
-        login()
-        register()
-        home()
+        login(props.navigateTo)
+        register(props.navigateTo)
+        home(props.navigateTo)
         elections(sample.elections())
         election(sample.election())
         candidates(sample.electionAndCandidates())
@@ -50,4 +54,6 @@ class PrototypeComponent : RComponent<RProps, RState>() {
     }
 }
 
-fun RBuilder.prototype() = child(PrototypeComponent::class) {}
+fun RBuilder.prototype(navigateTo: (String) -> Unit) = child(PrototypeComponent::class) {
+    attrs.navigateTo = navigateTo
+}
