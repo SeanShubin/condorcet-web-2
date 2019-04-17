@@ -20,6 +20,7 @@ class App : RComponent<RProps, AppState>() {
     override fun AppState.init() {
         pageName = "login"
     }
+
     override fun RBuilder.render() {
         val sample = Sample()
         val navigateTo: (String) -> Unit = { name ->

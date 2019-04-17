@@ -9,9 +9,6 @@ import home.home
 import login.login
 import logo.logo
 import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
 import react.dom.code
 import react.dom.div
 import react.dom.h2
@@ -21,39 +18,29 @@ import sample.Sample
 import ticker.ticker
 import voters.voters
 
-interface PrototypeProps : RProps {
-    var navigateTo: (String) -> Unit
-}
-
-class PrototypeComponent : RComponent<PrototypeProps, RState>() {
-    override fun RBuilder.render() {
-        val sample = Sample()
-        div("App-header") {
-            logo()
-            h2 {
-                +"Welcome to React with Kotlin"
-            }
+fun RBuilder.prototype(navigateTo: (String) -> Unit) {
+    val sample = Sample()
+    div("App-header") {
+        logo()
+        h2 {
+            +"Welcome to React with Kotlin"
         }
-        p("App-intro") {
-            +"To get started, edit "
-            code { +"app/App.kt" }
-            +" and save to reload."
-        }
-        p("App-ticker") {
-            ticker()
-        }
-        login(props.navigateTo)
-        register(props.navigateTo)
-        home(props.navigateTo)
-        elections(sample.elections())
-        election(sample.election())
-        candidates(sample.electionAndCandidates())
-        voters(sample.electionAndVoters())
-        ballots(sample.voterAndBallots())
-        ballot(sample.ballot())
     }
-}
-
-fun RBuilder.prototype(navigateTo: (String) -> Unit) = child(PrototypeComponent::class) {
-    attrs.navigateTo = navigateTo
+    p("App-intro") {
+        +"To get started, edit "
+        code { +"app/App.kt" }
+        +" and save to reload."
+    }
+    p("App-ticker") {
+        ticker()
+    }
+    login(navigateTo)
+    register(navigateTo)
+    home(navigateTo)
+    elections(sample.elections())
+    election(sample.election())
+    candidates(sample.electionAndCandidates())
+    voters(sample.electionAndVoters())
+    ballots(sample.voterAndBallots())
+    ballot(sample.ballot())
 }
