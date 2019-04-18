@@ -13,18 +13,18 @@ import login.login
 import model.State
 import prototype.prototype
 import react.*
+import react.dom.p
 import register.register
-import sample.Sample
 import voters.voters
 
 interface AppState : RState {
     var model: State
 }
 
-interface AppProps:RProps {
-    var eventLoop:EventLoop
-    var environment:Environment
-    var api:Api
+interface AppProps : RProps {
+    var eventLoop: EventLoop
+    var environment: Environment
+    var api: Api
 }
 
 class App : RComponent<AppProps, AppState>() {
@@ -33,16 +33,22 @@ class App : RComponent<AppProps, AppState>() {
     }
 
     override fun RBuilder.render() {
-        val sample = Sample()
-        fun handleEffect(effect: Effect){
+        fun handleEffect(effect: Effect) {
             props.environment.handleEffect(state.model, props.eventLoop, props.api, effect)
         }
-        fun handleEvent(event: Event){
-            setState{
+
+        fun handleEvent(event: Event) {
+            console.log("App::handleEvent($event)")
+            setState {
                 val (newState, effects) = props.eventLoop.reactTo(state.model, event)
-                state.model = newState
+                console.log("newState = $newState")
+                console.log("effects = $effects")
+                model = newState
                 effects.forEach(::handleEffect)
             }
+        }
+        p {
+            +state.model.toString()
         }
         when {
             state.model.pageName == "login" -> login(::handleEvent)
@@ -54,13 +60,14 @@ class App : RComponent<AppProps, AppState>() {
             state.model.pageName == "voters" -> voters(state.model.votersPage!!)
             state.model.pageName == "ballots" -> ballots(state.model.ballotsPage!!)
             state.model.pageName == "ballot" -> ballot(state.model.ballotPage!!)
+            state.model.pageName == "error" -> error(state.model.errorPage!!)
             state.model.pageName == "prototype" -> prototype(::handleEvent)
             else -> prototype(::handleEvent)
         }
     }
 }
 
-fun RBuilder.app(eventLoop:EventLoop, environment:Environment, api: Api) = child(App::class) {
+fun RBuilder.app(eventLoop: EventLoop, environment: Environment, api: Api) = child(App::class) {
     attrs.eventLoop = eventLoop
     attrs.environment = environment
     attrs.api = api

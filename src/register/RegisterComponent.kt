@@ -2,39 +2,58 @@ package register
 
 import event.Event
 import kotlinx.html.ButtonType
+import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
-import react.RBuilder
-import react.ReactElement
+import react.*
 import react.dom.*
 
-fun RBuilder.register(sendEvent: (Event) -> Unit) {
-    div(classes = "single-column-flex") {
-        h1 { +"Register" }
-        val nameField: ReactElement = input {
-            attrs["placeholder"] = "name"
-        }
-        val emailField = input {
-            attrs["placeholder"] = "email"
-        }
-        val passwordField = input {
-            attrs["placeholder"] = "password"
-            attrs["type"] = "password"
-        }
-        val confirmPasswordField = input {
-            attrs["placeholder"] = "confirm password"
-            attrs["type"] = "password"
-        }
-        button(type = ButtonType.button) {
-            +"Register"
-            attrs.onClickFunction = {
-                sendEvent(Event.RegisterRequest(nameField ))
+interface RegisterState : RState {
+    var name: String
+    var email: String
+    var password: String
+    var confirmPassword: String
+}
+
+interface RegisterProps : RProps {
+    var sendEvent: (Event) -> Unit
+}
+
+class RegisterComponent : RComponent<RegisterProps, RegisterState>() {
+    override fun RBuilder.render() {
+        div(classes = "single-column-flex") {
+            h1 { +"Register" }
+            input {
+                attrs["placeholder"] = "name"
+                attrs.onChangeFunction = { event ->
+                    console.log(event)
+                    setState {
+                    }
+                }
             }
-        }
-        a(href = "#") {
-            +"Login"
-            attrs.onClickFunction = {
-                sendEvent(Event.NavLoginRequest)
+            input {
+                attrs["placeholder"] = "email"
+            }
+            input {
+                attrs["placeholder"] = "password"
+                attrs["type"] = "password"
+            }
+            input {
+                attrs["placeholder"] = "confirm password"
+                attrs["type"] = "password"
+            }
+            button(type = ButtonType.button) {
+                +"Register"
+            }
+            a(href = "#") {
+                +"Login"
+                attrs.onClickFunction = {
+                    props.sendEvent(Event.NavLoginRequest)
+                }
             }
         }
     }
+}
+
+fun RBuilder.register(sendEvent: (Event) -> Unit) = child(RegisterComponent::class) {
+    attrs.sendEvent = sendEvent
 }

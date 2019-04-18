@@ -11,7 +11,7 @@ class EventLoopImpl : EventLoop {
 
         fun effects(vararg effects: Effect): StateAndEffects =
                 StateAndEffects(state, effects.toList())
-
+        console.log("EventLoopImpl::reactTo($state, $event)")
         return try {
             when (event) {
                 is Event.NavLoginRequest -> updateState {
