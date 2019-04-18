@@ -1,47 +1,67 @@
 package app
 
+import api.Api
 import ballot.ballot
 import ballots.ballots
 import candidates.candidates
+import effect.Effect
 import election.election
 import elections.elections
+import event.Event
 import home.home
 import login.login
+import model.State
 import prototype.prototype
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.setState
+import react.*
 import register.register
 import sample.Sample
 import voters.voters
 
-class App : RComponent<RProps, AppState>() {
+interface AppState : RState {
+    var model: State
+}
+
+interface AppProps:RProps {
+    var eventLoop:EventLoop
+    var environment:Environment
+    var api:Api
+}
+
+class App : RComponent<AppProps, AppState>() {
     override fun AppState.init() {
-        pageName = "login"
+        model = State.initial
     }
 
     override fun RBuilder.render() {
         val sample = Sample()
-        val navigateTo: (String) -> Unit = { name ->
-            setState {
-                pageName = name
+        fun handleEffect(effect: Effect){
+            props.environment.handleEffect(state.model, props.eventLoop, props.api, effect)
+        }
+        fun handleEvent(event: Event){
+            setState{
+                val (newState, effects) = props.eventLoop.reactTo(state.model, event)
+                state.model = newState
+                effects.forEach(::handleEffect)
             }
         }
         when {
-            state.pageName == "login" -> login(navigateTo)
-            state.pageName == "register" -> register(navigateTo)
-            state.pageName == "home" -> home(navigateTo)
-            state.pageName == "elections" -> elections(sample.elections())
-            state.pageName == "election" -> election(sample.election())
-            state.pageName == "candidates" -> candidates(sample.electionAndCandidates())
-            state.pageName == "voters" -> voters(sample.electionAndVoters())
-            state.pageName == "ballots" -> ballots(sample.voterAndBallots())
-            state.pageName == "ballot" -> ballot(sample.ballot())
-            state.pageName == "prototype" -> prototype(navigateTo)
-            else -> prototype(navigateTo)
+            state.model.pageName == "login" -> login(::handleEvent)
+            state.model.pageName == "register" -> register(::handleEvent)
+            state.model.pageName == "home" -> home(::handleEvent)
+            state.model.pageName == "elections" -> elections(state.model.electionsPage!!)
+            state.model.pageName == "election" -> election(state.model.electionPage!!)
+            state.model.pageName == "candidates" -> candidates(state.model.candidatesPage!!)
+            state.model.pageName == "voters" -> voters(state.model.votersPage!!)
+            state.model.pageName == "ballots" -> ballots(state.model.ballotsPage!!)
+            state.model.pageName == "ballot" -> ballot(state.model.ballotPage!!)
+            state.model.pageName == "prototype" -> prototype(::handleEvent)
+            else -> prototype(::handleEvent)
         }
     }
 }
 
-fun RBuilder.app() = child(App::class) {}
+fun RBuilder.app(eventLoop:EventLoop, environment:Environment, api: Api) = child(App::class) {
+    attrs.eventLoop = eventLoop
+    attrs.environment = environment
+    attrs.api = api
+}

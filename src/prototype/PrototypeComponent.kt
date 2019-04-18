@@ -5,6 +5,7 @@ import ballots.ballots
 import candidates.candidates
 import election.election
 import elections.elections
+import event.Event
 import home.home
 import login.login
 import logo.logo
@@ -18,7 +19,7 @@ import sample.Sample
 import ticker.ticker
 import voters.voters
 
-fun RBuilder.prototype(navigateTo: (String) -> Unit) {
+fun RBuilder.prototype(sendEvent: (Event) -> Unit) {
     val sample = Sample()
     div("App-header") {
         logo()
@@ -34,9 +35,9 @@ fun RBuilder.prototype(navigateTo: (String) -> Unit) {
     p("App-ticker") {
         ticker()
     }
-    login(navigateTo)
-    register(navigateTo)
-    home(navigateTo)
+    login(sendEvent)
+    register(sendEvent)
+    home(sendEvent)
     elections(sample.elections())
     election(sample.election())
     candidates(sample.electionAndCandidates())

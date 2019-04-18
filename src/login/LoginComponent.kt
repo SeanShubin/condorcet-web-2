@@ -1,11 +1,12 @@
 package login
 
+import event.Event
 import kotlinx.html.ButtonType
 import kotlinx.html.js.onClickFunction
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.login(navigateTo: (String) -> Unit) {
+fun RBuilder.login(sendEvent: (Event) -> Unit) {
     div(classes = "single-column-flex") {
         h1 { +"Login" }
         input {
@@ -18,19 +19,19 @@ fun RBuilder.login(navigateTo: (String) -> Unit) {
         button(type = ButtonType.button) {
             +"Login"
             attrs.onClickFunction = {
-                navigateTo("home")
+                sendEvent(Event.NavHomeRequest)
             }
         }
         a(href = "#") {
             +"Register"
             attrs.onClickFunction = {
-                navigateTo("register")
+                sendEvent(Event.NavRegisterRequest)
             }
         }
         a(href = "#") {
             +"Prototype"
             attrs.onClickFunction = {
-                navigateTo("prototype")
+                sendEvent(Event.NavPrototypeRequest)
             }
         }
     }
