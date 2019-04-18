@@ -13,7 +13,6 @@ import login.login
 import model.State
 import prototype.prototype
 import react.*
-import react.dom.p
 import register.register
 import voters.voters
 
@@ -46,9 +45,6 @@ class App : RComponent<AppProps, AppState>() {
                 model = newState
                 effects.forEach(::handleEffect)
             }
-        }
-        p {
-            +state.model.toString()
         }
         when {
             state.model.pageName == "login" -> login(::handleEvent)

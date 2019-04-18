@@ -84,7 +84,8 @@ class ApiFake : Api {
         TODO("not implemented")
     }
 
-    private fun findUser(nameOrEmail: String): User? = TODO()
+    private fun findUser(nameOrEmail: String): User? =
+            users.find { user -> user.name == nameOrEmail || user.email == nameOrEmail }
 
     private fun loginError(nameOrEmail: String): Promise<Api.Response<Unit>> =
             Promise.resolve(Api.Failure("Unable to authenticate user '$nameOrEmail'"))

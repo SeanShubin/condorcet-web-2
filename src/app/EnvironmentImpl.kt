@@ -13,8 +13,10 @@ class EnvironmentImpl : Environment {
             }
             is Effect.Login -> {
                 api.login(effect.nameOrEmail, effect.password).then {
+                    console.log("login success")
                     eventLoop.reactTo(state, Event.NavHomeRequest)
                 }.catch { throwable ->
+                    console.log("login failure")
                     eventLoop.reactTo(state, Event.Error(throwable.message ?: "<no message>"))
                 }
             }
