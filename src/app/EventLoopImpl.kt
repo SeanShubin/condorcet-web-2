@@ -35,7 +35,10 @@ class EventLoopImpl : EventLoop {
                     state.navPrototype()
                 }
                 is Event.Error -> updateState {
-                    state.error(event.message)
+                    console.log("error state: ${event.message}")
+                    val result = state.error(event.message)
+                    console.log("result $result")
+                    result
                 }
                 else -> effects(Effect.Dispatch(Event.Error("unknown event $event")))
             }

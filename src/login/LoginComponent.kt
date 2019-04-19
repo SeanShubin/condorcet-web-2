@@ -11,6 +11,7 @@ import react.dom.*
 
 interface LoginProps : RProps {
     var sendEvent: (Event) -> Unit
+    var errorMessage: String?
 }
 
 interface LoginState : RState {
@@ -27,6 +28,12 @@ class LoginComponent : RComponent<LoginProps, LoginState>() {
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
             h1 { +"Login" }
+            val errorMessage = props.errorMessage
+            if (errorMessage != null) {
+                p(classes = "error") {
+                    +errorMessage
+                }
+            }
             input {
                 attrs {
                     placeholder = "name or email"
@@ -75,6 +82,7 @@ class LoginComponent : RComponent<LoginProps, LoginState>() {
     }
 }
 
-fun RBuilder.login(sendEvent: (Event) -> Unit) = child(LoginComponent::class) {
+fun RBuilder.login(sendEvent: (Event) -> Unit, errorMessage: String?) = child(LoginComponent::class) {
     attrs.sendEvent = sendEvent
+    attrs.errorMessage = errorMessage
 }
