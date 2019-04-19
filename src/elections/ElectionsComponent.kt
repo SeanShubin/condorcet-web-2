@@ -62,7 +62,7 @@ fun RBuilder.elections(elections: List<Election>) {
                             }
                         }
                         td {
-                            +election.owner
+                            +election.ownerName
                         }
                         td {
                             +election.name

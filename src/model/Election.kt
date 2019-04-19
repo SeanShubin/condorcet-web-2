@@ -4,14 +4,14 @@ import model.StringConversions.booleanToString
 import model.StringConversions.dateToString
 import kotlin.js.Date
 
-data class Election(val owner: String,
+data class Election(val ownerName: String,
                     val name: String,
                     val start: Date? = null,
                     val end: Date? = null,
                     val secretBallot: Boolean = true,
                     val status: ElectionStatus = ElectionStatus.EDITING,
-                    val candidateCount: Int,
-                    val voterCount: Int) {
+                    val candidateCount: Int = 0,
+                    val voterCount: Int = 0) {
     val startString get() = dateToString(start)
     val endString get() = dateToString(end)
     val secretBallotString get() = booleanToString(secretBallot)

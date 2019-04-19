@@ -16,7 +16,7 @@ fun RBuilder.election(election: Election) {
             }
             +"Owner"
             input {
-                attrs["value"] = election.owner
+                attrs["value"] = election.ownerName
             }
             +"Status"
             input {

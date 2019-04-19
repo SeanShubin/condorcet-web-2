@@ -1,13 +1,20 @@
 package api
 
-import model.Ballot
-import model.Credentials
-import model.Election
-import model.User
+import model.*
 import kotlin.js.Promise
 
 class ApiFake : Api {
     private val users: MutableList<User> = mutableListOf()
+    private val elections: MutableList<Election> = mutableListOf()
+
+    init {
+        createUser("foo", "foo@email.com", "bar")
+        createUser("Alice", "alice@email.com", "password")
+        createUser("Bob", "bob@email.com", "password")
+        createUser("Carol", "carol@email.com", "password")
+        createUser("Dave", "dave@email.com", "password")
+        createElection("Alice", "Election 1")
+    }
     override fun login(nameOrEmail: String, password: String): Promise<Credentials> {
         val user = findUser(nameOrEmail)
         return when {
@@ -31,7 +38,14 @@ class ApiFake : Api {
     }
 
     override fun createElection(credentials: Credentials, electionName: String): Promise<Unit> {
-        TODO("not implemented")
+        return try {
+            assertAllowedToCreateElection(credentials)
+            assertElectionNameDoesNotExist(electionName)
+            createElection(credentials.name, electionName)
+            Promise.resolve(Unit)
+        } catch (ex: RuntimeException) {
+            Promise.reject(ex)
+        }
     }
 
     override fun copyElection(credentials: Credentials, newElectionName: String, electionToCopyName: String): Promise<Unit> {
@@ -108,9 +122,36 @@ class ApiFake : Api {
         }
     }
 
+    private fun assertElectionNameDoesNotExist(name: String) {
+        if (elections.find { it.name == name } != null) {
+            throw RuntimeException("Election named '$name' already exists")
+        }
+    }
+
+    private fun assertAllowedToCreateElection(credentials: Credentials) {
+        val user = lookupUser(credentials)
+        if (!user.authorization.canCreateElections()) {
+            throw RuntimeException("User '${user.name} is not allowed to create elections")
+        }
+    }
+
     private fun createUser(name: String, email: String, password: String): User {
-        val user = User(name, email, password)
+        val user = User(name, email, password, Standard)
         users.add(user)
         return user
+    }
+
+    private fun createElection(ownerName: String, electionName: String) {
+        val election = Election(ownerName, electionName)
+        elections.add(election)
+    }
+
+    private fun lookupUser(credentials: Credentials): User {
+        val user = findUser(credentials.name)
+        when {
+            user == null -> throw RuntimeException("Invalid credentials for user '${credentials.name}'")
+            user.password == credentials.password -> return user
+            else -> throw RuntimeException("Invalid credentials for user '${credentials.name}'")
+        }
     }
 }
