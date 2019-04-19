@@ -3,10 +3,10 @@ package app
 import api.Api
 import effect.Effect
 import event.Event
-import model.State
+import pages.Page
 
 class EnvironmentImpl : Environment {
-    override fun handleEffect(state: State, handleEvent: (Event) -> Unit, api: Api, effect: Effect) {
+    override fun handleEffect(state: Page, handleEvent: (Event) -> Unit, api: Api, effect: Effect) {
         when (effect) {
             is Effect.Dispatch -> {
                 handleEvent(effect.event)

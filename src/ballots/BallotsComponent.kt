@@ -1,11 +1,10 @@
 package ballots
 
-import model.VoterAndBallots
+import model.Ballot
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.ballots(voterAndBallots: VoterAndBallots) {
-    val (voter, ballots) = voterAndBallots
+fun RBuilder.ballots(voterName: String, ballots: List<Ballot>) {
     div(classes = "single-column-flex") {
         h1 {
             +"Ballots"
@@ -15,7 +14,7 @@ fun RBuilder.ballots(voterAndBallots: VoterAndBallots) {
                 +"Voter"
             }
             input {
-                attrs["value"] = voter
+                attrs["value"] = voterName
             }
         }
         table {

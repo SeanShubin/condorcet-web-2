@@ -1,7 +1,9 @@
 package sample
 
-import model.*
+import model.Ballot
+import model.Election
 import model.Election.ElectionStatus
+import model.Ranking
 import kotlin.js.Date
 
 class Sample {
@@ -25,20 +27,15 @@ class Sample {
         index++
         return index
     }
-
     fun rankings(howMany: Int): List<Ranking> = ((1..howMany).map { ranking() })
     fun ranking(): Ranking =
-            Ranking(createInt(), candidateName())
-
+            Ranking(rank(), candidateName())
     fun ballot(): Ballot =
             Ballot(electionName(), voterName(), rankings(3), ballotAction())
-
     fun ballots(howMany: Int): List<Ballot> =
             ((1..howMany).map { ballot() })
 
-    fun voterAndBallots(): VoterAndBallots =
-            VoterAndBallots(voterName(), ballots(3))
-
+    fun ballots(): List<Ballot> = ballots(3)
     fun elections(): List<Election> = elections(3)
     fun elections(howMany: Int): List<Election> = (1..howMany).map { election() }
     fun election(): Election = Election(
@@ -50,9 +47,6 @@ class Sample {
             electionStatus(),
             candidateCount = 3,
             voterCount = 20)
-
-    fun electionAndCandidates(): ElectionAndCandidates = ElectionAndCandidates(electionName(), candidates())
-    fun electionAndVoters(): ElectionAndVoters = ElectionAndVoters(electionName(), voters())
     fun candidates(): List<String> = candidates(3)
     fun voters(): List<String> = voters(3)
     fun candidates(howMany: Int): List<String> = ((1..howMany).map { candidateName() })
@@ -70,11 +64,6 @@ class Sample {
     fun electionStatus(): ElectionStatus {
         index++
         return enumValue(index)
-    }
-
-    fun createInt(): Int {
-        index++
-        return index
     }
 
     fun ballotAction(): Ballot.Action {

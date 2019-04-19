@@ -1,12 +1,10 @@
 package candidates
 
 import kotlinx.html.ButtonType
-import model.ElectionAndCandidates
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.candidates(electionAndCandidates: ElectionAndCandidates) {
-    val (electionName, candidates) = electionAndCandidates
+fun RBuilder.candidates(electionName: String, candidates: List<String>) {
     div(classes = "single-column-flex") {
         h1 { +"Candidates" }
         div(classes = "two-column-grid") {

@@ -11,14 +11,14 @@ import error.errorPage
 import event.Event
 import home.home
 import login.login
-import model.State
+import pages.*
 import prototype.prototype
 import react.*
 import register.register
 import voters.voters
 
 interface AppState : RState {
-    var model: State
+    var page: Page
 }
 
 interface AppProps : RProps {
@@ -29,38 +29,38 @@ interface AppProps : RProps {
 
 class App : RComponent<AppProps, AppState>() {
     override fun AppState.init() {
-        model = State.initial
+        page = Page.initial
     }
 
     override fun RBuilder.render() {
         fun handleEvent(event: Event) {
             fun handleEffect(effect: Effect) {
-                props.environment.handleEffect(state.model, ::handleEvent, props.api, effect)
+                props.environment.handleEffect(state.page, ::handleEvent, props.api, effect)
             }
             try {
-                val (newState, effects) = props.eventLoop.reactTo(state.model, event)
+                val (newState, effects) = props.eventLoop.reactTo(state.page, event)
                 setState {
-                    model = newState
+                    page = newState
                     effects.forEach(::handleEffect)
                 }
             } catch (ex: Throwable) {
                 setState {
-                    model = model.copy(pageName = "error", errorMessage = ex.message)
+                    page = page.navError(ex.message ?: "<no message>")
                 }
             }
         }
-        when {
-            state.model.pageName == "login" -> login(::handleEvent, state.model.errorMessage)
-            state.model.pageName == "register" -> register(::handleEvent, state.model.errorMessage)
-            state.model.pageName == "home" -> home(::handleEvent)
-            state.model.pageName == "elections" -> elections(state.model.electionsPage!!)
-            state.model.pageName == "election" -> election(state.model.electionPage!!)
-            state.model.pageName == "candidates" -> candidates(state.model.candidatesPage!!)
-            state.model.pageName == "voters" -> voters(state.model.votersPage!!)
-            state.model.pageName == "ballots" -> ballots(state.model.ballotsPage!!)
-            state.model.pageName == "ballot" -> ballot(state.model.ballotPage!!)
-            state.model.pageName == "error" -> errorPage(::handleEvent, state.model.errorMessage!!)
-            state.model.pageName == "prototype" -> prototype(::handleEvent)
+        when (val page = state.page) {
+            is LoginPage -> login(::handleEvent, page.errorMessage)
+            is RegisterPage -> register(::handleEvent, page.errorMessage)
+            is HomePage -> home(::handleEvent)
+            is ElectionsPage -> elections(page.elections)
+            is ElectionPage -> election(page.election)
+            is CandidatesPage -> candidates(page.electionName, page.candidates)
+            is VotersPage -> voters(page.electionName, page.voters)
+            is BallotsPage -> ballots(page.voterName, page.ballots)
+            is BallotPage -> ballot(page.ballot)
+            is PrototypePage -> prototype(::handleEvent)
+            is UnexpectedErrorPage -> errorPage(::handleEvent, page.message)
             else -> prototype(::handleEvent)
         }
     }

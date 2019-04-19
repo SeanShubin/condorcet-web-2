@@ -40,8 +40,8 @@ fun RBuilder.prototype(sendEvent: (Event) -> Unit) {
     home(sendEvent)
     elections(sample.elections())
     election(sample.election())
-    candidates(sample.electionAndCandidates())
-    voters(sample.electionAndVoters())
-    ballots(sample.voterAndBallots())
+    candidates(sample.electionName(), sample.candidates())
+    voters(sample.electionName(), sample.voters())
+    ballots(sample.voterName(), sample.ballots())
     ballot(sample.ballot())
 }

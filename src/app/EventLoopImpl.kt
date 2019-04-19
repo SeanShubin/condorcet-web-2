@@ -2,11 +2,11 @@ package app
 
 import effect.Effect
 import event.Event
-import model.State
+import pages.Page
 
 class EventLoopImpl : EventLoop {
-    override fun reactTo(state: State, event: Event): StateAndEffects {
-        fun updateState(f: (State) -> State): StateAndEffects =
+    override fun reactTo(state: Page, event: Event): StateAndEffects {
+        fun updateState(f: (Page) -> Page): StateAndEffects =
                 StateAndEffects(f(state), emptyList())
 
         fun effects(vararg effects: Effect): StateAndEffects =
@@ -28,7 +28,7 @@ class EventLoopImpl : EventLoop {
                     state.navPrototype()
                 }
                 is Event.Error -> updateState {
-                    state.error(event.message)
+                    state.navError(event.message)
                 }
                 else -> effects(Effect.Dispatch(Event.Error("unknown event $event")))
             }

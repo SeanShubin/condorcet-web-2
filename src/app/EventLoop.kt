@@ -1,8 +1,8 @@
 package app
 
 import event.Event
-import model.State
+import pages.Page
 
 interface EventLoop {
-    fun reactTo(state: State, event: Event): StateAndEffects
+    fun reactTo(state: Page, event: Event): StateAndEffects
 }

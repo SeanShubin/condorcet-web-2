@@ -1,6 +1,6 @@
 package app
 
 import effect.Effect
-import model.State
+import pages.Page
 
-data class StateAndEffects(val state: State, val effects: List<Effect>)
+data class StateAndEffects(val state: Page, val effects: List<Effect>)
