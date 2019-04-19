@@ -36,7 +36,7 @@ fun RBuilder.prototype(sendEvent: (Event) -> Unit) {
         ticker()
     }
     login(sendEvent, errorMessage = null)
-    register(sendEvent)
+    register(sendEvent, errorMessage = null)
     home(sendEvent)
     elections(sample.elections())
     election(sample.election())

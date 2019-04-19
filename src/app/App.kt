@@ -37,15 +37,21 @@ class App : RComponent<AppProps, AppState>() {
             fun handleEffect(effect: Effect) {
                 props.environment.handleEffect(state.model, ::handleEvent, props.api, effect)
             }
-            setState {
+            try {
                 val (newState, effects) = props.eventLoop.reactTo(state.model, event)
-                model = newState
-                effects.forEach(::handleEffect)
+                setState {
+                    model = newState
+                    effects.forEach(::handleEffect)
+                }
+            } catch (ex: Throwable) {
+                setState {
+                    model = model.copy(pageName = "error", errorMessage = ex.message)
+                }
             }
         }
         when {
             state.model.pageName == "login" -> login(::handleEvent, state.model.errorMessage)
-            state.model.pageName == "register" -> register(::handleEvent)
+            state.model.pageName == "register" -> register(::handleEvent, state.model.errorMessage)
             state.model.pageName == "home" -> home(::handleEvent)
             state.model.pageName == "elections" -> elections(state.model.electionsPage!!)
             state.model.pageName == "election" -> election(state.model.electionPage!!)

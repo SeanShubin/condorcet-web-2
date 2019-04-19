@@ -2,8 +2,10 @@ package register
 
 import event.Event
 import kotlinx.html.ButtonType
+import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.*
 
@@ -16,43 +18,96 @@ interface RegisterState : RState {
 
 interface RegisterProps : RProps {
     var sendEvent: (Event) -> Unit
+    var errorMessage: String?
 }
 
 class RegisterComponent : RComponent<RegisterProps, RegisterState>() {
+    override fun RegisterState.init() {
+        name = ""
+        email = ""
+        password = ""
+        confirmPassword = ""
+    }
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
             h1 { +"Register" }
+            val errorMessage = props.errorMessage
+            if (errorMessage != null) {
+                p(classes = "error") {
+                    +errorMessage
+                }
+            }
             input {
-                attrs["placeholder"] = "name"
-                attrs.onChangeFunction = { event ->
-                    setState {
+                attrs {
+                    placeholder = "name"
+                    onChangeFunction = { event ->
+                        val target = event.target as HTMLInputElement
+                        setState {
+                            name = target.value
+                        }
                     }
                 }
             }
             input {
-                attrs["placeholder"] = "email"
+                attrs {
+                    placeholder = "email"
+                    onChangeFunction = { event ->
+                        val target = event.target as HTMLInputElement
+                        setState {
+                            email = target.value
+                        }
+                    }
+                }
             }
             input {
-                attrs["placeholder"] = "password"
-                attrs["type"] = "password"
+                attrs {
+                    placeholder = "password"
+                    type = InputType.password
+                    onChangeFunction = { event ->
+                        val target = event.target as HTMLInputElement
+                        setState {
+                            password = target.value
+                        }
+                    }
+                }
             }
             input {
-                attrs["placeholder"] = "confirm password"
-                attrs["type"] = "password"
+                attrs {
+                    placeholder = "confirm password"
+                    type = InputType.password
+                    onChangeFunction = { event ->
+                        val target = event.target as HTMLInputElement
+                        setState {
+                            confirmPassword = target.value
+                        }
+                    }
+                }
             }
             button(type = ButtonType.button) {
                 +"Register"
+                attrs {
+                    onClickFunction = {
+                        props.sendEvent(Event.RegisterRequest(
+                                state.name,
+                                state.email,
+                                state.password,
+                                state.confirmPassword))
+                    }
+                }
             }
             a(href = "#") {
                 +"Login"
-                attrs.onClickFunction = {
-                    props.sendEvent(Event.NavLoginRequest)
+                attrs {
+                    onClickFunction = {
+                        props.sendEvent(Event.NavLoginRequest)
+                    }
                 }
             }
         }
     }
 }
 
-fun RBuilder.register(sendEvent: (Event) -> Unit) = child(RegisterComponent::class) {
+fun RBuilder.register(sendEvent: (Event) -> Unit, errorMessage: String?) = child(RegisterComponent::class) {
     attrs.sendEvent = sendEvent
+    attrs.errorMessage = errorMessage
 }

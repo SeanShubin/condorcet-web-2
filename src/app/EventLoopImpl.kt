@@ -24,12 +24,6 @@ class EventLoopImpl : EventLoop {
                 is Event.NavHomeRequest -> updateState {
                     state.navHome()
                 }
-                is Event.NavElectionsRequest -> TODO()
-                is Event.NavElectionRequest -> TODO()
-                is Event.NavCandidatesRequest -> TODO()
-                is Event.NavVotersRequest -> TODO()
-                is Event.NavBallotsRequest -> TODO()
-                is Event.NavBallotRequest -> TODO()
                 is Event.NavPrototypeRequest -> updateState {
                     state.navPrototype()
                 }

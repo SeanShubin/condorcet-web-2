@@ -6,9 +6,10 @@ interface Event {
     object NavLoginRequest : Event
     data class LoginRequest(val nameOrEmail: String, val password: String) : Event
     data class LoginSuccess(val credentials: Credentials) : Event
+    data class LoginFailure(val message: String) : Event
     object LogoutRequest:Event
     object NavRegisterRequest : Event
-    data class RegisterRequest(val name: String, val email: String, val password: String, val confirmPassword: String)
+    data class RegisterRequest(val name: String, val email: String, val password: String, val confirmPassword: String) : Event
     object NavHomeRequest : Event
     object NavElectionsRequest : Event
     data class NavElectionRequest(val electionName: String) : Event
