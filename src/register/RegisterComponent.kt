@@ -25,7 +25,6 @@ class RegisterComponent : RComponent<RegisterProps, RegisterState>() {
             input {
                 attrs["placeholder"] = "name"
                 attrs.onChangeFunction = { event ->
-                    console.log(event)
                     setState {
                     }
                 }

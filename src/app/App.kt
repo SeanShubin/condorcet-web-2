@@ -37,16 +37,12 @@ class App : RComponent<AppProps, AppState>() {
             fun handleEffect(effect: Effect) {
                 props.environment.handleEffect(state.model, ::handleEvent, props.api, effect)
             }
-            console.log("App::handleEvent($event)")
             setState {
                 val (newState, effects) = props.eventLoop.reactTo(state.model, event)
-                console.log("newState = $newState")
-                console.log("effects = $effects")
                 model = newState
                 effects.forEach(::handleEffect)
             }
         }
-        console.log("going to page ${state.model.pageName}")
         when {
             state.model.pageName == "login" -> login(::handleEvent, state.model.errorMessage)
             state.model.pageName == "register" -> register(::handleEvent)

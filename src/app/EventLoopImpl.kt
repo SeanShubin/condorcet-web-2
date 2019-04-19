@@ -11,7 +11,6 @@ class EventLoopImpl : EventLoop {
 
         fun effects(vararg effects: Effect): StateAndEffects =
                 StateAndEffects(state, effects.toList())
-        console.log("EventLoopImpl::reactTo($state, $event)")
         return try {
             when (event) {
                 is Event.NavLoginRequest -> updateState {
@@ -35,10 +34,7 @@ class EventLoopImpl : EventLoop {
                     state.navPrototype()
                 }
                 is Event.Error -> updateState {
-                    console.log("error state: ${event.message}")
-                    val result = state.error(event.message)
-                    console.log("result $result")
-                    result
+                    state.error(event.message)
                 }
                 else -> effects(Effect.Dispatch(Event.Error("unknown event $event")))
             }
