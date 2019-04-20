@@ -5,12 +5,15 @@ import model.Election
 
 interface Page {
     val name: String
-    fun unsupported(transitionName: String): Page = navError("Unsupported transition $transitionName from page $name")
-    fun navLogin(): Page = unsupported("navLogin")
-    fun navRegister(): Page = unsupported("navRegister")
-    fun navHome(): Page = unsupported("navHome")
-    fun navPrototype(): Page = unsupported("navPrototype")
+    fun unsupported(transitionName: String): Page =
+            navError("Unsupported transition $transitionName from page $name")
+
+    fun navLogin(): Page = LoginPage(errorMessage = null)
+    fun navRegister(): Page = RegisterPage(errorMessage = null)
+    fun navHome(): Page = HomePage
+    fun navPrototype(): Page = PrototypePage
     fun navError(message: String): Page = UnexpectedErrorPage(message)
+    fun loginFailure(message: String): Page = LoginPage(errorMessage = message)
 
     companion object {
         val initial = LoginPage(errorMessage = null)
@@ -19,12 +22,10 @@ interface Page {
 
 data class LoginPage(val errorMessage: String?) : Page {
     override val name: String = "login"
-    override fun navRegister(): Page = RegisterPage(errorMessage = null)
 }
 
 data class RegisterPage(val errorMessage: String?) : Page {
     override val name: String = "register"
-    override fun navLogin(): Page = LoginPage(errorMessage = null)
 }
 
 object HomePage : Page {
@@ -61,7 +62,4 @@ object PrototypePage : Page {
 
 data class UnexpectedErrorPage(val message: String) : Page {
     override val name: String = "unexpected"
-    override fun navLogin(): Page = LoginPage(errorMessage = null)
-    override fun navRegister(): Page = RegisterPage(errorMessage = null)
-    override fun navPrototype(): Page = PrototypePage
 }

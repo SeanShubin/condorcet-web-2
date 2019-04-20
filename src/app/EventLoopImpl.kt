@@ -6,6 +6,7 @@ import pages.Page
 
 class EventLoopImpl : EventLoop {
     override fun reactTo(state: Page, event: Event): StateAndEffects {
+        console.log("event: $state $event")
         fun updateState(f: (Page) -> Page): StateAndEffects =
                 StateAndEffects(f(state), emptyList())
 
@@ -18,6 +19,9 @@ class EventLoopImpl : EventLoop {
                 }
                 is Event.LoginRequest -> effects(Effect.Login(event.nameOrEmail, event.password))
                 is Event.LoginSuccess -> effects(Effect.Dispatch(Event.NavHomeRequest))
+                is Event.LoginFailure -> updateState {
+                    state.loginFailure(event.message)
+                }
                 is Event.NavRegisterRequest -> updateState {
                     state.navRegister()
                 }
