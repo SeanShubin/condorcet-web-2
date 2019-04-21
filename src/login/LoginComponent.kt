@@ -1,10 +1,12 @@
 package login
 
+import dynamic.EventUtil
 import event.Event
 import kotlinx.html.ButtonType
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onKeyUpFunction
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.*
@@ -27,6 +29,13 @@ class LoginComponent : RComponent<LoginProps, LoginState>() {
 
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
+            attrs {
+                onKeyUpFunction = { target: org.w3c.dom.events.Event ->
+                    if (EventUtil.key(target) === "Enter") {
+                        loginButtonPressed(target)
+                    }
+                }
+            }
             h1 { +"Login" }
             val errorMessage = props.errorMessage
             if (errorMessage != null) {
@@ -62,9 +71,7 @@ class LoginComponent : RComponent<LoginProps, LoginState>() {
             }
             button(type = ButtonType.button) {
                 +"Login"
-                attrs.onClickFunction = {
-                    props.sendEvent(Event.LoginRequest(state.nameOrEmail, state.password))
-                }
+                attrs.onClickFunction = ::loginButtonPressed
             }
             a(href = "#") {
                 +"Register"
@@ -79,6 +86,10 @@ class LoginComponent : RComponent<LoginProps, LoginState>() {
                 }
             }
         }
+    }
+
+    private fun loginButtonPressed(event: org.w3c.dom.events.Event) {
+        props.sendEvent(Event.LoginRequest(state.nameOrEmail, state.password))
     }
 }
 
