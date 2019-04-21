@@ -21,6 +21,8 @@ interface Event {
         override fun toString(): String = "NavHomeRequest"
     }
 
+    data class RegisterFailure(val message: String) : Event
+
     object NavElectionsRequest : Event {
         override fun toString(): String = "NavElectionsRequest"
     }

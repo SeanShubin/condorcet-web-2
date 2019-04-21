@@ -14,6 +14,7 @@ interface Page {
     fun navPrototype(): Page = PrototypePage
     fun navError(message: String): Page = UnexpectedErrorPage(message)
     fun loginFailure(message: String): Page = LoginPage(errorMessage = message)
+    fun registerFailure(message: String): Page = RegisterPage(errorMessage = message)
 
     companion object {
         val initial = LoginPage(errorMessage = null)

@@ -22,6 +22,11 @@ class EventLoopImpl : EventLoop {
                 is Event.LoginFailure -> updateState {
                     state.loginFailure(event.message)
                 }
+                is Event.RegisterRequest -> effects(Effect.Register(
+                        event.name, event.email, event.password, event.confirmPassword))
+                is Event.RegisterFailure -> updateState {
+                    state.registerFailure(event.message)
+                }
                 is Event.NavRegisterRequest -> updateState {
                     state.navRegister()
                 }

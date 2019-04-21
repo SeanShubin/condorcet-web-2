@@ -19,6 +19,17 @@ class EnvironmentImpl : Environment {
                     handleEvent(Event.LoginFailure(throwable.message ?: "<no message>"))
                 }
             }
+            is Effect.Register -> {
+                if (effect.password != effect.confirmPassword) {
+                    handleEvent(Event.RegisterFailure("password does not match confirmation"))
+                } else {
+                    api.register(effect.name, effect.password, effect.password).then {
+                        handleEvent(Event.NavHomeRequest)
+                    }.catch { throwable ->
+                        handleEvent(Event.RegisterFailure(throwable.message ?: "<no message>"))
+                    }
+                }
+            }
         }
     }
 }
