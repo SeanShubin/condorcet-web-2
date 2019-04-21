@@ -1,10 +1,12 @@
 package register
 
+import dynamic.EventUtil
 import event.Event
 import kotlinx.html.ButtonType
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onKeyUpFunction
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.*
@@ -30,6 +32,13 @@ class RegisterComponent : RComponent<RegisterProps, RegisterState>() {
     }
     override fun RBuilder.render() {
         div(classes = "single-column-flex") {
+            attrs {
+                onKeyUpFunction = { target: org.w3c.dom.events.Event ->
+                    if (EventUtil.key(target) === "Enter") {
+                        registerButtonPressed(target)
+                    }
+                }
+            }
             h1 { +"Register" }
             val errorMessage = props.errorMessage
             if (errorMessage != null) {
@@ -86,13 +95,7 @@ class RegisterComponent : RComponent<RegisterProps, RegisterState>() {
             button(type = ButtonType.button) {
                 +"Register"
                 attrs {
-                    onClickFunction = {
-                        props.sendEvent(Event.RegisterRequest(
-                                state.name,
-                                state.email,
-                                state.password,
-                                state.confirmPassword))
-                    }
+                    onClickFunction = ::registerButtonPressed
                 }
             }
             a(href = "#") {
@@ -104,6 +107,14 @@ class RegisterComponent : RComponent<RegisterProps, RegisterState>() {
                 }
             }
         }
+    }
+
+    private fun registerButtonPressed(event: org.w3c.dom.events.Event) {
+        props.sendEvent(Event.RegisterRequest(
+                state.name,
+                state.email,
+                state.password,
+                state.confirmPassword))
     }
 }
 
