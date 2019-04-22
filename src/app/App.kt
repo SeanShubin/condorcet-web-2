@@ -15,10 +15,12 @@ import pages.*
 import prototype.prototype
 import react.*
 import register.register
+import state.Model
 import voters.voters
+import kotlin.browser.window
 
 interface AppState : RState {
-    var page: Page
+    var model: Model
 }
 
 interface AppProps : RProps {
@@ -29,7 +31,10 @@ interface AppProps : RProps {
 
 class App : RComponent<AppProps, AppState>() {
     override fun AppState.init() {
-        page = Page.initial
+        val page = Page.initial
+        val lastPathName = "/"
+        model = Model(page, lastPathName)
+
     }
 
     override fun RBuilder.render() {
@@ -38,18 +43,23 @@ class App : RComponent<AppProps, AppState>() {
                 effect.apply(::handleEvent, props.environment)
             }
             try {
-                val (newState, effects) = props.eventLoop.reactTo(state.page, event)
+                val (newState, effects) = props.eventLoop.reactTo(state.model, event)
                 setState {
-                    page = newState
+                    model = newState
                     effects.forEach(::handleEffect)
                 }
             } catch (ex: Throwable) {
                 setState {
-                    page = page.navError(ex.message ?: "<no message>")
+                    model = model.copy(page = model.page.navError(ex.message ?: "<no message>"))
                 }
             }
         }
-        when (val page = state.page) {
+        console.log("state.model.pathName = ${state.model.pathName}")
+        console.log("window.location.pathname = ${window.location.pathname}")
+        if (state.model.pathName != window.location.pathname) {
+            handleEvent(Event.PathNameChanged(window.location.pathname))
+        }
+        when (val page = state.model.page) {
             is LoginPage -> login(::handleEvent, page.errorMessage)
             is RegisterPage -> register(::handleEvent, page.errorMessage)
             is HomePage -> home(::handleEvent)

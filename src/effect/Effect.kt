@@ -37,4 +37,10 @@ interface Effect {
             }
         }
     }
+
+    data class SetPathName(val pathName: String) : Effect {
+        override fun apply(handleEvent: (Event) -> Unit, environment: Environment) {
+            environment.setPathName(pathName)
+        }
+    }
 }
