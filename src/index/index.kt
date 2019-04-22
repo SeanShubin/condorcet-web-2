@@ -11,7 +11,7 @@ import kotlin.browser.document
 fun main(args: Array<String>) {
     val eventLoop: EventLoop = EventLoopImpl()
     val api: Api = ApiFake()
-    val environment: Environment = EnvironmentImpl()
+    val environment: Environment = EnvironmentImpl(api)
     requireAll(require.context("src", true, js("/\\.css$/")))
     render(document.getElementById("root")) {
         app(eventLoop, environment, api)

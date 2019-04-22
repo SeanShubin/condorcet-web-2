@@ -35,7 +35,7 @@ class App : RComponent<AppProps, AppState>() {
     override fun RBuilder.render() {
         fun handleEvent(event: Event) {
             fun handleEffect(effect: Effect) {
-                props.environment.handleEffect(state.page, ::handleEvent, props.api, effect)
+                effect.apply(::handleEvent, props.environment)
             }
             try {
                 val (newState, effects) = props.eventLoop.reactTo(state.page, event)
