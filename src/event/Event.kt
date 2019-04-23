@@ -3,7 +3,6 @@ package event
 import model.Credentials
 
 interface Event {
-    class PathNameChanged(val pathName: String) : Event
     object NavLoginRequest : Event {
         override fun toString(): String = "NavLoginRequest"
     }

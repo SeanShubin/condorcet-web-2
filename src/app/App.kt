@@ -17,7 +17,6 @@ import react.*
 import register.register
 import state.Model
 import voters.voters
-import kotlin.browser.window
 
 interface AppState : RState {
     var model: Model
@@ -32,14 +31,14 @@ interface AppProps : RProps {
 class App : RComponent<AppProps, AppState>() {
     override fun AppState.init() {
         val page = Page.initial
-        val lastPathName = "/"
-        model = Model(page, lastPathName)
+        model = Model(page)
 
     }
 
     override fun RBuilder.render() {
         fun handleEvent(event: Event) {
             fun handleEffect(effect: Effect) {
+                console.log("effect: $effect")
                 effect.apply(::handleEvent, props.environment)
             }
             try {
@@ -53,11 +52,6 @@ class App : RComponent<AppProps, AppState>() {
                     model = model.copy(page = model.page.navError(ex.message ?: "<no message>"))
                 }
             }
-        }
-        console.log("state.model.pathName = ${state.model.pathName}")
-        console.log("window.location.pathname = ${window.location.pathname}")
-        if (state.model.pathName != window.location.pathname) {
-            handleEvent(Event.PathNameChanged(window.location.pathname))
         }
         when (val page = state.model.page) {
             is LoginPage -> login(::handleEvent, page.errorMessage)
