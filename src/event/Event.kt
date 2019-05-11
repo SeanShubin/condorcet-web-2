@@ -1,6 +1,7 @@
 package event
 
 import model.Credentials
+import model.Election
 
 interface Event {
     object NavLoginRequest : Event {
@@ -21,9 +22,6 @@ interface Event {
 
     data class RegisterFailure(val message: String) : Event
 
-    object NavElectionsRequest : Event {
-        override fun toString(): String = "NavElectionsRequest"
-    }
     data class NavElectionRequest(val electionName: String) : Event
     data class NavCandidatesRequest(val electionName: String) : Event
     data class NavVotersRequest(val electionName: String) : Event
@@ -33,4 +31,7 @@ interface Event {
         override fun toString(): String = "NavPrototypeRequest"
     }
     data class Error(val message: String) : Event
+    data class ListElectionsRequest(val credentials: Credentials) : Event
+    data class ListElectionsSuccess(val elections: List<Election>) : Event
+    data class ListElectionsFailure(val message: String) : Event
 }

@@ -2,6 +2,7 @@ package effect
 
 import app.Environment
 import event.Event
+import model.Credentials
 
 interface Effect {
     fun apply(handleEvent: (Event) -> Unit, environment: Environment)
@@ -17,7 +18,7 @@ interface Effect {
             environment.api.login(nameOrEmail, password).then { credentials ->
                 handleEvent(Event.NavHomeRequest(credentials))
             }.catch { throwable ->
-                handleEvent(Event.LoginFailure(throwable.message ?: "<no message>"))
+                handleEvent(Event.LoginFailure(throwable.message ?: "Unable to login"))
             }
         }
     }
@@ -32,12 +33,21 @@ interface Effect {
                 environment.api.register(name, password, password).then { credentials ->
                     handleEvent(Event.NavHomeRequest(credentials))
                 }.catch { throwable ->
-                    handleEvent(Event.RegisterFailure(throwable.message ?: "<no message>"))
+                    handleEvent(Event.RegisterFailure(throwable.message ?: "Unable to register"))
                 }
             }
         }
     }
 
+    data class ListElections(val credentials: Credentials) : Effect {
+        override fun apply(handleEvent: (Event) -> Unit, environment: Environment) {
+            environment.api.listElections(credentials).then { elections ->
+                handleEvent(Event.ListElectionsSuccess(elections))
+            }.catch { throwable ->
+                handleEvent(Event.ListElectionsFailure(throwable.message ?: "Unable to list elections"))
+            }
+        }
+    }
     data class SetPathName(val pathName: String) : Effect {
         override fun apply(handleEvent: (Event) -> Unit, environment: Environment) {
             environment.setPathName(pathName)

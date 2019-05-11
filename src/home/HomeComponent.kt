@@ -14,7 +14,7 @@ fun RBuilder.home(sendEvent: (Event) -> Unit, credentials: Credentials) {
         a(href = "#") {
             +"Elections"
             attrs.onClickFunction = {
-                sendEvent(Event.NavElectionsRequest)
+                sendEvent(Event.ListElectionsRequest(credentials))
             }
         }
         a(href = "#") {
