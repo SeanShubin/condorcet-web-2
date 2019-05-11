@@ -34,4 +34,7 @@ interface Event {
     data class ListElectionsRequest(val credentials: Credentials) : Event
     data class ListElectionsSuccess(val credentials: Credentials, val elections: List<Election>) : Event
     data class ListElectionsFailure(val message: String) : Event
+    data class CreateElectionRequest(val credentials: Credentials, val electionName: String) : Event
+    data class CopyElectionRequest(val credentials: Credentials, val electionName: String) : Event
+    data class EditElectionRequest(val credentials: Credentials, val electionName: String) : Event
 }
