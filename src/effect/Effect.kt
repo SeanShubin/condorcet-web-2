@@ -48,6 +48,16 @@ interface Effect {
             }
         }
     }
+
+    data class CreateElection(val credentials: Credentials, val electionName: String) : Effect {
+        override fun apply(handleEvent: (Event) -> Unit, environment: Environment) {
+            environment.api.createElection(credentials, electionName).then { election ->
+                handleEvent(Event.CreateElectionSuccess(credentials, election))
+            }.catch { throwable ->
+                handleEvent(Event.CreateElectionFailure(throwable.message ?: "Unable to create election"))
+            }
+        }
+    }
     data class SetPathName(val pathName: String) : Effect {
         override fun apply(handleEvent: (Event) -> Unit, environment: Environment) {
             environment.setPathName(pathName)

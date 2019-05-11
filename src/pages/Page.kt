@@ -17,6 +17,7 @@ interface Page {
     fun loginFailure(message: String): Page = LoginPage(errorMessage = message)
     fun registerFailure(message: String): Page = RegisterPage(errorMessage = message)
     fun navElections(credentials: Credentials, elections: List<Election>): Page = ElectionsPage(credentials, elections)
+    fun navElection(credentials: Credentials, election: Election): Page = ElectionPage(credentials, election)
 
     companion object {
         val initial = LoginPage(errorMessage = null)
@@ -47,7 +48,7 @@ data class CandidatesPage(val electionName: String, val candidates: List<String>
     override val name: String = "candidates"
 }
 
-data class ElectionPage(val election: Election) : Page {
+data class ElectionPage(val credentials: Credentials, val election: Election) : Page {
     override val name: String = "election"
 }
 

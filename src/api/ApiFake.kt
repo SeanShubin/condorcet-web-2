@@ -37,12 +37,12 @@ class ApiFake : Api {
         }
     }
 
-    override fun createElection(credentials: Credentials, electionName: String): Promise<Unit> {
+    override fun createElection(credentials: Credentials, electionName: String): Promise<Election> {
         return try {
             assertAllowedToCreateElection(credentials)
             assertElectionNameDoesNotExist(electionName)
-            createElection(credentials.name, electionName)
-            Promise.resolve(Unit)
+            val election = createElection(credentials.name, electionName)
+            Promise.resolve(election)
         } catch (ex: RuntimeException) {
             Promise.reject(ex)
         }
@@ -141,9 +141,10 @@ class ApiFake : Api {
         return user
     }
 
-    private fun createElection(ownerName: String, electionName: String) {
+    private fun createElection(ownerName: String, electionName: String): Election {
         val election = Election(ownerName, electionName)
         elections.add(election)
+        return election
     }
 
     private fun lookupUser(credentials: Credentials): User {
