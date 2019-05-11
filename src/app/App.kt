@@ -4,7 +4,6 @@ import api.Api
 import ballot.ballot
 import ballots.ballots
 import candidates.candidates
-import effect.Effect
 import election.election
 import elections.elections
 import error.errorPage
@@ -32,20 +31,15 @@ class App : RComponent<AppProps, AppState>() {
     override fun AppState.init() {
         val page = Page.initial
         model = Model(page)
-
     }
 
     override fun RBuilder.render() {
         fun handleEvent(event: Event) {
-            fun handleEffect(effect: Effect) {
-                console.log("effect: $effect")
-                effect.apply(::handleEvent, props.environment)
-            }
             try {
                 val (newState, effects) = props.eventLoop.reactTo(state.model, event)
                 setState {
                     model = newState
-                    effects.forEach(::handleEffect)
+                    effects.forEach { it.apply(::handleEvent, props.environment) }
                 }
             } catch (ex: Throwable) {
                 setState {

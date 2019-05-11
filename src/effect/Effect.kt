@@ -42,7 +42,7 @@ interface Effect {
     data class ListElections(val credentials: Credentials) : Effect {
         override fun apply(handleEvent: (Event) -> Unit, environment: Environment) {
             environment.api.listElections(credentials).then { elections ->
-                handleEvent(Event.ListElectionsSuccess(elections))
+                handleEvent(Event.ListElectionsSuccess(credentials, elections))
             }.catch { throwable ->
                 handleEvent(Event.ListElectionsFailure(throwable.message ?: "Unable to list elections"))
             }

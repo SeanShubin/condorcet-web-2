@@ -47,6 +47,10 @@ class EventLoopImpl : EventLoop {
                 is Event.LogoutRequest -> updatePage {
                     page.navLogin()
                 }
+                is Event.ListElectionsRequest -> effects(Effect.ListElections(event.credentials))
+                is Event.ListElectionsSuccess -> updatePage {
+                    page.navElections(event.credentials, event.elections)
+                }
                 else -> effects(Effect.Dispatch(Event.Error("unknown event $event")))
             }
         } catch (ex: Exception) {

@@ -53,7 +53,7 @@ class ApiFake : Api {
     }
 
     override fun listElections(credentials: Credentials): Promise<List<Election>> {
-        TODO("not implemented")
+        return Promise.resolve(elections)
     }
 
     override fun getElection(credentials: Credentials, electionName: String): Promise<Election> {

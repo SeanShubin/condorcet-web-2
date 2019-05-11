@@ -32,6 +32,6 @@ interface Event {
     }
     data class Error(val message: String) : Event
     data class ListElectionsRequest(val credentials: Credentials) : Event
-    data class ListElectionsSuccess(val elections: List<Election>) : Event
+    data class ListElectionsSuccess(val credentials: Credentials, val elections: List<Election>) : Event
     data class ListElectionsFailure(val message: String) : Event
 }
