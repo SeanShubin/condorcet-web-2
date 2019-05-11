@@ -1,6 +1,7 @@
 package pages
 
 import model.Ballot
+import model.Credentials
 import model.Election
 
 interface Page {
@@ -10,7 +11,7 @@ interface Page {
 
     fun navLogin(): Page = LoginPage(errorMessage = null)
     fun navRegister(): Page = RegisterPage(errorMessage = null)
-    fun navHome(): Page = HomePage
+    fun navHome(credentials: Credentials): Page = HomePage(credentials)
     fun navPrototype(): Page = PrototypePage
     fun navError(message: String): Page = UnexpectedErrorPage(message)
     fun loginFailure(message: String): Page = LoginPage(errorMessage = message)
@@ -29,7 +30,7 @@ data class RegisterPage(val errorMessage: String?) : Page {
     override val name: String = "register"
 }
 
-object HomePage : Page {
+data class HomePage(val credentials: Credentials) : Page {
     override val name: String = "home"
 }
 

@@ -56,7 +56,7 @@ class App : RComponent<AppProps, AppState>() {
         when (val page = state.model.page) {
             is LoginPage -> login(::handleEvent, page.errorMessage)
             is RegisterPage -> register(::handleEvent, page.errorMessage)
-            is HomePage -> home(::handleEvent)
+            is HomePage -> home(::handleEvent, page.credentials)
             is ElectionsPage -> elections(page.elections)
             is ElectionPage -> election(page.election)
             is CandidatesPage -> candidates(page.electionName, page.candidates)

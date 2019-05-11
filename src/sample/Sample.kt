@@ -1,6 +1,7 @@
 package sample
 
 import model.Ballot
+import model.Credentials
 import model.Election
 import model.Election.ElectionStatus
 import model.Ranking
@@ -70,6 +71,14 @@ class Sample {
         index++
         return enumValue(index)
     }
+
+    fun password(): String {
+        index++
+        return "password $index"
+    }
+
+    fun credentials(): Credentials =
+            Credentials(voterName(), password())
 
     inline fun <reified T : Enum<T>> enumValue(index: Int): T {
         val enumValues = enumValues<T>()

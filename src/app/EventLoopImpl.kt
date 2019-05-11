@@ -22,7 +22,7 @@ class EventLoopImpl : EventLoop {
             when (event) {
                 is Event.NavLoginRequest -> navigate(page.navLogin(), "/login")
                 is Event.LoginRequest -> effects(Effect.Login(event.nameOrEmail, event.password))
-                is Event.LoginSuccess -> effects(Effect.Dispatch(Event.NavHomeRequest))
+                is Event.LoginSuccess -> effects(Effect.Dispatch(Event.NavHomeRequest(event.credentials)))
                 is Event.LoginFailure -> updatePage {
                     page.loginFailure(event.message)
                 }
@@ -36,7 +36,7 @@ class EventLoopImpl : EventLoop {
                 }
                 is Event.NavRegisterRequest -> navigate(page.navRegister(), "/register")
                 is Event.NavHomeRequest -> updatePage {
-                    page.navHome()
+                    page.navHome(event.credentials)
                 }
                 is Event.NavPrototypeRequest -> updatePage {
                     page.navPrototype()

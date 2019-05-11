@@ -17,9 +17,7 @@ interface Event {
         override fun toString(): String = "NavRegisterRequest"
     }
     data class RegisterRequest(val name: String, val email: String, val password: String, val confirmPassword: String) : Event
-    object NavHomeRequest : Event {
-        override fun toString(): String = "NavHomeRequest"
-    }
+    data class NavHomeRequest(val credentials: Credentials) : Event
 
     data class RegisterFailure(val message: String) : Event
 
@@ -29,7 +27,7 @@ interface Event {
     data class NavElectionRequest(val electionName: String) : Event
     data class NavCandidatesRequest(val electionName: String) : Event
     data class NavVotersRequest(val electionName: String) : Event
-    data class NavBallotsRequest(val voterName: String) : Event
+    data class NavBallotsRequest(val credentials: Credentials) : Event
     data class NavBallotRequest(val electionName: String, val voterName: String) : Event
     object NavPrototypeRequest : Event {
         override fun toString(): String = "NavPrototypeRequest"

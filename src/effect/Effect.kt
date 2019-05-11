@@ -14,8 +14,8 @@ interface Effect {
 
     data class Login(val nameOrEmail: String, val password: String) : Effect {
         override fun apply(handleEvent: (Event) -> Unit, environment: Environment) {
-            environment.api.login(nameOrEmail, password).then {
-                handleEvent(Event.NavHomeRequest)
+            environment.api.login(nameOrEmail, password).then { credentials ->
+                handleEvent(Event.NavHomeRequest(credentials))
             }.catch { throwable ->
                 handleEvent(Event.LoginFailure(throwable.message ?: "<no message>"))
             }
@@ -29,8 +29,8 @@ interface Effect {
             if (password != confirmPassword) {
                 handleEvent(Event.RegisterFailure("password does not match confirmation"))
             } else {
-                environment.api.register(name, password, password).then {
-                    handleEvent(Event.NavHomeRequest)
+                environment.api.register(name, password, password).then { credentials ->
+                    handleEvent(Event.NavHomeRequest(credentials))
                 }.catch { throwable ->
                     handleEvent(Event.RegisterFailure(throwable.message ?: "<no message>"))
                 }
