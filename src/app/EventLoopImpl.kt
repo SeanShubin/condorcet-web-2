@@ -44,6 +44,9 @@ class EventLoopImpl : EventLoop {
                 is Event.Error -> updatePage {
                     page.navError(event.message)
                 }
+                is Event.LogoutRequest -> updatePage {
+                    page.navLogin()
+                }
                 else -> effects(Effect.Dispatch(Event.Error("unknown event $event")))
             }
         } catch (ex: Exception) {
