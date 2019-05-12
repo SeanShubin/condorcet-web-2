@@ -10,7 +10,6 @@ interface Effect {
         override fun apply(handleEvent: (Event) -> Unit, environment: Environment) {
             handleEvent(event)
         }
-
     }
 
     data class Login(val nameOrEmail: String, val password: String) : Effect {
@@ -63,4 +62,15 @@ interface Effect {
             environment.setPathName(pathName)
         }
     }
+
+    data class ListBallots(val credentials: Credentials) : Effect {
+        override fun apply(handleEvent: (Event) -> Unit, environment: Environment) {
+            environment.api.listBallots(credentials, credentials.name).then { ballots ->
+                handleEvent(Event.ListBallotsSuccess(credentials, credentials.name, ballots))
+            }.catch { throwable ->
+                handleEvent(Event.ListBallotsFailure(throwable.message ?: "Unable to list ballots"))
+            }
+        }
+    }
+
 }

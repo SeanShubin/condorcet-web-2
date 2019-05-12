@@ -58,6 +58,14 @@ fun RBuilder.election(sendEvent: (Event) -> Unit,
             +"End Now"
         }
         a(href = "#") {
+            +"Elections"
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.ListElectionsRequest(credentials))
+                }
+            }
+        }
+        a(href = "#") {
             +"Home"
             attrs {
                 onClickFunction = {

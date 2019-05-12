@@ -7,7 +7,10 @@ import model.Credentials
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.ballots(sendEvent: (Event) -> Unit, credentials: Credentials, voterName: String, ballots: List<Ballot>) {
+fun RBuilder.ballots(sendEvent: (Event) -> Unit,
+                     credentials: Credentials,
+                     voterName: String,
+                     ballots: List<Ballot>) {
     div(classes = "single-column-flex") {
         h1 {
             +"Ballots"
@@ -17,30 +20,39 @@ fun RBuilder.ballots(sendEvent: (Event) -> Unit, credentials: Credentials, voter
                 +"Voter"
             }
             input {
-                attrs["value"] = voterName
-            }
-        }
-        table {
-            thead {
-                tr {
-                    th {
-                        +"ballot"
-                    }
-                    th {
-                        +"election"
-                    }
+                attrs {
+                    value = voterName
+                    readonly = true
                 }
             }
-            tbody {
-                ballots.forEach {
+        }
+        if (ballots.isEmpty()) {
+            span {
+                +"No ballots for $voterName"
+            }
+        } else {
+            table {
+                thead {
                     tr {
-                        td {
-                            a(href = "#") {
-                                +it.action.displayName
-                            }
+                        th {
+                            +"ballot"
                         }
-                        td {
-                            +it.electionName
+                        th {
+                            +"election"
+                        }
+                    }
+                }
+                tbody {
+                    ballots.forEach {
+                        tr {
+                            td {
+                                a(href = "#") {
+                                    +it.action.displayName
+                                }
+                            }
+                            td {
+                                +it.electionName
+                            }
                         }
                     }
                 }

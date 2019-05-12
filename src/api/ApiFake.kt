@@ -4,8 +4,16 @@ import model.*
 import kotlin.js.Promise
 
 class ApiFake : Api {
-    private val users: MutableList<User> = mutableListOf()
-    private val elections: MutableList<Election> = mutableListOf()
+    private val users: MutableList<User> = mutableListOf(
+            User("Alice", "alice@email.com", "password", Standard),
+            User("Bob", "bob@email.com", "password", Standard),
+            User("Carol", "carol@email.com", "password", Standard),
+            User("Dave", "dave@email.com", "password", Standard))
+    private val elections: MutableList<Election> = mutableListOf(
+            Election("Alice", "Election 1"),
+            Election("Alice", "Election 2"),
+            Election("Bob", "Election 3"))
+    private val allBallots: MutableList<Ballot> = mutableListOf()
 
     override fun login(nameOrEmail: String, password: String): Promise<Credentials> {
         val user = findUser(nameOrEmail)
@@ -87,7 +95,17 @@ class ApiFake : Api {
     }
 
     override fun listBallots(credentials: Credentials, voterName: String): Promise<List<Ballot>> {
-        TODO("not implemented")
+        return try {
+            assertCredentialsValid(credentials)
+            assertVoterNameExists(voterName)
+            assertAllowedToSeeBallotsFor(credentials, voterName)
+            val ballotsForVoter = allBallots.filter { ballot ->
+                ballot.voterName == voterName
+            }
+            Promise.resolve(ballotsForVoter)
+        } catch (ex: RuntimeException) {
+            Promise.reject(ex)
+        }
     }
 
     override fun getBallot(credentials: Credentials, electionName: String, voterName: String): Promise<Ballot> {
@@ -100,6 +118,10 @@ class ApiFake : Api {
 
     private fun findUser(nameOrEmail: String): User? =
             users.find { user -> user.name == nameOrEmail || user.email == nameOrEmail }
+
+    private fun findUserByName(name: String): User? = users.find { user -> user.name == name }
+
+    private fun findVoterByName(name: String): User? = users.find { user -> user.name == name }
 
     private fun loginError(nameOrEmail: String): Promise<Credentials> =
             Promise.reject(RuntimeException("Unable to authenticate user '$nameOrEmail'"))
@@ -126,6 +148,29 @@ class ApiFake : Api {
         val user = lookupUser(credentials)
         if (!user.authorization.canCreateElections()) {
             throw RuntimeException("User '${user.name} is not allowed to create elections")
+        }
+    }
+
+    private fun assertCredentialsValid(credentials: Credentials) {
+        val user = findUserByName(credentials.name)
+        if (user == null) {
+            throw RuntimeException("User named ${credentials.name} does not exist")
+        } else {
+            if (credentials.password != user.password) {
+                throw RuntimeException("Incorrect password for user ${credentials.name}")
+            }
+        }
+    }
+
+    private fun assertVoterNameExists(voterName: String) {
+        if (findVoterByName(voterName) == null) {
+            throw RuntimeException("Voter named $voterName does not exist")
+        }
+    }
+
+    private fun assertAllowedToSeeBallotsFor(credentials: Credentials, voterName: String) {
+        if (credentials.name != voterName) {
+            throw RuntimeException("User ${credentials.name} not allowed to see votes for $voterName")
         }
     }
 

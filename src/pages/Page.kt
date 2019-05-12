@@ -18,6 +18,9 @@ interface Page {
     fun registerFailure(message: String): Page = RegisterPage(errorMessage = message)
     fun navElections(credentials: Credentials, elections: List<Election>): Page = ElectionsPage(credentials, elections)
     fun navElection(credentials: Credentials, election: Election): Page = ElectionPage(credentials, election)
+    fun navBallots(credentials: Credentials,
+                   voterName: String,
+                   ballots: List<Ballot>): Page = BallotsPage(credentials, voterName, ballots)
 
     companion object {
         val initial = LoginPage(errorMessage = null)

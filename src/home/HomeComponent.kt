@@ -13,14 +13,18 @@ fun RBuilder.home(sendEvent: (Event) -> Unit, credentials: Credentials) {
         h1 { +"Home" }
         a(href = "#") {
             +"Elections"
-            attrs.onClickFunction = {
-                sendEvent(Event.ListElectionsRequest(credentials))
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.ListElectionsRequest(credentials))
+                }
             }
         }
         a(href = "#") {
             +"Ballots"
-            attrs.onClickFunction = {
-                sendEvent(Event.NavBallotsRequest(credentials))
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.ListBallotsRequest(credentials))
+                }
             }
         }
         a(href = "#") {
