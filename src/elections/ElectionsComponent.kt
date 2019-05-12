@@ -129,14 +129,18 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
             }
             a(href = "#") {
                 +"Home"
-                attrs.onClickFunction = {
-                    sendEvent(Event.NavHomeRequest(credentials))
+                attrs {
+                    onClickFunction = {
+                        sendEvent(Event.NavHomeRequest(credentials))
+                    }
                 }
             }
             a(href = "#") {
                 +"Logout"
-                attrs.onClickFunction = {
-                    sendEvent(Event.LogoutRequest)
+                attrs {
+                    onClickFunction = {
+                        sendEvent(Event.LogoutRequest)
+                    }
                 }
             }
         }

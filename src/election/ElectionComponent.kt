@@ -1,12 +1,17 @@
 package election
 
+import event.Event
 import kotlinx.html.InputType
+import kotlinx.html.js.onClickFunction
+import model.Credentials
 import model.Election
 import model.StringConversions.dateToString
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.election(election: Election) {
+fun RBuilder.election(sendEvent: (Event) -> Unit,
+                      credentials: Credentials,
+                      election: Election) {
     div(classes = "single-column-flex") {
         h1 { +"Election" }
         div(classes = "two-column-grid") {
@@ -54,9 +59,19 @@ fun RBuilder.election(election: Election) {
         }
         a(href = "#") {
             +"Home"
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.NavHomeRequest(credentials))
+                }
+            }
         }
         a(href = "#") {
             +"Logout"
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.LogoutRequest)
+                }
+            }
         }
     }
 }

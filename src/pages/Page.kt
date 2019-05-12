@@ -36,15 +36,19 @@ data class HomePage(val credentials: Credentials) : Page {
     override val name: String = "home"
 }
 
-data class BallotPage(val ballot: Ballot) : Page {
+data class BallotPage(val credentials: Credentials, val ballot: Ballot) : Page {
     override val name: String = "ballot"
 }
 
-data class BallotsPage(val voterName: String, val ballots: List<Ballot>) : Page {
+data class BallotsPage(val credentials: Credentials,
+                       val voterName: String,
+                       val ballots: List<Ballot>) : Page {
     override val name: String = "ballots"
 }
 
-data class CandidatesPage(val electionName: String, val candidates: List<String>) : Page {
+data class CandidatesPage(val credentials: Credentials,
+                          val electionName: String,
+                          val candidates: List<String>) : Page {
     override val name: String = "candidates"
 }
 
@@ -56,7 +60,9 @@ data class ElectionsPage(val credentials: Credentials, val elections: List<Elect
     override val name: String = "elections"
 }
 
-data class VotersPage(val electionName: String, val voters: List<String>) : Page {
+data class VotersPage(val credentials: Credentials,
+                      val electionName: String,
+                      val voters: List<String>) : Page {
     override val name: String = "voters"
 }
 

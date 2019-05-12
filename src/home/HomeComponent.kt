@@ -25,8 +25,10 @@ fun RBuilder.home(sendEvent: (Event) -> Unit, credentials: Credentials) {
         }
         a(href = "#") {
             +"Logout"
-            attrs.onClickFunction = {
-                sendEvent(Event.LogoutRequest)
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.LogoutRequest)
+                }
             }
         }
     }

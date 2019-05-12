@@ -1,10 +1,16 @@
 package voters
 
+import event.Event
 import kotlinx.html.ButtonType
+import kotlinx.html.js.onClickFunction
+import model.Credentials
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.voters(electionName: String, voters: List<String>) {
+fun RBuilder.voters(sendEvent: (Event) -> Unit,
+                    credentials: Credentials,
+                    electionName: String,
+                    voters: List<String>) {
     div(classes = "single-column-flex") {
         h1 { +"Voters" }
         div(classes = "two-column-grid") {
@@ -44,9 +50,19 @@ fun RBuilder.voters(electionName: String, voters: List<String>) {
         }
         a(href = "#") {
             +"Home"
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.NavHomeRequest(credentials))
+                }
+            }
         }
         a(href = "#") {
             +"Logout"
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.LogoutRequest)
+                }
+            }
         }
     }
 }

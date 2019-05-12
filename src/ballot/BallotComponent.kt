@@ -1,10 +1,13 @@
 package ballot
 
+import event.Event
+import kotlinx.html.js.onClickFunction
 import model.Ballot
+import model.Credentials
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.ballot(ballot: Ballot) {
+fun RBuilder.ballot(sendEvent: (Event) -> Unit, credentials: Credentials, ballot: Ballot) {
     div(classes = "single-column-flex") {
         h1 {
             +"Ballot"
@@ -56,9 +59,19 @@ fun RBuilder.ballot(ballot: Ballot) {
         }
         a(href = "#") {
             +"Home"
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.NavHomeRequest(credentials))
+                }
+            }
         }
         a(href = "#") {
             +"Logout"
+            attrs {
+                onClickFunction = {
+                    sendEvent(Event.LogoutRequest)
+                }
+            }
         }
     }
 }

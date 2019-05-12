@@ -17,7 +17,8 @@ fun main(args: Array<String>) {
             Event.RegisterRequest("Bob", "bob@email.com", "password", "password"),
             Event.RegisterRequest("Carol", "carol@email.com", "password", "password"),
             Event.RegisterRequest("Dave", "dave@email.com", "password", "password"),
-            Event.CreateElectionRequest(aliceCredentials, "Election 1"))
+            Event.CreateElectionRequest(aliceCredentials, "Election 1"),
+            Event.NavHomeRequest(aliceCredentials))
     val eventLoop: EventLoop = EventLoopImpl()
     val api: Api = ApiFake()
     val environment: Environment = EnvironmentImpl(api)
