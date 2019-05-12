@@ -13,15 +13,17 @@ interface Event {
     object LogoutRequest : Event {
         override fun toString(): String = "LogoutRequest"
     }
-
     object NavRegisterRequest : Event {
         override fun toString(): String = "NavRegisterRequest"
     }
-    data class RegisterRequest(val name: String, val email: String, val password: String, val confirmPassword: String) : Event
+
+    data class RegisterRequest(
+            val name: String,
+            val email: String,
+            val password: String,
+            val confirmPassword: String) : Event
     data class NavHomeRequest(val credentials: Credentials) : Event
-
     data class RegisterFailure(val message: String) : Event
-
     data class NavElectionRequest(val electionName: String) : Event
     data class NavCandidatesRequest(val electionName: String) : Event
     data class NavVotersRequest(val electionName: String) : Event

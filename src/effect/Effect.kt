@@ -30,7 +30,7 @@ interface Effect {
             if (password != confirmPassword) {
                 handleEvent(Event.RegisterFailure("password does not match confirmation"))
             } else {
-                environment.api.register(name, password, password).then { credentials ->
+                environment.api.register(name, email, password).then { credentials ->
                     handleEvent(Event.NavHomeRequest(credentials))
                 }.catch { throwable ->
                     handleEvent(Event.RegisterFailure(throwable.message ?: "Unable to register"))

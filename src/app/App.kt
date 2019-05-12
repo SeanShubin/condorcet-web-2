@@ -25,6 +25,7 @@ interface AppProps : RProps {
     var eventLoop: EventLoop
     var environment: Environment
     var api: Api
+    var initialEvents: List<Event>
 }
 
 class App : RComponent<AppProps, AppState>() {
@@ -33,20 +34,25 @@ class App : RComponent<AppProps, AppState>() {
         model = Model(page)
     }
 
-    override fun RBuilder.render() {
-        fun handleEvent(event: Event) {
-            try {
-                val (newState, effects) = props.eventLoop.reactTo(state.model, event)
-                setState {
-                    model = newState
-                    effects.forEach { it.apply(::handleEvent, props.environment) }
-                }
-            } catch (ex: Throwable) {
-                setState {
-                    model = model.copy(page = model.page.navError(ex.message ?: "<no message>"))
-                }
+    override fun componentDidMount() {
+        props.initialEvents.forEach(::handleEvent)
+    }
+
+    fun handleEvent(event: Event) {
+        try {
+            val (newState, effects) = props.eventLoop.reactTo(state.model, event)
+            setState {
+                model = newState
+                effects.forEach { it.apply(::handleEvent, props.environment) }
+            }
+        } catch (ex: Throwable) {
+            setState {
+                model = model.copy(page = model.page.navError(ex.message ?: "<no message>"))
             }
         }
+    }
+
+    override fun RBuilder.render() {
         when (val page = state.model.page) {
             is LoginPage -> login(::handleEvent, page.errorMessage)
             is RegisterPage -> register(::handleEvent, page.errorMessage)
@@ -64,8 +70,12 @@ class App : RComponent<AppProps, AppState>() {
     }
 }
 
-fun RBuilder.app(eventLoop: EventLoop, environment: Environment, api: Api) = child(App::class) {
+fun RBuilder.app(eventLoop: EventLoop,
+                 environment: Environment,
+                 api: Api,
+                 initialEvents: List<Event>) = child(App::class) {
     attrs.eventLoop = eventLoop
     attrs.environment = environment
     attrs.api = api
+    attrs.initialEvents = initialEvents
 }

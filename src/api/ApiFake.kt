@@ -7,14 +7,6 @@ class ApiFake : Api {
     private val users: MutableList<User> = mutableListOf()
     private val elections: MutableList<Election> = mutableListOf()
 
-    init {
-        createUser("foo", "foo@email.com", "bar")
-        createUser("Alice", "alice@email.com", "password")
-        createUser("Bob", "bob@email.com", "password")
-        createUser("Carol", "carol@email.com", "password")
-        createUser("Dave", "dave@email.com", "password")
-        createElection("Alice", "Election 1")
-    }
     override fun login(nameOrEmail: String, password: String): Promise<Credentials> {
         val user = findUser(nameOrEmail)
         return when {
@@ -48,7 +40,9 @@ class ApiFake : Api {
         }
     }
 
-    override fun copyElection(credentials: Credentials, newElectionName: String, electionToCopyName: String): Promise<Unit> {
+    override fun copyElection(credentials: Credentials,
+                              newElectionName: String,
+                              electionToCopyName: String): Promise<Unit> {
         TODO("not implemented")
     }
 
