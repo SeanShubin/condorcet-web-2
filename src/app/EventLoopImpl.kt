@@ -62,7 +62,9 @@ class EventLoopImpl : EventLoop {
                     page.navBallots(event.credentials, event.voterName, event.ballots)
                 }
                 is LoadElectionRequest -> effects(Effect.LoadElection(event.credentials, event.electionName))
-
+                is LoadElectionSuccess -> updatePage {
+                    page.navElection(event.credentials, event.election)
+                }
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {
