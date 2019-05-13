@@ -1,13 +1,13 @@
 package candidates
 
-import event.Event
+import event.CondorcetEvent
 import kotlinx.html.ButtonType
 import kotlinx.html.js.onClickFunction
 import model.Credentials
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.candidates(sendEvent: (Event) -> Unit,
+fun RBuilder.candidates(sendEvent: (CondorcetEvent) -> Unit,
                         credentials: Credentials,
                         electionName: String,
                         candidates: List<String>) {
@@ -51,7 +51,7 @@ fun RBuilder.candidates(sendEvent: (Event) -> Unit,
             +"Home"
             attrs {
                 onClickFunction = {
-                    sendEvent(Event.NavHomeRequest(credentials))
+                    sendEvent(CondorcetEvent.NavHomeRequest(credentials))
                 }
             }
         }
@@ -59,7 +59,7 @@ fun RBuilder.candidates(sendEvent: (Event) -> Unit,
             +"Logout"
             attrs {
                 onClickFunction = {
-                    sendEvent(Event.LogoutRequest)
+                    sendEvent(CondorcetEvent.LogoutRequest)
                 }
             }
         }

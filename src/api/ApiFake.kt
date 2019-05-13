@@ -8,7 +8,8 @@ class ApiFake : Api {
             User("Alice", "alice@email.com", "password", Standard),
             User("Bob", "bob@email.com", "password", Standard),
             User("Carol", "carol@email.com", "password", Standard),
-            User("Dave", "dave@email.com", "password", Standard))
+            User("Dave", "dave@email.com", "password", Standard),
+            User("foo", "foo@email.com", "bar", Standard))
     private val elections: MutableList<Election> = mutableListOf(
             Election("Alice", "Election 1"),
             Election("Alice", "Election 2"),

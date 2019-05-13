@@ -5,7 +5,7 @@ import ballots.ballots
 import candidates.candidates
 import election.election
 import elections.elections
-import event.Event
+import event.CondorcetEvent
 import home.home
 import login.login
 import logo.logo
@@ -19,7 +19,7 @@ import sample.Sample
 import ticker.ticker
 import voters.voters
 
-fun RBuilder.prototype(sendEvent: (Event) -> Unit) {
+fun RBuilder.prototype(sendEvent: (CondorcetEvent) -> Unit) {
     val sample = Sample()
     div("App-header") {
         logo()

@@ -1,12 +1,12 @@
 package app
 
 import effect.Effect
-import event.Event
+import event.CondorcetEvent
 import pages.Page
 import state.Model
 
 class EventLoopImpl : EventLoop {
-    override fun reactTo(model: Model, event: Event): StateAndEffects {
+    override fun reactTo(model: Model, event: CondorcetEvent): StateAndEffects {
         val page = model.page
         console.log("event: $model $event")
         fun updatePage(f: (Page) -> Page): StateAndEffects =
@@ -20,50 +20,50 @@ class EventLoopImpl : EventLoop {
                         listOf(Effect.SetPathName(location)))
         return try {
             when (event) {
-                is Event.NavLoginRequest -> navigate(page.navLogin(), "/login")
-                is Event.LoginRequest -> effects(Effect.Login(event.nameOrEmail, event.password))
-                is Event.LoginSuccess -> effects(Effect.Dispatch(Event.NavHomeRequest(event.credentials)))
-                is Event.LoginFailure -> updatePage {
+                is CondorcetEvent.NavLoginRequest -> navigate(page.navLogin(), "/login")
+                is CondorcetEvent.LoginRequest -> effects(Effect.Login(event.nameOrEmail, event.password))
+                is CondorcetEvent.LoginSuccess -> effects(Effect.Dispatch(CondorcetEvent.NavHomeRequest(event.credentials)))
+                is CondorcetEvent.LoginFailure -> updatePage {
                     page.loginFailure(event.message)
                 }
-                is Event.RegisterRequest -> effects(Effect.Register(
+                is CondorcetEvent.RegisterRequest -> effects(Effect.Register(
                         event.name,
                         event.email,
                         event.password,
                         event.confirmPassword))
-                is Event.RegisterFailure -> updatePage {
+                is CondorcetEvent.RegisterFailure -> updatePage {
                     page.registerFailure(event.message)
                 }
-                is Event.NavRegisterRequest -> navigate(page.navRegister(), "/register")
-                is Event.NavHomeRequest -> updatePage {
+                is CondorcetEvent.NavRegisterRequest -> navigate(page.navRegister(), "/register")
+                is CondorcetEvent.NavHomeRequest -> updatePage {
                     page.navHome(event.credentials)
                 }
-                is Event.NavPrototypeRequest -> updatePage {
+                is CondorcetEvent.NavPrototypeRequest -> updatePage {
                     page.navPrototype()
                 }
-                is Event.Error -> updatePage {
+                is CondorcetEvent.Error -> updatePage {
                     page.navError(event.message)
                 }
-                is Event.LogoutRequest -> updatePage {
+                is CondorcetEvent.LogoutRequest -> updatePage {
                     page.navLogin()
                 }
-                is Event.ListElectionsRequest -> effects(Effect.ListElections(event.credentials))
-                is Event.ListElectionsSuccess -> updatePage {
+                is CondorcetEvent.ListElectionsRequest -> effects(Effect.ListElections(event.credentials))
+                is CondorcetEvent.ListElectionsSuccess -> updatePage {
                     page.navElections(event.credentials, event.elections)
                 }
-                is Event.CreateElectionRequest ->
+                is CondorcetEvent.CreateElectionRequest ->
                     effects(Effect.CreateElection(event.credentials, event.electionName))
-                is Event.CreateElectionSuccess -> updatePage {
+                is CondorcetEvent.CreateElectionSuccess -> updatePage {
                     page.navElection(event.credentials, event.election)
                 }
-                is Event.ListBallotsRequest -> effects(Effect.ListBallots(event.credentials))
-                is Event.ListBallotsSuccess -> updatePage {
+                is CondorcetEvent.ListBallotsRequest -> effects(Effect.ListBallots(event.credentials))
+                is CondorcetEvent.ListBallotsSuccess -> updatePage {
                     page.navBallots(event.credentials, event.voterName, event.ballots)
                 }
-                else -> effects(Effect.Dispatch(Event.Error("unknown event $event")))
+                else -> effects(Effect.Dispatch(CondorcetEvent.Error("unknown event $event")))
             }
         } catch (ex: Exception) {
-            effects(Effect.Dispatch(Event.Error("exception: '${ex.message}'")))
+            effects(Effect.Dispatch(CondorcetEvent.Error("exception: '${ex.message}'")))
         }
     }
 }

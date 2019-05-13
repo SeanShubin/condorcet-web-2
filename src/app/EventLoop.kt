@@ -1,8 +1,8 @@
 package app
 
-import event.Event
+import event.CondorcetEvent
 import state.Model
 
 interface EventLoop {
-    fun reactTo(model: Model, event: Event): StateAndEffects
+    fun reactTo(model: Model, event: CondorcetEvent): StateAndEffects
 }

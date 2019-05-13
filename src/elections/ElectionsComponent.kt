@@ -1,6 +1,6 @@
 package elections
 
-import event.Event
+import event.CondorcetEvent
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import model.Credentials
@@ -10,7 +10,7 @@ import react.*
 import react.dom.*
 
 interface ElectionsProps : RProps {
-    var sendEvent: (Event) -> Unit
+    var sendEvent: (CondorcetEvent) -> Unit
     var credentials: Credentials
     var elections: List<Election>
 }
@@ -43,7 +43,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                     +"Create"
                     attrs {
                         onClickFunction = {
-                            sendEvent(Event.CreateElectionRequest(credentials, state.electionName))
+                            sendEvent(CondorcetEvent.CreateElectionRequest(credentials, state.electionName))
                         }
                     }
                 }
@@ -70,7 +70,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                 button {
                     +"Copy"
                     attrs.onClickFunction = {
-                        sendEvent(Event.CopyElectionRequest(credentials, state.electionToCopy))
+                        sendEvent(CondorcetEvent.CopyElectionRequest(credentials, state.electionToCopy))
                     }
                 }
             }
@@ -104,7 +104,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                                 a(href = "#") {
                                     +"edit"
                                     attrs.onClickFunction = {
-                                        sendEvent(Event.EditElectionRequest(credentials, election.name))
+                                        sendEvent(CondorcetEvent.EditElectionRequest(credentials, election.name))
                                     }
                                 }
                             }
@@ -131,7 +131,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                 +"Home"
                 attrs {
                     onClickFunction = {
-                        sendEvent(Event.NavHomeRequest(credentials))
+                        sendEvent(CondorcetEvent.NavHomeRequest(credentials))
                     }
                 }
             }
@@ -139,7 +139,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                 +"Logout"
                 attrs {
                     onClickFunction = {
-                        sendEvent(Event.LogoutRequest)
+                        sendEvent(CondorcetEvent.LogoutRequest)
                     }
                 }
             }
@@ -147,7 +147,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
     }
 }
 
-fun RBuilder.elections(sendEvent: (Event) -> Unit, credentials: Credentials, elections: List<Election>) = child(ElectionsComponent::class) {
+fun RBuilder.elections(sendEvent: (CondorcetEvent) -> Unit, credentials: Credentials, elections: List<Election>) = child(ElectionsComponent::class) {
     attrs.sendEvent = sendEvent
     attrs.credentials = credentials
     attrs.elections = elections

@@ -7,7 +7,7 @@ import candidates.candidates
 import election.election
 import elections.elections
 import error.errorPage
-import event.Event
+import event.CondorcetEvent
 import home.home
 import login.login
 import pages.*
@@ -25,7 +25,7 @@ interface AppProps : RProps {
     var eventLoop: EventLoop
     var environment: Environment
     var api: Api
-    var initialEvents: List<Event>
+    var initialEvents: List<CondorcetEvent>
 }
 
 class App : RComponent<AppProps, AppState>() {
@@ -38,7 +38,7 @@ class App : RComponent<AppProps, AppState>() {
         props.initialEvents.forEach(::handleEvent)
     }
 
-    fun handleEvent(event: Event) {
+    private fun handleEvent(event: CondorcetEvent) {
         try {
             val (newState, effects) = props.eventLoop.reactTo(state.model, event)
             setState {
@@ -73,7 +73,7 @@ class App : RComponent<AppProps, AppState>() {
 fun RBuilder.app(eventLoop: EventLoop,
                  environment: Environment,
                  api: Api,
-                 initialEvents: List<Event>) = child(App::class) {
+                 initialEvents: List<CondorcetEvent>) = child(App::class) {
     attrs.eventLoop = eventLoop
     attrs.environment = environment
     attrs.api = api

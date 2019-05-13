@@ -1,6 +1,6 @@
 package election
 
-import event.Event
+import event.CondorcetEvent
 import kotlinx.html.InputType
 import kotlinx.html.js.onClickFunction
 import model.Credentials
@@ -9,7 +9,7 @@ import model.StringConversions.dateToString
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.election(sendEvent: (Event) -> Unit,
+fun RBuilder.election(sendEvent: (CondorcetEvent) -> Unit,
                       credentials: Credentials,
                       election: Election) {
     div(classes = "single-column-flex") {
@@ -61,7 +61,7 @@ fun RBuilder.election(sendEvent: (Event) -> Unit,
             +"Elections"
             attrs {
                 onClickFunction = {
-                    sendEvent(Event.ListElectionsRequest(credentials))
+                    sendEvent(CondorcetEvent.ListElectionsRequest(credentials))
                 }
             }
         }
@@ -69,7 +69,7 @@ fun RBuilder.election(sendEvent: (Event) -> Unit,
             +"Home"
             attrs {
                 onClickFunction = {
-                    sendEvent(Event.NavHomeRequest(credentials))
+                    sendEvent(CondorcetEvent.NavHomeRequest(credentials))
                 }
             }
         }
@@ -77,7 +77,7 @@ fun RBuilder.election(sendEvent: (Event) -> Unit,
             +"Logout"
             attrs {
                 onClickFunction = {
-                    sendEvent(Event.LogoutRequest)
+                    sendEvent(CondorcetEvent.LogoutRequest)
                 }
             }
         }
