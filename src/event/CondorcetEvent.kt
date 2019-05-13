@@ -28,11 +28,6 @@ interface CondorcetEvent {
 
     data class NavHomeRequest(val credentials: Credentials) : CondorcetEvent
     data class RegisterFailure(val message: String) : CondorcetEvent
-    data class NavElectionRequest(val electionName: String) : CondorcetEvent
-    data class NavCandidatesRequest(val electionName: String) : CondorcetEvent
-    data class NavVotersRequest(val electionName: String) : CondorcetEvent
-    data class NavBallotsRequest(val credentials: Credentials) : CondorcetEvent
-    data class NavBallotRequest(val electionName: String, val voterName: String) : CondorcetEvent
     object NavPrototypeRequest : CondorcetEvent {
         override fun toString(): String = "NavPrototypeRequest"
     }
