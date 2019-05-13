@@ -17,7 +17,7 @@ class ApiFake : Api {
     private val allBallots: MutableList<Ballot> = mutableListOf()
 
     override fun login(nameOrEmail: String, password: String): Promise<Credentials> {
-        val user = findUser(nameOrEmail)
+        val user = searchUser(nameOrEmail)
         return when {
             user == null -> loginError(nameOrEmail)
             user.password == password -> Promise.resolve(Credentials(user.name, user.password))
@@ -60,7 +60,13 @@ class ApiFake : Api {
     }
 
     override fun getElection(credentials: Credentials, electionName: String): Promise<Election> {
-        TODO("not implemented - getElection")
+        return try {
+            assertAllowedToGetElection(credentials, electionName)
+            val election = lookupElectionByName(electionName)
+            Promise.resolve(election)
+        } catch (ex: RuntimeException) {
+            Promise.reject(ex)
+        }
     }
 
     override fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Unit> {
@@ -117,12 +123,21 @@ class ApiFake : Api {
         TODO("not implemented - castBallot")
     }
 
-    private fun findUser(nameOrEmail: String): User? =
+    private fun lookupUser(nameOrEmail: String): User =
+            searchUser(nameOrEmail) ?: throw RuntimeException("User with name or email '$nameOrEmail' not found")
+
+    private fun searchUser(nameOrEmail: String): User? =
             users.find { user -> user.name == nameOrEmail || user.email == nameOrEmail }
 
-    private fun findUserByName(name: String): User? = users.find { user -> user.name == name }
+    private fun lookupUserByName(name: String): User =
+            searchUserByName(name) ?: throw RuntimeException("User with name '$name' not found")
 
-    private fun findVoterByName(name: String): User? = users.find { user -> user.name == name }
+    private fun searchUserByName(name: String): User? = users.find { user -> user.name == name }
+
+    private fun lookupElectionByName(electionName: String): Election =
+            searchElectionByName(electionName) ?: throw RuntimeException("Election with name '$electionName' not found")
+
+    private fun searchElectionByName(electionName: String): Election? = elections.find { election -> election.name == electionName }
 
     private fun loginError(nameOrEmail: String): Promise<Credentials> =
             Promise.reject(RuntimeException("Unable to authenticate user '$nameOrEmail'"))
@@ -146,27 +161,33 @@ class ApiFake : Api {
     }
 
     private fun assertAllowedToCreateElection(credentials: Credentials) {
-        val user = lookupUser(credentials)
-        if (!user.authorization.canCreateElections()) {
+        val user = authenticateUser(credentials)
+        if (!user.authorization.canCreateElections) {
             throw RuntimeException("User '${user.name} is not allowed to create elections")
         }
     }
 
-    private fun assertCredentialsValid(credentials: Credentials) {
-        val user = findUserByName(credentials.name)
-        if (user == null) {
-            throw RuntimeException("User named ${credentials.name} does not exist")
+    private fun assertAllowedToGetElection(credentials: Credentials, electionName: String) {
+        val user = authenticateUser(credentials)
+        if (user.authorization.canViewAllElections) {
+            return
         } else {
-            if (credentials.password != user.password) {
-                throw RuntimeException("Incorrect password for user ${credentials.name}")
+            val election = lookupElectionByName(electionName)
+            if (election.ownerName != user.name) {
+                throw RuntimeException("User '${user.name}' is not allowed view election '$electionName'")
             }
         }
     }
 
-    private fun assertVoterNameExists(voterName: String) {
-        if (findVoterByName(voterName) == null) {
-            throw RuntimeException("Voter named $voterName does not exist")
+    private fun assertCredentialsValid(credentials: Credentials) {
+        val user = lookupUserByName(credentials.name)
+        if (credentials.password != user.password) {
+            throw RuntimeException("Incorrect password for user ${credentials.name}")
         }
+    }
+
+    private fun assertVoterNameExists(voterName: String) {
+        lookupUserByName(voterName)
     }
 
     private fun assertAllowedToSeeBallotsFor(credentials: Credentials, voterName: String) {
@@ -187,8 +208,8 @@ class ApiFake : Api {
         return election
     }
 
-    private fun lookupUser(credentials: Credentials): User {
-        val user = findUser(credentials.name)
+    private fun authenticateUser(credentials: Credentials): User {
+        val user = searchUser(credentials.name)
         when {
             user == null -> throw RuntimeException("Invalid credentials for user '${credentials.name}'")
             user.password == credentials.password -> return user

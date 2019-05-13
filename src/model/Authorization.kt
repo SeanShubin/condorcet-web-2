@@ -1,21 +1,26 @@
 package model
 
 interface Authorization {
-    fun canCreateElections(): Boolean
+    val canCreateElections: Boolean
+    val canViewAllElections: Boolean
 }
 
 object Guest : Authorization {
-    override fun canCreateElections() = false
+    override val canCreateElections = false
+    override val canViewAllElections = true
 }
 
 object Standard : Authorization {
-    override fun canCreateElections(): Boolean = true
+    override val canCreateElections = true
+    override val canViewAllElections = true
 }
 
 object Admin : Authorization {
-    override fun canCreateElections(): Boolean = true
+    override val canCreateElections = true
+    override val canViewAllElections = true
 }
 
 object Owner : Authorization {
-    override fun canCreateElections(): Boolean = true
+    override val canCreateElections = true
+    override val canViewAllElections = true
 }
