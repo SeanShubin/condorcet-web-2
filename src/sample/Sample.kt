@@ -24,6 +24,11 @@ class Sample {
         return "Candidate $index"
     }
 
+    fun errorMessage(): String? {
+        index++
+        return "Error Message $index"
+    }
+
     fun rank(): Int {
         index++
         return index

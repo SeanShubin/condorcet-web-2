@@ -17,7 +17,7 @@ interface Page {
     fun loginFailure(message: String): Page = LoginPage(errorMessage = message)
     fun registerFailure(message: String): Page = RegisterPage(errorMessage = message)
     fun navElections(credentials: Credentials, elections: List<Election>): Page = ElectionsPage(credentials, elections)
-    fun navElection(credentials: Credentials, election: Election): Page = ElectionPage(credentials, election)
+    fun navElection(credentials: Credentials, election: Election, errorMessage: String? = null): Page = ElectionPage(credentials, election, errorMessage)
     fun navBallots(credentials: Credentials,
                    voterName: String,
                    ballots: List<Ballot>): Page = BallotsPage(credentials, voterName, ballots)
@@ -55,7 +55,7 @@ data class CandidatesPage(val credentials: Credentials,
     override val name: String = "candidates"
 }
 
-data class ElectionPage(val credentials: Credentials, val election: Election) : Page {
+data class ElectionPage(val credentials: Credentials, val election: Election, val errorMessage: String?) : Page {
     override val name: String = "election"
 }
 

@@ -3,7 +3,7 @@ package index
 import api.Api
 import api.ApiFake
 import app.*
-import event.CondorcetEvent.NavHomeRequest
+import event.CondorcetEvent.LoadElectionRequest
 import kotlinext.js.require
 import kotlinext.js.requireAll
 import model.Credentials
@@ -12,7 +12,7 @@ import kotlin.browser.document
 
 fun main(args: Array<String>) {
     val aliceCredentials = Credentials("Alice", "password")
-    val initialEvents = listOf(NavHomeRequest(aliceCredentials))
+    val initialEvents = listOf(LoadElectionRequest(aliceCredentials, "Election 1"))
     val eventLoop: EventLoop = EventLoopImpl()
     val api: Api = ApiFake()
     val environment: Environment = EnvironmentImpl(api)

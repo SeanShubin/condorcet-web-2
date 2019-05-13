@@ -47,3 +47,7 @@ td, th {
 .error {
     color: red;
 }
+
+.readonly {
+    background-color: lightgrey;
+}
