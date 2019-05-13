@@ -105,7 +105,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                                 a(href = "#") {
                                     +"edit"
                                     attrs.onClickFunction = {
-                                        sendEvent(EditElectionRequest(credentials, election.name))
+                                        sendEvent(LoadElectionRequest(credentials, election.name))
                                     }
                                 }
                             }

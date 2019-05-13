@@ -52,7 +52,7 @@ class ApiFake : Api {
     override fun copyElection(credentials: Credentials,
                               newElectionName: String,
                               electionToCopyName: String): Promise<Unit> {
-        TODO("not implemented")
+        TODO("not implemented - copyElection")
     }
 
     override fun listElections(credentials: Credentials): Promise<List<Election>> {
@@ -60,39 +60,39 @@ class ApiFake : Api {
     }
 
     override fun getElection(credentials: Credentials, electionName: String): Promise<Election> {
-        TODO("not implemented")
+        TODO("not implemented - getElection")
     }
 
     override fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Unit> {
-        TODO("not implemented")
+        TODO("not implemented - doneEditingElection")
     }
 
     override fun startElection(credentials: Credentials, electionName: String): Promise<Unit> {
-        TODO("not implemented")
+        TODO("not implemented - startElection")
     }
 
     override fun endElection(credentials: Credentials, electionName: String): Promise<Unit> {
-        TODO("not implemented")
+        TODO("not implemented - endElection")
     }
 
     override fun listCandidates(credentials: Credentials, electionName: String): Promise<List<String>> {
-        TODO("not implemented")
+        TODO("not implemented - listCandidates")
     }
 
     override fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<Unit> {
-        TODO("not implemented")
+        TODO("not implemented - updateCandidates")
     }
 
     override fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<List<String>> {
-        TODO("not implemented")
+        TODO("not implemented - listEligibleVoters")
     }
 
     override fun listAllVoters(credentials: Credentials): Promise<List<String>> {
-        TODO("not implemented")
+        TODO("not implemented - listAllVoters")
     }
 
     override fun updateEligibleVoters(credentials: Credentials, electionName: String, eligibleVoters: List<String>): Promise<Unit> {
-        TODO("not implemented")
+        TODO("not implemented - updateEligibleVoters")
     }
 
     override fun listBallots(credentials: Credentials, voterName: String): Promise<List<Ballot>> {
@@ -110,11 +110,11 @@ class ApiFake : Api {
     }
 
     override fun getBallot(credentials: Credentials, electionName: String, voterName: String): Promise<Ballot> {
-        TODO("not implemented")
+        TODO("not implemented - getBallot")
     }
 
     override fun castBallot(credentials: Credentials, electionName: String, voterName: String, ballot: Ballot): Promise<Unit> {
-        TODO("not implemented")
+        TODO("not implemented - castBallot")
     }
 
     private fun findUser(nameOrEmail: String): User? =
