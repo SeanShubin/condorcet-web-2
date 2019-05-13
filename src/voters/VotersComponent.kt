@@ -1,6 +1,8 @@
 package voters
 
 import event.CondorcetEvent
+import event.CondorcetEvent.LogoutRequest
+import event.CondorcetEvent.NavHomeRequest
 import kotlinx.html.ButtonType
 import kotlinx.html.js.onClickFunction
 import model.Credentials
@@ -52,7 +54,7 @@ fun RBuilder.voters(sendEvent: (CondorcetEvent) -> Unit,
             +"Home"
             attrs {
                 onClickFunction = {
-                    sendEvent(CondorcetEvent.NavHomeRequest(credentials))
+                    sendEvent(NavHomeRequest(credentials))
                 }
             }
         }
@@ -60,7 +62,7 @@ fun RBuilder.voters(sendEvent: (CondorcetEvent) -> Unit,
             +"Logout"
             attrs {
                 onClickFunction = {
-                    sendEvent(CondorcetEvent.LogoutRequest)
+                    sendEvent(LogoutRequest)
                 }
             }
         }

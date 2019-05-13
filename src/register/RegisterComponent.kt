@@ -2,6 +2,8 @@ package register
 
 import dynamic.EventUtil
 import event.CondorcetEvent
+import event.CondorcetEvent.NavLoginRequest
+import event.CondorcetEvent.RegisterRequest
 import kotlinx.html.ButtonType
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
@@ -102,7 +104,7 @@ class RegisterComponent : RComponent<RegisterProps, RegisterState>() {
                 +"Login"
                 attrs {
                     onClickFunction = {
-                        props.sendEvent(CondorcetEvent.NavLoginRequest)
+                        props.sendEvent(NavLoginRequest)
                     }
                 }
             }
@@ -110,7 +112,7 @@ class RegisterComponent : RComponent<RegisterProps, RegisterState>() {
     }
 
     private fun registerButtonPressed(event: org.w3c.dom.events.Event) {
-        props.sendEvent(CondorcetEvent.RegisterRequest(
+        props.sendEvent(RegisterRequest(
                 state.name,
                 state.email,
                 state.password,

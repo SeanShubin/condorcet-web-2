@@ -2,6 +2,7 @@ package login
 
 import dynamic.EventUtil
 import event.CondorcetEvent
+import event.CondorcetEvent.*
 import kotlinx.html.ButtonType
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
@@ -76,20 +77,20 @@ class LoginComponent : RComponent<LoginProps, LoginState>() {
             a(href = "#") {
                 +"Register"
                 attrs.onClickFunction = {
-                    props.sendEvent(CondorcetEvent.NavRegisterRequest)
+                    props.sendEvent(NavRegisterRequest)
                 }
             }
             a(href = "#") {
                 +"Prototype"
                 attrs.onClickFunction = {
-                    props.sendEvent(CondorcetEvent.NavPrototypeRequest)
+                    props.sendEvent(NavPrototypeRequest)
                 }
             }
         }
     }
 
     private fun loginButtonPressed(event: org.w3c.dom.events.Event) {
-        props.sendEvent(CondorcetEvent.LoginRequest(state.nameOrEmail, state.password))
+        props.sendEvent(LoginRequest(state.nameOrEmail, state.password))
     }
 }
 

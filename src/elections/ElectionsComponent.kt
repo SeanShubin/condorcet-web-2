@@ -1,6 +1,7 @@
 package elections
 
 import event.CondorcetEvent
+import event.CondorcetEvent.*
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import model.Credentials
@@ -43,7 +44,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                     +"Create"
                     attrs {
                         onClickFunction = {
-                            sendEvent(CondorcetEvent.CreateElectionRequest(credentials, state.electionName))
+                            sendEvent(CreateElectionRequest(credentials, state.electionName))
                         }
                     }
                 }
@@ -70,7 +71,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                 button {
                     +"Copy"
                     attrs.onClickFunction = {
-                        sendEvent(CondorcetEvent.CopyElectionRequest(credentials, state.electionToCopy))
+                        sendEvent(CopyElectionRequest(credentials, state.electionToCopy))
                     }
                 }
             }
@@ -104,7 +105,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                                 a(href = "#") {
                                     +"edit"
                                     attrs.onClickFunction = {
-                                        sendEvent(CondorcetEvent.EditElectionRequest(credentials, election.name))
+                                        sendEvent(EditElectionRequest(credentials, election.name))
                                     }
                                 }
                             }
@@ -131,7 +132,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                 +"Home"
                 attrs {
                     onClickFunction = {
-                        sendEvent(CondorcetEvent.NavHomeRequest(credentials))
+                        sendEvent(NavHomeRequest(credentials))
                     }
                 }
             }
@@ -139,7 +140,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                 +"Logout"
                 attrs {
                     onClickFunction = {
-                        sendEvent(CondorcetEvent.LogoutRequest)
+                        sendEvent(LogoutRequest)
                     }
                 }
             }

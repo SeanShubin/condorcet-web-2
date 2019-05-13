@@ -1,6 +1,7 @@
 package home
 
 import event.CondorcetEvent
+import event.CondorcetEvent.*
 import kotlinx.html.js.onClickFunction
 import model.Credentials
 import react.RBuilder
@@ -15,7 +16,7 @@ fun RBuilder.home(sendEvent: (CondorcetEvent) -> Unit, credentials: Credentials)
             +"Elections"
             attrs {
                 onClickFunction = {
-                    sendEvent(CondorcetEvent.ListElectionsRequest(credentials))
+                    sendEvent(ListElectionsRequest(credentials))
                 }
             }
         }
@@ -23,7 +24,7 @@ fun RBuilder.home(sendEvent: (CondorcetEvent) -> Unit, credentials: Credentials)
             +"Ballots"
             attrs {
                 onClickFunction = {
-                    sendEvent(CondorcetEvent.ListBallotsRequest(credentials))
+                    sendEvent(ListBallotsRequest(credentials))
                 }
             }
         }
@@ -31,7 +32,7 @@ fun RBuilder.home(sendEvent: (CondorcetEvent) -> Unit, credentials: Credentials)
             +"Logout"
             attrs {
                 onClickFunction = {
-                    sendEvent(CondorcetEvent.LogoutRequest)
+                    sendEvent(LogoutRequest)
                 }
             }
         }

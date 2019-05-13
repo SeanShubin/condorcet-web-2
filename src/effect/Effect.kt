@@ -2,6 +2,7 @@ package effect
 
 import app.Environment
 import event.CondorcetEvent
+import event.CondorcetEvent.*
 import model.Credentials
 
 interface Effect {
@@ -15,9 +16,9 @@ interface Effect {
     data class Login(val nameOrEmail: String, val password: String) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             environment.api.login(nameOrEmail, password).then { credentials ->
-                handleEvent(CondorcetEvent.NavHomeRequest(credentials))
+                handleEvent(NavHomeRequest(credentials))
             }.catch { throwable ->
-                handleEvent(CondorcetEvent.LoginFailure(throwable.message ?: "Unable to login"))
+                handleEvent(LoginFailure(throwable.message ?: "Unable to login"))
             }
         }
     }
@@ -27,12 +28,12 @@ interface Effect {
                         val confirmPassword: String) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             if (password != confirmPassword) {
-                handleEvent(CondorcetEvent.RegisterFailure("password does not match confirmation"))
+                handleEvent(RegisterFailure("password does not match confirmation"))
             } else {
                 environment.api.register(name, email, password).then { credentials ->
-                    handleEvent(CondorcetEvent.NavHomeRequest(credentials))
+                    handleEvent(NavHomeRequest(credentials))
                 }.catch { throwable ->
-                    handleEvent(CondorcetEvent.RegisterFailure(throwable.message ?: "Unable to register"))
+                    handleEvent(RegisterFailure(throwable.message ?: "Unable to register"))
                 }
             }
         }
@@ -41,9 +42,9 @@ interface Effect {
     data class ListElections(val credentials: Credentials) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             environment.api.listElections(credentials).then { elections ->
-                handleEvent(CondorcetEvent.ListElectionsSuccess(credentials, elections))
+                handleEvent(ListElectionsSuccess(credentials, elections))
             }.catch { throwable ->
-                handleEvent(CondorcetEvent.ListElectionsFailure(throwable.message ?: "Unable to list elections"))
+                handleEvent(ListElectionsFailure(throwable.message ?: "Unable to list elections"))
             }
         }
     }
@@ -51,9 +52,9 @@ interface Effect {
     data class CreateElection(val credentials: Credentials, val electionName: String) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             environment.api.createElection(credentials, electionName).then { election ->
-                handleEvent(CondorcetEvent.CreateElectionSuccess(credentials, election))
+                handleEvent(CreateElectionSuccess(credentials, election))
             }.catch { throwable ->
-                handleEvent(CondorcetEvent.CreateElectionFailure(throwable.message ?: "Unable to create election"))
+                handleEvent(CreateElectionFailure(throwable.message ?: "Unable to create election"))
             }
         }
     }
@@ -66,9 +67,9 @@ interface Effect {
     data class ListBallots(val credentials: Credentials) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             environment.api.listBallots(credentials, credentials.name).then { ballots ->
-                handleEvent(CondorcetEvent.ListBallotsSuccess(credentials, credentials.name, ballots))
+                handleEvent(ListBallotsSuccess(credentials, credentials.name, ballots))
             }.catch { throwable ->
-                handleEvent(CondorcetEvent.ListBallotsFailure(throwable.message ?: "Unable to list ballots"))
+                handleEvent(ListBallotsFailure(throwable.message ?: "Unable to list ballots"))
             }
         }
     }

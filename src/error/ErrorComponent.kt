@@ -1,6 +1,7 @@
 package error
 
 import event.CondorcetEvent
+import event.CondorcetEvent.*
 import kotlinx.html.js.onClickFunction
 import react.RBuilder
 import react.dom.a
@@ -17,19 +18,19 @@ fun RBuilder.errorPage(sendEvent: (CondorcetEvent) -> Unit, errorMessage: String
         a(href = "#") {
             +"Login"
             attrs.onClickFunction = {
-                sendEvent(CondorcetEvent.NavLoginRequest)
+                sendEvent(NavLoginRequest)
             }
         }
         a(href = "#") {
             +"Register"
             attrs.onClickFunction = {
-                sendEvent(CondorcetEvent.NavRegisterRequest)
+                sendEvent(NavRegisterRequest)
             }
         }
         a(href = "#") {
             +"Prototype"
             attrs.onClickFunction = {
-                sendEvent(CondorcetEvent.NavPrototypeRequest)
+                sendEvent(NavPrototypeRequest)
             }
         }
     }

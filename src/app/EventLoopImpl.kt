@@ -2,6 +2,7 @@ package app
 
 import effect.Effect
 import event.CondorcetEvent
+import event.CondorcetEvent.*
 import pages.Page
 import state.Model
 
@@ -20,50 +21,51 @@ class EventLoopImpl : EventLoop {
                         listOf(Effect.SetPathName(location)))
         return try {
             when (event) {
-                is CondorcetEvent.NavLoginRequest -> navigate(page.navLogin(), "/login")
-                is CondorcetEvent.LoginRequest -> effects(Effect.Login(event.nameOrEmail, event.password))
-                is CondorcetEvent.LoginSuccess -> effects(Effect.Dispatch(CondorcetEvent.NavHomeRequest(event.credentials)))
-                is CondorcetEvent.LoginFailure -> updatePage {
+                is NavLoginRequest -> navigate(page.navLogin(), "/login")
+                is LoginRequest -> effects(Effect.Login(event.nameOrEmail, event.password))
+                is LoginSuccess -> effects(Effect.Dispatch(NavHomeRequest(event.credentials)))
+                is LoginFailure -> updatePage {
                     page.loginFailure(event.message)
                 }
-                is CondorcetEvent.RegisterRequest -> effects(Effect.Register(
+                is RegisterRequest -> effects(Effect.Register(
                         event.name,
                         event.email,
                         event.password,
                         event.confirmPassword))
-                is CondorcetEvent.RegisterFailure -> updatePage {
+                is RegisterFailure -> updatePage {
                     page.registerFailure(event.message)
                 }
-                is CondorcetEvent.NavRegisterRequest -> navigate(page.navRegister(), "/register")
-                is CondorcetEvent.NavHomeRequest -> updatePage {
+                is NavRegisterRequest -> navigate(page.navRegister(), "/register")
+                is NavHomeRequest -> updatePage {
                     page.navHome(event.credentials)
                 }
-                is CondorcetEvent.NavPrototypeRequest -> updatePage {
+                is NavPrototypeRequest -> updatePage {
                     page.navPrototype()
                 }
-                is CondorcetEvent.Error -> updatePage {
+                is Error -> updatePage {
                     page.navError(event.message)
                 }
-                is CondorcetEvent.LogoutRequest -> updatePage {
+                is LogoutRequest -> updatePage {
                     page.navLogin()
                 }
-                is CondorcetEvent.ListElectionsRequest -> effects(Effect.ListElections(event.credentials))
-                is CondorcetEvent.ListElectionsSuccess -> updatePage {
+                is ListElectionsRequest -> effects(Effect.ListElections(event.credentials))
+                is ListElectionsSuccess -> updatePage {
                     page.navElections(event.credentials, event.elections)
                 }
-                is CondorcetEvent.CreateElectionRequest ->
+                is CreateElectionRequest ->
                     effects(Effect.CreateElection(event.credentials, event.electionName))
-                is CondorcetEvent.CreateElectionSuccess -> updatePage {
+                is CreateElectionSuccess -> updatePage {
                     page.navElection(event.credentials, event.election)
                 }
-                is CondorcetEvent.ListBallotsRequest -> effects(Effect.ListBallots(event.credentials))
-                is CondorcetEvent.ListBallotsSuccess -> updatePage {
+                is ListBallotsRequest -> effects(Effect.ListBallots(event.credentials))
+                is ListBallotsSuccess -> updatePage {
                     page.navBallots(event.credentials, event.voterName, event.ballots)
                 }
-                else -> effects(Effect.Dispatch(CondorcetEvent.Error("unknown event $event")))
+
+                else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {
-            effects(Effect.Dispatch(CondorcetEvent.Error("exception: '${ex.message}'")))
+            effects(Effect.Dispatch(Error("exception: '${ex.message}'")))
         }
     }
 }
