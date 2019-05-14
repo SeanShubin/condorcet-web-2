@@ -4,6 +4,7 @@ import app.Environment
 import event.CondorcetEvent
 import event.CondorcetEvent.*
 import model.Credentials
+import model.StringConversions.stringToDate
 
 interface Effect {
     fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment)
@@ -58,11 +59,6 @@ interface Effect {
             }
         }
     }
-    data class SetPathName(val pathName: String) : Effect {
-        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
-            environment.setPathName(pathName)
-        }
-    }
 
     data class ListBallots(val credentials: Credentials) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
@@ -80,6 +76,18 @@ interface Effect {
                 handleEvent(LoadElectionSuccess(credentials, election))
             }.catch { throwable ->
                 handleEvent(LoadElectionFailure(throwable.message ?: "Unable to load election $electionName"))
+            }
+        }
+    }
+
+    data class SetStartDate(val credentials: Credentials, val electionName: String, val startDateString: String) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            val now = environment.clock.now()
+            val isoStartDate = stringToDate(startDateString, now).toISOString()
+            environment.api.setStartDate(credentials, electionName, isoStartDate).then { election ->
+                handleEvent(LoadElectionSuccess(credentials, election))
+            }.catch { throwable ->
+                handleEvent(UpdateElectionFailure(throwable.message ?: "Unable to set start date for $electionName"))
             }
         }
     }

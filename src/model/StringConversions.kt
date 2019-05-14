@@ -14,6 +14,26 @@ object StringConversions {
                 "$year-$month-$day $hours:$minutes"
             }
 
+    private val nonDigitRegex = Regex("""[^\d]+""")
+
+    fun stringToDate(asString: String, defaultDate: Date): Date {
+        val parts = asString.split(nonDigitRegex)
+        val year = atIndexOrDefault(parts, 0, defaultDate.getFullYear())
+        val month = atIndexOrDefault(parts, 1, defaultDate.getMonth() + 1)
+        val day = atIndexOrDefault(parts, 2, defaultDate.getDate())
+        val hour = atIndexOrDefault(parts, 3, 0)
+        val minute = atIndexOrDefault(parts, 4, 0)
+        return Date(year, month, day, hour, minute)
+    }
+
+    private fun atIndexOrDefault(list: List<String>, index: Int, default: Int): Int =
+            if (index < list.size) try {
+                list[index].toInt()
+            } catch (ex: NumberFormatException) {
+                default
+            }
+            else default
+
     fun booleanToString(b: Boolean) = if (b) "yes" else "no"
 
     private fun pad2(s: Any): String = pad2(s.toString())

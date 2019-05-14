@@ -1,11 +1,8 @@
 package app
 
 import api.Api
-import kotlin.browser.window
+import clock.Clock
 
-class EnvironmentImpl(override val api: Api) : Environment {
-    override fun setPathName(pathName: String) {
-        console.log("setPathName($pathName)")
-        window.location.pathname = pathName
-    }
-}
+class EnvironmentImpl(override val api: Api,
+                      override val clock: Clock) : Environment
+

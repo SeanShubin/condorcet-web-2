@@ -1,6 +1,7 @@
 package api
 
 import model.*
+import kotlin.js.Date
 import kotlin.js.Promise
 
 class ApiFake : Api {
@@ -123,6 +124,20 @@ class ApiFake : Api {
         TODO("not implemented - castBallot")
     }
 
+    override fun setStartDate(credentials: Credentials, electionName: String, isoStartDate: String): Promise<Election> {
+        return try {
+            val user = authenticateUser(credentials)
+            val electionIndex = lookupElectionIndexByName(electionName)
+            val election = elections[electionIndex]
+            assertAllowedToEditElection(user, election)
+            val updatedElection = election.copy(start = Date(isoStartDate))
+            elections[electionIndex] = updatedElection
+            return Promise.Companion.resolve(updatedElection)
+        } catch (ex: RuntimeException) {
+            Promise.reject(ex)
+        }
+    }
+
     private fun lookupUser(nameOrEmail: String): User =
             searchUser(nameOrEmail) ?: throw RuntimeException("User with name or email '$nameOrEmail' not found")
 
@@ -137,7 +152,19 @@ class ApiFake : Api {
     private fun lookupElectionByName(electionName: String): Election =
             searchElectionByName(electionName) ?: throw RuntimeException("Election with name '$electionName' not found")
 
-    private fun searchElectionByName(electionName: String): Election? = elections.find { election -> election.name == electionName }
+    private fun searchElectionByName(electionName: String): Election? {
+        val index = searchElectionIndexByName(electionName)
+        return if (index == null) null else elections[index]
+    }
+
+    private fun searchElectionIndexByName(electionName: String): Int? {
+        val index = elections.indexOfFirst { election -> election.name == electionName }
+        return if (index == -1) null else index
+    }
+
+    private fun lookupElectionIndexByName(electionName: String): Int =
+            searchElectionIndexByName(electionName)
+                    ?: throw RuntimeException("Election with name '$electionName' not found")
 
     private fun loginError(nameOrEmail: String): Promise<Credentials> =
             Promise.reject(RuntimeException("Unable to authenticate user '$nameOrEmail'"))
@@ -176,6 +203,12 @@ class ApiFake : Api {
             if (election.ownerName != user.name) {
                 throw RuntimeException("User '${user.name}' is not allowed view election '$electionName'")
             }
+        }
+    }
+
+    private fun assertAllowedToEditElection(user: User, election: Election) {
+        if (election.ownerName != user.name) {
+            throw RuntimeException("User '${user.name}' is not allowed to edit election '${election.name}' owned by ${election.ownerName}")
         }
     }
 

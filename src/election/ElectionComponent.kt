@@ -25,9 +25,9 @@ interface ElectionState : RState {
 }
 
 class ElectionComponent : RComponent<ElectionProps, ElectionState>() {
-    override fun ElectionState.init() {
-        startDate = ""
-        endDate = ""
+    override fun ElectionState.init(props: ElectionProps) {
+        startDate = props.election.startString
+        endDate = props.election.endString
     }
 
     override fun RBuilder.render() {

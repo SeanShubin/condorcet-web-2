@@ -3,6 +3,8 @@ package index
 import api.Api
 import api.ApiFake
 import app.*
+import clock.Clock
+import clock.ClockImpl
 import event.CondorcetEvent.LoadElectionRequest
 import kotlinext.js.require
 import kotlinext.js.requireAll
@@ -15,7 +17,8 @@ fun main(args: Array<String>) {
     val initialEvents = listOf(LoadElectionRequest(aliceCredentials, "Election 1"))
     val eventLoop: EventLoop = EventLoopImpl()
     val api: Api = ApiFake()
-    val environment: Environment = EnvironmentImpl(api)
+    val clock: Clock = ClockImpl()
+    val environment: Environment = EnvironmentImpl(api, clock)
     requireAll(require.context("src", true, js("/\\.css$/")))
     render(document.getElementById("root")) {
         app(eventLoop, environment, api, initialEvents)

@@ -1,8 +1,9 @@
 package app
 
 import api.Api
+import clock.Clock
 
 interface Environment {
     val api: Api
-    fun setPathName(pathName: String)
+    val clock: Clock
 }

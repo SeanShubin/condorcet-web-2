@@ -14,14 +14,11 @@ class EventLoopImpl : EventLoop {
                 StateAndEffects(model.copy(page = f(page)), emptyList())
         fun effects(vararg effects: Effect): StateAndEffects =
                 StateAndEffects(model, effects.toList())
-
-        fun navigate(page: Page, location: String): StateAndEffects =
-                StateAndEffects(
-                        model.copy(page = page),
-                        listOf(Effect.SetPathName(location)))
         return try {
             when (event) {
-                is NavLoginRequest -> navigate(page.navLogin(), "/login")
+                is NavLoginRequest -> updatePage {
+                    page.navLogin()
+                }
                 is LoginRequest -> effects(Effect.Login(event.nameOrEmail, event.password))
                 is LoginSuccess -> effects(Effect.Dispatch(NavHomeRequest(event.credentials)))
                 is LoginFailure -> updatePage {
@@ -35,7 +32,9 @@ class EventLoopImpl : EventLoop {
                 is RegisterFailure -> updatePage {
                     page.registerFailure(event.message)
                 }
-                is NavRegisterRequest -> navigate(page.navRegister(), "/register")
+                is NavRegisterRequest -> updatePage {
+                    page.navRegister()
+                }
                 is NavHomeRequest -> updatePage {
                     page.navHome(event.credentials)
                 }
@@ -65,6 +64,7 @@ class EventLoopImpl : EventLoop {
                 is LoadElectionSuccess -> updatePage {
                     page.navElection(event.credentials, event.election)
                 }
+                is UpdateStartDate -> effects(Effect.SetStartDate(event.credentials, event.electionName, event.startDate))
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {
