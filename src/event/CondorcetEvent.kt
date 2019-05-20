@@ -58,4 +58,6 @@ interface CondorcetEvent {
     data class UpdateEndDate(val credentials: Credentials, val electionName: String, val endDate: String) : CondorcetEvent
     data class UpdateSecretBallot(val credentials: Credentials, val electionName: String, val checked: Boolean) : CondorcetEvent
     data class UpdateElectionFailure(val message: String) : CondorcetEvent
+    data class StartDateChanged(val startDate: String) : CondorcetEvent
+    data class EndDateChanged(val endDate: String) : CondorcetEvent
 }

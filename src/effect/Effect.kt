@@ -91,4 +91,27 @@ interface Effect {
             }
         }
     }
+
+    data class SetEndDate(val credentials: Credentials, val electionName: String, val endDateString: String) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            val now = environment.clock.now()
+            val isoEndDate = stringToDate(endDateString, now).toISOString()
+            environment.api.setEndDate(credentials, electionName, isoEndDate).then { election ->
+                handleEvent(LoadElectionSuccess(credentials, election))
+            }.catch { throwable ->
+                handleEvent(UpdateElectionFailure(throwable.message ?: "Unable to set end date for $electionName"))
+            }
+        }
+    }
+
+    data class SetSecretBallot(val credentials: Credentials, val electionName: String, val secretBallot: Boolean) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.setSecretBallot(credentials, electionName, secretBallot).then { election ->
+                handleEvent(LoadElectionSuccess(credentials, election))
+            }.catch { throwable ->
+                handleEvent(UpdateElectionFailure(throwable.message
+                        ?: "Unable to set secretBallot to $secretBallot for $electionName"))
+            }
+        }
+    }
 }

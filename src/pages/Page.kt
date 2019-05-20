@@ -3,6 +3,7 @@ package pages
 import model.Ballot
 import model.Credentials
 import model.Election
+import model.StringConversions.stringToDate
 
 interface Page {
     val name: String
@@ -21,6 +22,10 @@ interface Page {
     fun navBallots(credentials: Credentials,
                    voterName: String,
                    ballots: List<Ballot>): Page = BallotsPage(credentials, voterName, ballots)
+
+    fun startChanged(start: String): Page = unsupported("startChanged")
+    fun endChanged(start: String): Page = unsupported("endChanged")
+    fun secretBallotChanged(secretBallot: Boolean): Page = unsupported("secretBallotChanged")
 
     companion object {
         val initial = LoginPage(errorMessage = null)
@@ -57,6 +62,29 @@ data class CandidatesPage(val credentials: Credentials,
 
 data class ElectionPage(val credentials: Credentials, val election: Election, val errorMessage: String?) : Page {
     override val name: String = "election"
+    override fun startChanged(start: String): Page {
+        val oldElection = this.election
+        val newElection = if (oldElection.start == null) {
+            oldElection.copy(start = null)
+        } else {
+            oldElection.copy(start = stringToDate(start, oldElection.start))
+        }
+        return copy(election = newElection)
+    }
+
+    override fun endChanged(end: String): Page {
+        val oldElection = this.election
+        val newElection = if (oldElection.end == null) {
+            oldElection.copy(end = null)
+        } else {
+            oldElection.copy(end = stringToDate(end, oldElection.end))
+        }
+        return copy(election = newElection)
+    }
+
+    override fun secretBallotChanged(secretBallot: Boolean): Page {
+        return copy(election = election.copy(secretBallot = secretBallot))
+    }
 }
 
 data class ElectionsPage(val credentials: Credentials, val elections: List<Election>) : Page {

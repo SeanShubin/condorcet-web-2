@@ -65,6 +65,13 @@ class EventLoopImpl : EventLoop {
                     page.navElection(event.credentials, event.election)
                 }
                 is UpdateStartDate -> effects(Effect.SetStartDate(event.credentials, event.electionName, event.startDate))
+                is StartDateChanged -> updatePage {
+                    page.startChanged(event.startDate)
+                }
+                is EndDateChanged -> updatePage {
+                    page.endChanged(event.endDate)
+                }
+                is UpdateSecretBallot -> effects(Effect.SetSecretBallot(event.credentials, event.electionName, event.checked))
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {

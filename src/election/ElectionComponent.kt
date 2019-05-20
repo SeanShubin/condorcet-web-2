@@ -9,7 +9,10 @@ import kotlinx.html.js.onClickFunction
 import model.Credentials
 import model.Election
 import org.w3c.dom.HTMLInputElement
-import react.*
+import react.RBuilder
+import react.RComponent
+import react.RProps
+import react.RState
 import react.dom.*
 
 interface ElectionProps : RProps {
@@ -19,17 +22,7 @@ interface ElectionProps : RProps {
     var credentials: Credentials
 }
 
-interface ElectionState : RState {
-    var startDate: String
-    var endDate: String
-}
-
-class ElectionComponent : RComponent<ElectionProps, ElectionState>() {
-    override fun ElectionState.init(props: ElectionProps) {
-        startDate = props.election.startString
-        endDate = props.election.endString
-    }
-
+class ElectionComponent : RComponent<ElectionProps, RState>() {
     override fun RBuilder.render() {
         val sendEvent = props.sendEvent
         val election = props.election
@@ -68,15 +61,13 @@ class ElectionComponent : RComponent<ElectionProps, ElectionState>() {
                 input {
                     attrs {
                         placeholder = "YYYY-MM-DD HH:MM"
-                        value = state.startDate
+                        value = props.election.startString
                         onChangeFunction = { event ->
                             val target = event.target as HTMLInputElement
-                            setState {
-                                startDate = target.value
-                            }
+                            sendEvent(StartDateChanged(target.value))
                         }
                         onBlurFunction = { event ->
-                            sendEvent(UpdateStartDate(credentials, election.name, state.startDate))
+                            sendEvent(UpdateStartDate(credentials, election.name, props.election.startString))
                         }
                     }
                 }
@@ -84,15 +75,13 @@ class ElectionComponent : RComponent<ElectionProps, ElectionState>() {
                 input {
                     attrs {
                         placeholder = "YYYY-MM-DD HH:MM"
-                        value = state.endDate
+                        value = props.election.endString
                         onChangeFunction = { event ->
                             val target = event.target as HTMLInputElement
-                            setState {
-                                endDate = target.value
-                            }
+                            sendEvent(EndDateChanged(target.value))
                         }
                         onBlurFunction = { event ->
-                            sendEvent(UpdateEndDate(credentials, election.name, state.endDate))
+                            sendEvent(UpdateEndDate(credentials, election.name, props.election.endString))
                         }
                     }
                 }

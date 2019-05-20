@@ -126,13 +126,35 @@ class ApiFake : Api {
 
     override fun setStartDate(credentials: Credentials, electionName: String, isoStartDate: String): Promise<Election> {
         return try {
-            val user = authenticateUser(credentials)
-            val electionIndex = lookupElectionIndexByName(electionName)
-            val election = elections[electionIndex]
-            assertAllowedToEditElection(user, election)
-            val updatedElection = election.copy(start = Date(isoStartDate))
-            elections[electionIndex] = updatedElection
-            return Promise.Companion.resolve(updatedElection)
+            return withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
+                val updatedElection = election.copy(start = Date(isoStartDate))
+                elections[electionIndex] = updatedElection
+                Promise.Companion.resolve(updatedElection)
+            }
+        } catch (ex: RuntimeException) {
+            Promise.reject(ex)
+        }
+    }
+
+    override fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String): Promise<Election> {
+        return try {
+            return withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
+                val updatedElection = election.copy(end = Date(isoEndDate))
+                elections[electionIndex] = updatedElection
+                Promise.Companion.resolve(updatedElection)
+            }
+        } catch (ex: RuntimeException) {
+            Promise.reject(ex)
+        }
+    }
+
+    override fun setSecretBallot(credentials: Credentials, electionName: String, secretBallot: Boolean): Promise<Election> {
+        return try {
+            return withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
+                val updatedElection = election.copy(secretBallot = secretBallot)
+                elections[electionIndex] = updatedElection
+                Promise.Companion.resolve(updatedElection)
+            }
         } catch (ex: RuntimeException) {
             Promise.reject(ex)
         }
@@ -248,5 +270,13 @@ class ApiFake : Api {
             user.password == credentials.password -> return user
             else -> throw RuntimeException("Invalid credentials for user '${credentials.name}'")
         }
+    }
+
+    private fun withUserThatCanEditElectionWithIndex(credentials: Credentials, electionName: String, f: (User, Election, Int) -> Promise<Election>): Promise<Election> {
+        val user = authenticateUser(credentials)
+        val electionIndex = lookupElectionIndexByName(electionName)
+        val election = elections[electionIndex]
+        assertAllowedToEditElection(user, election)
+        return f(user, election, electionIndex)
     }
 }

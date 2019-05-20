@@ -58,7 +58,11 @@ class App : RComponent<AppProps, AppState>() {
             is RegisterPage -> register(::handleEvent, page.errorMessage)
             is HomePage -> home(::handleEvent, page.credentials)
             is ElectionsPage -> elections(::handleEvent, page.credentials, page.elections)
-            is ElectionPage -> election(::handleEvent, page.credentials, page.election, page.errorMessage)
+            is ElectionPage -> election(
+                    ::handleEvent,
+                    page.credentials,
+                    page.election,
+                    page.errorMessage)
             is CandidatesPage -> candidates(::handleEvent, page.credentials, page.electionName, page.candidates)
             is VotersPage -> voters(::handleEvent, page.credentials, page.electionName, page.voters)
             is BallotsPage -> ballots(::handleEvent, page.credentials, page.voterName, page.ballots)
