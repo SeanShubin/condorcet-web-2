@@ -17,161 +17,148 @@ class ApiFake : Api {
             Election("Bob", "Election 3"))
     private val allBallots: MutableList<Ballot> = mutableListOf()
 
-    override fun login(nameOrEmail: String, password: String): Promise<Credentials> {
-        val user = searchUser(nameOrEmail)
-        return when {
-            user == null -> loginError(nameOrEmail)
-            user.password == password -> Promise.resolve(Credentials(user.name, user.password))
-            else -> loginError(nameOrEmail)
-        }
-    }
+    override fun login(nameOrEmail: String, password: String): Promise<Credentials> =
+            handleException {
+                val user = searchUser(nameOrEmail)
+                when {
+                    user == null -> throw RuntimeException("Unable to authenticate user '$nameOrEmail'")
+                    user.password == password -> Credentials(user.name, user.password)
+                    else -> throw RuntimeException("Unable to authenticate user '$nameOrEmail'")
+                }
+            }
 
-    override fun logout(): Promise<Unit> = Promise.resolve(Unit)
+    override fun register(name: String, email: String, password: String): Promise<Credentials> =
+            handleException {
+                assertUserNameDoesNotExist(name)
+                assertUserEmailDoesNotExist(email)
+                val user = createUser(name, email, password)
+                Credentials(user.name, user.password)
+            }
 
-    override fun register(name: String, email: String, password: String): Promise<Credentials> {
-        return try {
-            assertUserNameDoesNotExist(name)
-            assertUserEmailDoesNotExist(email)
-            val user = createUser(name, email, password)
-            Promise.resolve(Credentials(user.name, user.password))
-        } catch (ex: RuntimeException) {
-            Promise.reject(ex)
-        }
-    }
-
-    override fun createElection(credentials: Credentials, electionName: String): Promise<Election> {
-        return try {
-            assertAllowedToCreateElection(credentials)
-            assertElectionNameDoesNotExist(electionName)
-            val election = createElection(credentials.name, electionName)
-            Promise.resolve(election)
-        } catch (ex: RuntimeException) {
-            Promise.reject(ex)
-        }
-    }
+    override fun createElection(credentials: Credentials, electionName: String): Promise<Election> =
+            handleException {
+                assertAllowedToCreateElection(credentials)
+                assertElectionNameDoesNotExist(electionName)
+                val election = createElection(credentials.name, electionName)
+                election
+            }
 
     override fun copyElection(credentials: Credentials,
                               newElectionName: String,
-                              electionToCopyName: String): Promise<Unit> {
-        TODO("not implemented - copyElection")
-    }
-
-    override fun listElections(credentials: Credentials): Promise<List<Election>> {
-        return Promise.resolve(elections)
-    }
-
-    override fun getElection(credentials: Credentials, electionName: String): Promise<Election> {
-        return try {
-            assertAllowedToGetElection(credentials, electionName)
-            val election = lookupElectionByName(electionName)
-            Promise.resolve(election)
-        } catch (ex: RuntimeException) {
-            Promise.reject(ex)
-        }
-    }
-
-    override fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Unit> {
-        TODO("not implemented - doneEditingElection")
-    }
-
-    override fun startElection(credentials: Credentials, electionName: String): Promise<Unit> {
-        TODO("not implemented - startElection")
-    }
-
-    override fun endElection(credentials: Credentials, electionName: String): Promise<Unit> {
-        TODO("not implemented - endElection")
-    }
-
-    override fun listCandidates(credentials: Credentials, electionName: String): Promise<List<String>> {
-        TODO("not implemented - listCandidates")
-    }
-
-    override fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<Unit> {
-        TODO("not implemented - updateCandidates")
-    }
-
-    override fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<List<String>> {
-        TODO("not implemented - listEligibleVoters")
-    }
-
-    override fun listAllVoters(credentials: Credentials): Promise<List<String>> {
-        TODO("not implemented - listAllVoters")
-    }
-
-    override fun updateEligibleVoters(credentials: Credentials, electionName: String, eligibleVoters: List<String>): Promise<Unit> {
-        TODO("not implemented - updateEligibleVoters")
-    }
-
-    override fun listBallots(credentials: Credentials, voterName: String): Promise<List<Ballot>> {
-        return try {
-            assertCredentialsValid(credentials)
-            assertVoterNameExists(voterName)
-            assertAllowedToSeeBallotsFor(credentials, voterName)
-            val ballotsForVoter = allBallots.filter { ballot ->
-                ballot.voterName == voterName
+                              electionToCopyName: String): Promise<Unit> =
+            handleException {
+                TODO("not implemented - copyElection")
             }
-            Promise.resolve(ballotsForVoter)
-        } catch (ex: RuntimeException) {
-            Promise.reject(ex)
-        }
-    }
 
-    override fun getBallot(credentials: Credentials, electionName: String, voterName: String): Promise<Ballot> {
-        TODO("not implemented - getBallot")
-    }
-
-    override fun castBallot(credentials: Credentials, electionName: String, voterName: String, ballot: Ballot): Promise<Unit> {
-        TODO("not implemented - castBallot")
-    }
-
-    override fun setStartDate(credentials: Credentials, electionName: String, isoStartDate: String): Promise<Election> {
-        return try {
-            return withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
-                val updatedElection = election.copy(start = Date(isoStartDate))
-                elections[electionIndex] = updatedElection
-                Promise.Companion.resolve(updatedElection)
+    override fun listElections(credentials: Credentials): Promise<List<Election>> =
+            handleException {
+                elections
             }
-        } catch (ex: RuntimeException) {
-            Promise.reject(ex)
-        }
-    }
 
-    override fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String): Promise<Election> {
-        return try {
-            return withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
-                val updatedElection = election.copy(end = Date(isoEndDate))
-                elections[electionIndex] = updatedElection
-                Promise.Companion.resolve(updatedElection)
+    override fun getElection(credentials: Credentials, electionName: String): Promise<Election> =
+            handleException {
+                assertAllowedToGetElection(credentials, electionName)
+                val election = findElectionByName(electionName)
+                election
             }
-        } catch (ex: RuntimeException) {
-            Promise.reject(ex)
-        }
-    }
 
-    override fun setSecretBallot(credentials: Credentials, electionName: String, secretBallot: Boolean): Promise<Election> {
-        return try {
-            return withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
-                val updatedElection = election.copy(secretBallot = secretBallot)
-                elections[electionIndex] = updatedElection
-                Promise.Companion.resolve(updatedElection)
+    override fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Unit> =
+            handleException {
+                TODO("not implemented - copyElection")
             }
-        } catch (ex: RuntimeException) {
-            Promise.reject(ex)
-        }
-    }
 
-    private fun lookupUser(nameOrEmail: String): User =
-            searchUser(nameOrEmail) ?: throw RuntimeException("User with name or email '$nameOrEmail' not found")
+    override fun startElection(credentials: Credentials, electionName: String): Promise<Unit> =
+            handleException {
+                TODO("not implemented - copyElection")
+            }
+
+    override fun endElection(credentials: Credentials, electionName: String): Promise<Unit> =
+            handleException {
+                TODO("not implemented - copyElection")
+            }
+
+    override fun listCandidates(credentials: Credentials, electionName: String): Promise<List<String>> =
+            handleException {
+                TODO("not implemented - copyElection")
+            }
+
+    override fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<Unit> =
+            handleException {
+                TODO("not implemented - copyElection")
+            }
+
+    override fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<List<String>> =
+            handleException {
+                TODO("not implemented - copyElection")
+            }
+
+    override fun listAllVoters(credentials: Credentials): Promise<List<String>> =
+            handleException {
+                TODO("not implemented - copyElection")
+            }
+
+    override fun updateEligibleVoters(credentials: Credentials, electionName: String, eligibleVoters: List<String>): Promise<Unit> =
+            handleException {
+                TODO("not implemented - copyElection")
+            }
+
+    override fun listBallots(credentials: Credentials, voterName: String): Promise<List<Ballot>> =
+            handleException {
+                assertCredentialsValid(credentials)
+                assertVoterNameExists(voterName)
+                assertAllowedToSeeBallotsFor(credentials, voterName)
+                val ballotsForVoter = allBallots.filter { ballot ->
+                    ballot.voterName == voterName
+                }
+                ballotsForVoter
+            }
+
+    override fun getBallot(credentials: Credentials, electionName: String, voterName: String): Promise<Ballot> =
+            handleException {
+                TODO("not implemented - copyElection")
+            }
+
+    override fun castBallot(credentials: Credentials, electionName: String, voterName: String, ballot: Ballot): Promise<Unit> =
+            handleException {
+                TODO("not implemented - copyElection")
+            }
+
+    override fun setStartDate(credentials: Credentials, electionName: String, isoStartDate: String): Promise<Election> =
+            handleException {
+                withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
+                    val updatedElection = election.copy(start = Date(isoStartDate))
+                    elections[electionIndex] = updatedElection
+                    updatedElection
+                }
+            }
+
+    override fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String): Promise<Election> =
+            handleException {
+                withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
+                    val updatedElection = election.copy(end = Date(isoEndDate))
+                    elections[electionIndex] = updatedElection
+                    updatedElection
+                }
+            }
+
+    override fun setSecretBallot(credentials: Credentials, electionName: String, secretBallot: Boolean): Promise<Election> =
+            handleException {
+                withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
+                    val updatedElection = election.copy(secretBallot = secretBallot)
+                    elections[electionIndex] = updatedElection
+                    updatedElection
+                }
+            }
 
     private fun searchUser(nameOrEmail: String): User? =
             users.find { user -> user.name == nameOrEmail || user.email == nameOrEmail }
 
-    private fun lookupUserByName(name: String): User =
+    private fun findUserByName(name: String): User =
             searchUserByName(name) ?: throw RuntimeException("User with name '$name' not found")
 
     private fun searchUserByName(name: String): User? = users.find { user -> user.name == name }
 
-    private fun lookupElectionByName(electionName: String): Election =
+    private fun findElectionByName(electionName: String): Election =
             searchElectionByName(electionName) ?: throw RuntimeException("Election with name '$electionName' not found")
 
     private fun searchElectionByName(electionName: String): Election? {
@@ -184,12 +171,9 @@ class ApiFake : Api {
         return if (index == -1) null else index
     }
 
-    private fun lookupElectionIndexByName(electionName: String): Int =
+    private fun findElectionIndexByName(electionName: String): Int =
             searchElectionIndexByName(electionName)
                     ?: throw RuntimeException("Election with name '$electionName' not found")
-
-    private fun loginError(nameOrEmail: String): Promise<Credentials> =
-            Promise.reject(RuntimeException("Unable to authenticate user '$nameOrEmail'"))
 
     private fun assertUserNameDoesNotExist(name: String) {
         if (users.find { it.name == name } != null) {
@@ -221,7 +205,7 @@ class ApiFake : Api {
         if (user.authorization.canViewAllElections) {
             return
         } else {
-            val election = lookupElectionByName(electionName)
+            val election = findElectionByName(electionName)
             if (election.ownerName != user.name) {
                 throw RuntimeException("User '${user.name}' is not allowed view election '$electionName'")
             }
@@ -235,14 +219,14 @@ class ApiFake : Api {
     }
 
     private fun assertCredentialsValid(credentials: Credentials) {
-        val user = lookupUserByName(credentials.name)
+        val user = findUserByName(credentials.name)
         if (credentials.password != user.password) {
             throw RuntimeException("Incorrect password for user ${credentials.name}")
         }
     }
 
     private fun assertVoterNameExists(voterName: String) {
-        lookupUserByName(voterName)
+        findUserByName(voterName)
     }
 
     private fun assertAllowedToSeeBallotsFor(credentials: Credentials, voterName: String) {
@@ -272,11 +256,18 @@ class ApiFake : Api {
         }
     }
 
-    private fun withUserThatCanEditElectionWithIndex(credentials: Credentials, electionName: String, f: (User, Election, Int) -> Promise<Election>): Promise<Election> {
+    private fun withUserThatCanEditElectionWithIndex(credentials: Credentials, electionName: String, f: (User, Election, Int) -> Election): Election {
         val user = authenticateUser(credentials)
-        val electionIndex = lookupElectionIndexByName(electionName)
+        val electionIndex = findElectionIndexByName(electionName)
         val election = elections[electionIndex]
         assertAllowedToEditElection(user, election)
         return f(user, election, electionIndex)
     }
+
+    private fun <T> handleException(f: () -> T): Promise<T> =
+            try {
+                Promise.resolve(f())
+            } catch (ex: RuntimeException) {
+                Promise.reject(ex)
+            }
 }

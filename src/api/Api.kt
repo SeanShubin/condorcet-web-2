@@ -7,7 +7,6 @@ import kotlin.js.Promise
 
 interface Api {
     fun login(nameOrEmail: String, password: String): Promise<Credentials>
-    fun logout(): Promise<Unit>
     fun register(name: String, email: String, password: String): Promise<Credentials>
     fun createElection(credentials: Credentials, electionName: String): Promise<Election>
     fun copyElection(credentials: Credentials, newElectionName: String, electionToCopyName: String): Promise<Unit>
