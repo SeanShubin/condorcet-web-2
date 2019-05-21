@@ -23,7 +23,8 @@ object StringConversions {
         val day = atIndexOrDefault(parts, 2, defaultDate.getDate())
         val hour = atIndexOrDefault(parts, 3, 0)
         val minute = atIndexOrDefault(parts, 4, 0)
-        return Date(year, month, day, hour, minute)
+        val date = Date(year, month - 1, day, hour, minute)
+        return date
     }
 
     private fun atIndexOrDefault(list: List<String>, index: Int, default: Int): Int =

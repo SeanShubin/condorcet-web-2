@@ -9,13 +9,14 @@ import state.Model
 class EventLoopImpl : EventLoop {
     override fun reactTo(model: Model, event: CondorcetEvent): StateAndEffects {
         val page = model.page
-        console.log("event: $event")
-        console.log("model: $model")
+        //        console.log("event: $event")
+//        console.log("old model: $model")
         fun updatePage(f: (Page) -> Page): StateAndEffects =
                 StateAndEffects(model.copy(page = f(page)), emptyList())
         fun effects(vararg effects: Effect): StateAndEffects =
                 StateAndEffects(model, effects.toList())
-        return try {
+
+        val stateAndEffects = try {
             when (event) {
                 is NavLoginRequest -> updatePage {
                     page.navLogin()
@@ -79,5 +80,7 @@ class EventLoopImpl : EventLoop {
         } catch (ex: Exception) {
             effects(Effect.Dispatch(Error("exception: '${ex.message}'")))
         }
+//        console.log("new model: ${stateAndEffects.state}")
+        return stateAndEffects
     }
 }
