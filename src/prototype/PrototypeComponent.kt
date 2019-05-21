@@ -9,6 +9,7 @@ import event.CondorcetEvent
 import home.home
 import login.login
 import logo.logo
+import pages.ElectionPage
 import react.RBuilder
 import react.dom.code
 import react.dom.div
@@ -39,7 +40,7 @@ fun RBuilder.prototype(sendEvent: (CondorcetEvent) -> Unit) {
     register(sendEvent, errorMessage = null)
     home(sendEvent, sample.credentials())
     elections(sendEvent, sample.credentials(), sample.elections())
-    election(sendEvent, sample.credentials(), sample.election(), sample.errorMessage())
+    election(sendEvent, ElectionPage.create(sample.credentials(), sample.election(), sample.errorMessage()))
     candidates(sendEvent, sample.credentials(), sample.electionName(), sample.candidates())
     voters(sendEvent, sample.credentials(), sample.electionName(), sample.voters())
     ballots(sendEvent, sample.credentials(), sample.voterName(), sample.ballots())

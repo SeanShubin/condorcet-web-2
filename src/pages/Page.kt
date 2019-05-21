@@ -3,7 +3,6 @@ package pages
 import model.Ballot
 import model.Credentials
 import model.Election
-import model.StringConversions.stringToDate
 
 interface Page {
     val name: String
@@ -18,13 +17,14 @@ interface Page {
     fun loginFailure(message: String): Page = LoginPage(errorMessage = message)
     fun registerFailure(message: String): Page = RegisterPage(errorMessage = message)
     fun navElections(credentials: Credentials, elections: List<Election>): Page = ElectionsPage(credentials, elections)
-    fun navElection(credentials: Credentials, election: Election, errorMessage: String? = null): Page = ElectionPage(credentials, election, errorMessage)
+    fun navElection(credentials: Credentials, election: Election, errorMessage: String? = null): Page =
+            ElectionPage.create(credentials, election, errorMessage)
     fun navBallots(credentials: Credentials,
                    voterName: String,
                    ballots: List<Ballot>): Page = BallotsPage(credentials, voterName, ballots)
 
     fun startChanged(start: String): Page = unsupported("startChanged")
-    fun endChanged(start: String): Page = unsupported("endChanged")
+    fun endChanged(end: String): Page = unsupported("endChanged")
     fun secretBallotChanged(secretBallot: Boolean): Page = unsupported("secretBallotChanged")
 
     companion object {
@@ -60,30 +60,35 @@ data class CandidatesPage(val credentials: Credentials,
     override val name: String = "candidates"
 }
 
-data class ElectionPage(val credentials: Credentials, val election: Election, val errorMessage: String?) : Page {
+data class ElectionPage(val credentials: Credentials,
+                        val electionName: String,
+                        val ownerName: String,
+                        val status: String,
+                        val start: String,
+                        val end: String,
+                        val secretBallot: Boolean,
+                        val candidateCount: Int,
+                        val voterCount: Int,
+                        val errorMessage: String?) : Page {
     override val name: String = "election"
-    override fun startChanged(start: String): Page {
-        val oldElection = this.election
-        val newElection = if (oldElection.start == null) {
-            oldElection.copy(start = null)
-        } else {
-            oldElection.copy(start = stringToDate(start, oldElection.start))
-        }
-        return copy(election = newElection)
-    }
+    override fun startChanged(start: String): Page = copy(start = start)
+    override fun endChanged(end: String): Page = copy(end = end)
+    override fun secretBallotChanged(secretBallot: Boolean): Page = copy(secretBallot = secretBallot)
 
-    override fun endChanged(end: String): Page {
-        val oldElection = this.election
-        val newElection = if (oldElection.end == null) {
-            oldElection.copy(end = null)
-        } else {
-            oldElection.copy(end = stringToDate(end, oldElection.end))
-        }
-        return copy(election = newElection)
-    }
+    companion object {
+        fun create(credentials: Credentials, election: Election, errorMessage: String? = null): ElectionPage =
+                ElectionPage(
+                        credentials,
+                        election.name,
+                        election.ownerName,
+                        election.status.description,
+                        election.startString,
+                        election.endString,
+                        election.secretBallot,
+                        election.candidateCount,
+                        election.voterCount,
+                        errorMessage)
 
-    override fun secretBallotChanged(secretBallot: Boolean): Page {
-        return copy(election = election.copy(secretBallot = secretBallot))
     }
 }
 

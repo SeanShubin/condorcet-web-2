@@ -6,9 +6,8 @@ import kotlinx.html.InputType
 import kotlinx.html.js.onBlurFunction
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
-import model.Credentials
-import model.Election
 import org.w3c.dom.HTMLInputElement
+import pages.ElectionPage
 import react.RBuilder
 import react.RComponent
 import react.RProps
@@ -17,17 +16,22 @@ import react.dom.*
 
 interface ElectionProps : RProps {
     var sendEvent: (CondorcetEvent) -> Unit
-    var errorMessage: String?
-    var election: Election
-    var credentials: Credentials
+    var page: ElectionPage
 }
 
 class ElectionComponent : RComponent<ElectionProps, RState>() {
     override fun RBuilder.render() {
         val sendEvent = props.sendEvent
-        val election = props.election
-        val credentials = props.credentials
-        val errorMessage = props.errorMessage
+        val credentials = props.page.credentials
+        val electionName = props.page.electionName
+        val ownerName = props.page.ownerName
+        val status = props.page.status
+        val start = props.page.start
+        val end = props.page.end
+        val secretBallot = props.page.secretBallot
+        val candidateCount = props.page.candidateCount
+        val voterCount = props.page.voterCount
+        val errorMessage = props.page.errorMessage
         div(classes = "single-column-flex") {
             h1 { +"Election" }
             if (errorMessage != null) {
@@ -39,21 +43,21 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                 +"Election"
                 input(classes = "readonly") {
                     attrs {
-                        value = election.name
+                        value = electionName
                         readonly = true
                     }
                 }
                 +"Owner"
                 input(classes = "readonly") {
                     attrs {
-                        value = election.ownerName
+                        value = ownerName
                         readonly = true
                     }
                 }
                 +"Status"
                 input(classes = "readonly") {
                     attrs {
-                        value = election.status.description
+                        value = status
                         readonly = true
                     }
                 }
@@ -61,13 +65,13 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                 input {
                     attrs {
                         placeholder = "YYYY-MM-DD HH:MM"
-                        value = props.election.startString
+                        value = start
                         onChangeFunction = { event ->
                             val target = event.target as HTMLInputElement
                             sendEvent(StartDateChanged(target.value))
                         }
                         onBlurFunction = { event ->
-                            sendEvent(UpdateStartDate(credentials, election.name, props.election.startString))
+                            sendEvent(UpdateStartDate(credentials, electionName, start))
                         }
                     }
                 }
@@ -75,13 +79,13 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                 input {
                     attrs {
                         placeholder = "YYYY-MM-DD HH:MM"
-                        value = props.election.endString
+                        value = end
                         onChangeFunction = { event ->
                             val target = event.target as HTMLInputElement
                             sendEvent(EndDateChanged(target.value))
                         }
                         onBlurFunction = { event ->
-                            sendEvent(UpdateEndDate(credentials, election.name, props.election.endString))
+                            sendEvent(UpdateEndDate(credentials, electionName, end))
                         }
                     }
                 }
@@ -89,29 +93,29 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
             span {
                 input(type = InputType.checkBox) {
                     attrs {
-                        checked = election.secretBallot
+                        checked = secretBallot
                         onChangeFunction = { event ->
                             val target = event.target as HTMLInputElement
-                            sendEvent(UpdateSecretBallot(credentials, election.name, target.checked))
+                            sendEvent(UpdateSecretBallot(credentials, electionName, target.checked))
                         }
                     }
                 }
                 +"Secret Ballot"
             }
             a(href = "#") {
-                +"Candidates (${election.candidateCount})"
+                +"Candidates ($candidateCount)"
                 attrs {
                     onClickFunction = {
-                        sendEvent(ListCandidatesRequest(credentials, election.name))
+                        sendEvent(ListCandidatesRequest(credentials, electionName))
                     }
                 }
 
             }
             a(href = "#") {
-                +"Voters (${election.voterCount})"
+                +"Voters ($voterCount)"
                 attrs {
                     onClickFunction = {
-                        sendEvent(ListVotersRequest(credentials, election.name))
+                        sendEvent(ListVotersRequest(credentials, electionName))
                     }
                 }
             }
@@ -119,7 +123,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                 +"Done Editing"
                 attrs {
                     onClickFunction = {
-                        sendEvent(DoneEditingRequest(credentials, election.name))
+                        sendEvent(DoneEditingRequest(credentials, electionName))
                     }
                 }
             }
@@ -127,7 +131,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                 +"Start Now"
                 attrs {
                     onClickFunction = {
-                        sendEvent(StartNowRequest(credentials, election.name))
+                        sendEvent(StartNowRequest(credentials, electionName))
                     }
                 }
             }
@@ -135,7 +139,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                 +"End Now"
                 attrs {
                     onClickFunction = {
-                        sendEvent(EndNowRequest(credentials, election.name))
+                        sendEvent(EndNowRequest(credentials, electionName))
                     }
                 }
             }
@@ -168,11 +172,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
 }
 
 fun RBuilder.election(sendEvent: (CondorcetEvent) -> Unit,
-                      credentials: Credentials,
-                      election: Election,
-                      errorMessage: String?) = child(ElectionComponent::class) {
+                      page: ElectionPage) = child(ElectionComponent::class) {
     attrs.sendEvent = sendEvent
-    attrs.credentials = credentials
-    attrs.election = election
-    attrs.errorMessage = errorMessage
+    attrs.page = page
 }

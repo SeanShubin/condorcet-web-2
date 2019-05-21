@@ -9,7 +9,8 @@ import state.Model
 class EventLoopImpl : EventLoop {
     override fun reactTo(model: Model, event: CondorcetEvent): StateAndEffects {
         val page = model.page
-        console.log("event: $model $event")
+        console.log("event: $event")
+        console.log("model: $model")
         fun updatePage(f: (Page) -> Page): StateAndEffects =
                 StateAndEffects(model.copy(page = f(page)), emptyList())
         fun effects(vararg effects: Effect): StateAndEffects =
@@ -65,6 +66,7 @@ class EventLoopImpl : EventLoop {
                     page.navElection(event.credentials, event.election)
                 }
                 is UpdateStartDate -> effects(Effect.SetStartDate(event.credentials, event.electionName, event.startDate))
+                is UpdateEndDate -> effects(Effect.SetEndDate(event.credentials, event.electionName, event.endDate))
                 is StartDateChanged -> updatePage {
                     page.startChanged(event.startDate)
                 }
