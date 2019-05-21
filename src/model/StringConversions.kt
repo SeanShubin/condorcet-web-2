@@ -18,7 +18,10 @@ object StringConversions {
 
     fun stringToDate(asString: String, defaultDate: Date): Date {
         val parts = asString.split(nonDigitRegex)
-        val year = atIndexOrDefault(parts, 0, defaultDate.getFullYear())
+        val unvalidatedYear = atIndexOrDefault(parts, 0, defaultDate.getFullYear())
+        val year = if (unvalidatedYear < defaultDate.getFullYear()) {
+            defaultDate.getFullYear()
+        } else unvalidatedYear
         val month = atIndexOrDefault(parts, 1, defaultDate.getMonth() + 1)
         val day = atIndexOrDefault(parts, 2, defaultDate.getDate())
         val hour = atIndexOrDefault(parts, 3, 0)
