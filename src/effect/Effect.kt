@@ -95,10 +95,7 @@ interface Effect {
     data class SetEndDate(val credentials: Credentials, val electionName: String, val endDateString: String) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             val now = environment.clock.now()
-            console.log("endDateString $endDateString")
-            console.log("stringToDate(endDateString, now) ${stringToDate(endDateString, now)}")
             val isoEndDate = stringToDate(endDateString, now).toISOString()
-            console.log("isoEndDate $isoEndDate")
             environment.api.setEndDate(credentials, electionName, isoEndDate).then { election ->
                 handleEvent(LoadElectionSuccess(credentials, election))
             }.catch { throwable ->
