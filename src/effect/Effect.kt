@@ -87,7 +87,7 @@ interface Effect {
             environment.api.setStartDate(credentials, electionName, isoStartDate).then { election ->
                 handleEvent(LoadElectionSuccess(credentials, election))
             }.catch { throwable ->
-                handleEvent(UpdateElectionFailure(throwable.message ?: "Unable to set start date for $electionName"))
+                handleEvent(LoadElectionFailure(throwable.message ?: "Unable to set start date for $electionName"))
             }
         }
     }
@@ -99,7 +99,7 @@ interface Effect {
             environment.api.setEndDate(credentials, electionName, isoEndDate).then { election ->
                 handleEvent(LoadElectionSuccess(credentials, election))
             }.catch { throwable ->
-                handleEvent(UpdateElectionFailure(throwable.message ?: "Unable to set end date for $electionName"))
+                handleEvent(LoadElectionFailure(throwable.message ?: "Unable to set end date for $electionName"))
             }
         }
     }
@@ -109,7 +109,7 @@ interface Effect {
             environment.api.setSecretBallot(credentials, electionName, secretBallot).then { election ->
                 handleEvent(LoadElectionSuccess(credentials, election))
             }.catch { throwable ->
-                handleEvent(UpdateElectionFailure(throwable.message
+                handleEvent(LoadElectionFailure(throwable.message
                         ?: "Unable to set secretBallot to $secretBallot for $electionName"))
             }
         }
@@ -131,6 +131,17 @@ interface Effect {
                 handleEvent(ListVotersSuccess(credentials, electionName, voters))
             }.catch { throwable ->
                 handleEvent(ListVotersFailure(throwable.message ?: "Unable to list eligible voters for $electionName"))
+            }
+        }
+    }
+
+    data class DoneEditing(val credentials: Credentials, val electionName: String) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.doneEditingElection(credentials, electionName).then { election ->
+                handleEvent(LoadElectionSuccess(credentials, election))
+            }.catch { throwable ->
+                handleEvent(LoadElectionFailure(throwable.message
+                        ?: "Unable to edlock election $electionName for further edits"))
             }
         }
     }

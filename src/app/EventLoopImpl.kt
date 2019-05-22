@@ -66,15 +66,15 @@ class EventLoopImpl : EventLoop {
                 is LoadElectionSuccess -> updatePage {
                     page.navElection(event.credentials, event.election)
                 }
-                is UpdateStartDate -> effects(Effect.SetStartDate(event.credentials, event.electionName, event.startDate))
-                is UpdateEndDate -> effects(Effect.SetEndDate(event.credentials, event.electionName, event.endDate))
+                is UpdateElectionStartDateRequest -> effects(Effect.SetStartDate(event.credentials, event.electionName, event.startDate))
+                is UpdateElectionEndDateRequest -> effects(Effect.SetEndDate(event.credentials, event.electionName, event.endDate))
                 is StartDateChanged -> updatePage {
                     page.startChanged(event.startDate)
                 }
                 is EndDateChanged -> updatePage {
                     page.endChanged(event.endDate)
                 }
-                is UpdateSecretBallot -> effects(Effect.SetSecretBallot(event.credentials, event.electionName, event.checked))
+                is UpdateElectionSecretBallotRequest -> effects(Effect.SetSecretBallot(event.credentials, event.electionName, event.checked))
                 is ListCandidatesRequest -> effects(Effect.ListCandidates(event.credentials, event.electionName))
                 is ListCandidatesSuccess -> updatePage {
                     page.navCandidates(event.credentials, event.electionName, event.candidates)
@@ -83,6 +83,7 @@ class EventLoopImpl : EventLoop {
                 is ListVotersSuccess -> updatePage {
                     page.navVoters(event.credentials, event.electionName, event.voters)
                 }
+                is DoneEditingRequest -> effects(Effect.DoneEditing(event.credentials, event.electionName))
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {

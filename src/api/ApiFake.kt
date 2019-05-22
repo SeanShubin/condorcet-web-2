@@ -77,7 +77,14 @@ class ApiFake : Api {
                 election
             }
 
-    override fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Unit> =
+    override fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Election> =
+            handleException {
+                updateElection(credentials, electionName) { election ->
+                    election.doneEditing()
+                }
+            }
+
+    override fun startElection(credentials: Credentials, electionName: String): Promise<Election> =
             handleException {
                 val user = assertCredentialsValid(credentials)
                 val election = findElectionByName(electionName)
@@ -85,15 +92,7 @@ class ApiFake : Api {
                 TODO("not implemented - doneEditingElection")
             }
 
-    override fun startElection(credentials: Credentials, electionName: String): Promise<Unit> =
-            handleException {
-                val user = assertCredentialsValid(credentials)
-                val election = findElectionByName(electionName)
-                assertUserOwnsElection(user, election)
-                TODO("not implemented - doneEditingElection")
-            }
-
-    override fun endElection(credentials: Credentials, electionName: String): Promise<Unit> =
+    override fun endElection(credentials: Credentials, electionName: String): Promise<Election> =
             handleException {
                 val user = assertCredentialsValid(credentials)
                 val election = findElectionByName(electionName)

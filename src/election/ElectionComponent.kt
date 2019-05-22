@@ -71,7 +71,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                             sendEvent(StartDateChanged(target.value))
                         }
                         onBlurFunction = { event ->
-                            sendEvent(UpdateStartDate(credentials, electionName, start))
+                            sendEvent(UpdateElectionStartDateRequest(credentials, electionName, start))
                         }
                     }
                 }
@@ -85,7 +85,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                             sendEvent(EndDateChanged(target.value))
                         }
                         onBlurFunction = { event ->
-                            sendEvent(UpdateEndDate(credentials, electionName, end))
+                            sendEvent(UpdateElectionEndDateRequest(credentials, electionName, end))
                         }
                     }
                 }
@@ -96,7 +96,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                         defaultChecked = secretBallot
                         onChangeFunction = { event ->
                             val target = event.target as HTMLInputElement
-                            sendEvent(UpdateSecretBallot(credentials, electionName, target.checked))
+                            sendEvent(UpdateElectionSecretBallotRequest(credentials, electionName, target.checked))
                         }
                     }
                 }
