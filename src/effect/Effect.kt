@@ -83,7 +83,7 @@ interface Effect {
     data class SetStartDate(val credentials: Credentials, val electionName: String, val startDateString: String) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             val now = environment.clock.now()
-            val isoStartDate = stringToDate(startDateString, now).toISOString()
+            val isoStartDate = if (startDateString.isBlank()) null else stringToDate(startDateString, now).toISOString()
             environment.api.setStartDate(credentials, electionName, isoStartDate).then { election ->
                 handleEvent(LoadElectionSuccess(credentials, election))
             }.catch { throwable ->
@@ -95,7 +95,7 @@ interface Effect {
     data class SetEndDate(val credentials: Credentials, val electionName: String, val endDateString: String) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             val now = environment.clock.now()
-            val isoEndDate = stringToDate(endDateString, now).toISOString()
+            val isoEndDate = if (endDateString.isBlank()) null else stringToDate(endDateString, now).toISOString()
             environment.api.setEndDate(credentials, electionName, isoEndDate).then { election ->
                 handleEvent(LoadElectionSuccess(credentials, election))
             }.catch { throwable ->

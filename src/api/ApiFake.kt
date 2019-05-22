@@ -123,19 +123,21 @@ class ApiFake : Api {
                 TODO("not implemented - copyElection")
             }
 
-    override fun setStartDate(credentials: Credentials, electionName: String, isoStartDate: String): Promise<Election> =
+    override fun setStartDate(credentials: Credentials, electionName: String, isoStartDate: String?): Promise<Election> =
             handleException {
                 withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
-                    val updatedElection = election.copy(start = Date(isoStartDate))
+                    val date = if (isoStartDate == null) null else Date(isoStartDate)
+                    val updatedElection = election.copy(start = date)
                     elections[electionIndex] = updatedElection
                     updatedElection
                 }
             }
 
-    override fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String): Promise<Election> =
+    override fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String?): Promise<Election> =
             handleException {
                 withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
-                    val updatedElection = election.copy(end = Date(isoEndDate))
+                    val date = if (isoEndDate == null) null else Date(isoEndDate)
+                    val updatedElection = election.copy(end = date)
                     elections[electionIndex] = updatedElection
                     updatedElection
                 }
