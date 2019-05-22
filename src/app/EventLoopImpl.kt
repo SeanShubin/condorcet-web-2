@@ -75,6 +75,7 @@ class EventLoopImpl : EventLoop {
                     page.endChanged(event.endDate)
                 }
                 is UpdateSecretBallot -> effects(Effect.SetSecretBallot(event.credentials, event.electionName, event.checked))
+                is ListCandidatesRequest -> effects(Effect.ListCandidates(event.credentials, event.electionName))
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {
