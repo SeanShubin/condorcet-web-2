@@ -266,8 +266,8 @@ class ApiFake : Api {
     private fun createElection(ownerName: String, electionName: String): Election {
         val election = Election(ownerName, electionName)
         elections.add(election)
-        val candidates = mutableListOf<String>()
-        candidatesByElection[electionName] = candidates
+        candidatesByElection[electionName] = emptyList()
+        votersByElection[electionName] = emptyList()
         return election
     }
 

@@ -20,22 +20,29 @@ fun RBuilder.voters(sendEvent: (CondorcetEvent) -> Unit,
                 +"Election"
             }
             input {
-                attrs["value"] = electionName
-            }
-        }
-        table {
-            thead {
-                tr {
-                    th {
-                        +"eligible voters"
-                    }
+                attrs {
+                    value = electionName
+                    readonly = true
                 }
             }
-            tbody {
-                for (voter in voters) {
+        }
+        if (voters.isEmpty()) {
+            span { +"No Voters" }
+        } else {
+            table {
+                thead {
                     tr {
-                        td {
-                            +voter
+                        th {
+                            +"eligible voters"
+                        }
+                    }
+                }
+                tbody {
+                    for (voter in voters) {
+                        tr {
+                            td {
+                                +voter
+                            }
                         }
                     }
                 }

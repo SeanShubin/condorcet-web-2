@@ -53,6 +53,8 @@ interface CondorcetEvent {
     data class ListCandidatesSuccess(val credentials: Credentials, val electionName: String, val candidates: List<String>) : CondorcetEvent
     data class ListCandidatesFailure(val message: String) : CondorcetEvent
     data class ListVotersRequest(val credentials: Credentials, val electionName: String) : CondorcetEvent
+    data class ListVotersSuccess(val credentials: Credentials, val electionName: String, val voters: List<String>) : CondorcetEvent
+    data class ListVotersFailure(val message: String) : CondorcetEvent
     data class DoneEditingRequest(val credentials: Credentials, val electionName: String) : CondorcetEvent
     data class StartNowRequest(val credentials: Credentials, val electionName: String) : CondorcetEvent
     data class EndNowRequest(val credentials: Credentials, val electionName: String) : CondorcetEvent

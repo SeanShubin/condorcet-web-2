@@ -124,4 +124,14 @@ interface Effect {
             }
         }
     }
+
+    data class ListVoters(val credentials: Credentials, val electionName: String) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.listEligibleVoters(credentials, electionName).then { voters ->
+                handleEvent(ListVotersSuccess(credentials, electionName, voters))
+            }.catch { throwable ->
+                handleEvent(ListVotersFailure(throwable.message ?: "Unable to list eligible voters for $electionName"))
+            }
+        }
+    }
 }

@@ -79,6 +79,10 @@ class EventLoopImpl : EventLoop {
                 is ListCandidatesSuccess -> updatePage {
                     page.navCandidates(event.credentials, event.electionName, event.candidates)
                 }
+                is ListVotersRequest -> effects(Effect.ListVoters(event.credentials, event.electionName))
+                is ListVotersSuccess -> updatePage {
+                    page.navVoters(event.credentials, event.electionName, event.voters)
+                }
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {
