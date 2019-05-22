@@ -93,7 +93,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
             span {
                 input(type = InputType.checkBox) {
                     attrs {
-                        checked = secretBallot
+                        defaultChecked = secretBallot
                         onChangeFunction = { event ->
                             val target = event.target as HTMLInputElement
                             sendEvent(UpdateSecretBallot(credentials, electionName, target.checked))
