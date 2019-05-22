@@ -141,7 +141,29 @@ interface Effect {
                 handleEvent(LoadElectionSuccess(credentials, election))
             }.catch { throwable ->
                 handleEvent(LoadElectionFailure(throwable.message
-                        ?: "Unable to edlock election $electionName for further edits"))
+                        ?: "Unable to lock election $electionName for further edits"))
+            }
+        }
+    }
+
+    data class StartElectionNow(val credentials: Credentials, val electionName: String) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.startElection(credentials, electionName).then { election ->
+                handleEvent(LoadElectionSuccess(credentials, election))
+            }.catch { throwable ->
+                handleEvent(LoadElectionFailure(throwable.message
+                        ?: "Unable to start election $electionName manually"))
+            }
+        }
+    }
+
+    data class EndElectionNow(val credentials: Credentials, val electionName: String) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.endElection(credentials, electionName).then { election ->
+                handleEvent(LoadElectionSuccess(credentials, election))
+            }.catch { throwable ->
+                handleEvent(LoadElectionFailure(throwable.message
+                        ?: "Unable to end election $electionName manually"))
             }
         }
     }

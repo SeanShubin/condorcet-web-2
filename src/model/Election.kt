@@ -16,11 +16,13 @@ data class Election(val ownerName: String,
     val endString get() = dateToString(end)
     val secretBallotString get() = booleanToString(secretBallot)
 
-    fun doneEditing() = copy(status = status.done(this))
+    fun doneEditing() = copy(status = status.lockForEdits(this))
+    fun startNow() = copy(status = status.startManually(this))
+    fun endNow() = copy(status = status.endManually(this))
 
     enum class ElectionStatus(val description: String) {
         EDITING("Editing, will not go live") {
-            override fun done(election: Election): ElectionStatus =
+            override fun lockForEdits(election: Election): ElectionStatus =
                     if (election.start == null) {
                         PENDING_MANUAL
                     } else {
@@ -28,12 +30,23 @@ data class Election(val ownerName: String,
                     }
         },
         PENDING_SCHEDULE("Locked for edits, will go live at scheduled time"),
-        PENDING_MANUAL("Locked for edits, must be manually started"),
+        PENDING_MANUAL("Locked for edits, must be manually started") {
+            override fun startManually(election: Election): ElectionStatus =
+                    if (election.end == null) {
+                        RUNNING_MANUAL
+                    } else {
+                        RUNNING_SCHEDULE
+                    }
+        },
         RUNNING_SCHEDULE("Live, will end at scheduled time"),
-        RUNNING_MANUAL("Live, must be manually closed"),
+        RUNNING_MANUAL("Live, must be manually closed") {
+            override fun endManually(election: Election): ElectionStatus = CONCLUDED
+        },
         CONCLUDED("Concluded");
 
-        open fun done(election: Election): ElectionStatus = throw RuntimeException("Unsupported transition done() from ${this.name}")
+        open fun lockForEdits(election: Election): ElectionStatus = throw RuntimeException("Unsupported transition lockForEdits() from ${this.name}")
+        open fun startManually(election: Election): ElectionStatus = throw RuntimeException("Unsupported transition startManually() from ${this.name}")
+        open fun endManually(election: Election): ElectionStatus = throw RuntimeException("Unsupported transition endManually() from ${this.name}")
 
         override fun toString(): String = this.name.toLowerCase()
     }

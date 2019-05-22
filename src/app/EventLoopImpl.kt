@@ -84,6 +84,8 @@ class EventLoopImpl : EventLoop {
                     page.navVoters(event.credentials, event.electionName, event.voters)
                 }
                 is DoneEditingRequest -> effects(Effect.DoneEditing(event.credentials, event.electionName))
+                is StartNowRequest -> effects(Effect.StartElectionNow(event.credentials, event.electionName))
+                is EndNowRequest -> effects(Effect.EndElectionNow(event.credentials, event.electionName))
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {
