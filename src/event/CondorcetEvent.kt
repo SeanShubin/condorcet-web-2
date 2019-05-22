@@ -39,7 +39,7 @@ interface CondorcetEvent {
     data class CreateElectionRequest(val credentials: Credentials, val electionName: String) : CondorcetEvent
     data class CreateElectionSuccess(val credentials: Credentials, val election: Election) : CondorcetEvent
     data class CreateElectionFailure(val message: String) : CondorcetEvent
-    data class CopyElectionRequest(val credentials: Credentials, val electionName: String) : CondorcetEvent
+    data class CopyElectionRequest(val credentials: Credentials, val newElectionName: String, val electionToCopyName: String) : CondorcetEvent
     data class LoadElectionRequest(val credentials: Credentials, val electionName: String) : CondorcetEvent
     data class LoadElectionSuccess(val credentials: Credentials, val election: Election) : CondorcetEvent
     data class LoadElectionFailure(val message: String) : CondorcetEvent

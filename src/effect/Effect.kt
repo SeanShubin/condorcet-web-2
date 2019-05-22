@@ -60,6 +60,16 @@ interface Effect {
         }
     }
 
+    data class CopyElection(val credentials: Credentials, val newElectionName: String, val electionToCopyName: String) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.copyElection(credentials, newElectionName, electionToCopyName).then { election ->
+                handleEvent(CreateElectionSuccess(credentials, election))
+            }.catch { throwable ->
+                handleEvent(CreateElectionFailure(throwable.message ?: "Unable to copy election $electionToCopyName"))
+            }
+        }
+    }
+
     data class ListBallots(val credentials: Credentials) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             environment.api.listBallots(credentials, credentials.name).then { ballots ->

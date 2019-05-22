@@ -7,6 +7,7 @@ import kotlinx.html.js.onClickFunction
 import model.Credentials
 import model.Election
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.HTMLSelectElement
 import react.*
 import react.dom.*
 
@@ -18,7 +19,8 @@ interface ElectionsProps : RProps {
 
 interface ElectionsState : RState {
     var electionName: String
-    var electionToCopy: String
+    var copiedElectionName: String
+    var electionToCopyName: String
 }
 
 class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
@@ -56,7 +58,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                         onChangeFunction = { event ->
                             val target = event.target as HTMLInputElement
                             setState {
-                                electionToCopy = target.value
+                                copiedElectionName = target.value
                             }
                         }
                     }
@@ -67,11 +69,20 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                             +election.name
                         }
                     }
+                    state.electionToCopyName = elections[0].name
+                    attrs {
+                        onChangeFunction = { event ->
+                            val target = event.target as HTMLSelectElement
+                            setState {
+                                electionToCopyName = target.value
+                            }
+                        }
+                    }
                 }
                 button {
                     +"Copy"
                     attrs.onClickFunction = {
-                        sendEvent(CopyElectionRequest(credentials, state.electionToCopy))
+                        sendEvent(CopyElectionRequest(credentials, state.copiedElectionName, state.electionToCopyName))
                     }
                 }
             }

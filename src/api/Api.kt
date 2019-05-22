@@ -9,7 +9,7 @@ interface Api {
     fun login(nameOrEmail: String, password: String): Promise<Credentials>
     fun register(name: String, email: String, password: String): Promise<Credentials>
     fun createElection(credentials: Credentials, electionName: String): Promise<Election>
-    fun copyElection(credentials: Credentials, newElectionName: String, electionToCopyName: String): Promise<Unit>
+    fun copyElection(credentials: Credentials, newElectionName: String, electionToCopyName: String): Promise<Election>
     fun listElections(credentials: Credentials): Promise<List<Election>>
     fun getElection(credentials: Credentials, electionName: String): Promise<Election>
     fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Election>

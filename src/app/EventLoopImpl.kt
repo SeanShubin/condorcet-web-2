@@ -58,6 +58,9 @@ class EventLoopImpl : EventLoop {
                 is CreateElectionSuccess -> updatePage {
                     page.navElection(event.credentials, event.election)
                 }
+                is CopyElectionRequest ->
+                    effects(Effect.CopyElection(event.credentials, event.newElectionName, event.electionToCopyName))
+
                 is ListBallotsRequest -> effects(Effect.ListBallots(event.credentials))
                 is ListBallotsSuccess -> updatePage {
                     page.navBallots(event.credentials, event.voterName, event.ballots)

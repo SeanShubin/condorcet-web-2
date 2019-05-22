@@ -58,10 +58,22 @@ class ApiFake : Api {
 
     override fun copyElection(credentials: Credentials,
                               newElectionName: String,
-                              electionToCopyName: String): Promise<Unit> =
+                              electionToCopyName: String): Promise<Election> =
             handleException {
-                assertCredentialsValid(credentials)
-                TODO("not implemented - copyElection")
+                val user = assertCredentialsValid(credentials)
+                val electionToCopy = findElectionByName(electionToCopyName)
+                val election = Election(
+                        ownerName = user.name,
+                        name = newElectionName,
+                        start = electionToCopy.start,
+                        end = electionToCopy.end,
+                        secretBallot = electionToCopy.secretBallot,
+                        status = Election.ElectionStatus.EDITING,
+                        candidateCount = electionToCopy.candidateCount,
+                        voterCount = electionToCopy.voterCount)
+                candidatesByElection[newElectionName] = candidatesByElection.getValue(electionToCopyName)
+                votersByElection[newElectionName] = votersByElection.getValue(electionToCopyName)
+                election
             }
 
     override fun listElections(credentials: Credentials): Promise<List<Election>> =
