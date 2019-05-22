@@ -2,5 +2,4 @@ package model
 
 data class User(val name: String,
                 val email: String,
-                val password: String,
-                val authorization: Authorization)
+                val password: String)
