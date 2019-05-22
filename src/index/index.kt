@@ -14,7 +14,7 @@ import kotlin.browser.document
 
 fun main(args: Array<String>) {
     val aliceCredentials = Credentials("Alice", "password")
-    val initialEvents = listOf(LoadElectionRequest(aliceCredentials, "Election 1"))
+    val initialEvents = listOf(LoadElectionRequest(aliceCredentials, "Favorite Ice Cream"))
     val eventLoop: EventLoop = EventLoopImpl()
     val api: Api = ApiFake()
     val clock: Clock = ClockImpl()

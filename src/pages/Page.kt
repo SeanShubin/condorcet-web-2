@@ -26,6 +26,7 @@ interface Page {
     fun startChanged(start: String): Page = unsupported("startChanged")
     fun endChanged(end: String): Page = unsupported("endChanged")
     fun secretBallotChanged(secretBallot: Boolean): Page = unsupported("secretBallotChanged")
+    fun navCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Page = CandidatesPage(credentials, electionName, candidates)
 
     companion object {
         val initial = LoginPage(errorMessage = null)

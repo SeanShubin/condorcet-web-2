@@ -13,6 +13,7 @@ fun RBuilder.candidates(sendEvent: (CondorcetEvent) -> Unit,
                         credentials: Credentials,
                         electionName: String,
                         candidates: List<String>) {
+    console.log("candidates", candidates)
     div(classes = "single-column-flex") {
         h1 { +"Candidates" }
         div(classes = "two-column-grid") {
@@ -20,22 +21,29 @@ fun RBuilder.candidates(sendEvent: (CondorcetEvent) -> Unit,
                 +"Election"
             }
             input {
-                attrs["value"] = electionName
-            }
-        }
-        table {
-            thead {
-                tr {
-                    th {
-                        +"candidate"
-                    }
+                attrs {
+                    value = electionName
+                    readonly = true
                 }
             }
-            tbody {
-                for (candidate in candidates) {
+        }
+        if (candidates.isEmpty()) {
+            span { +"No Candidates" }
+        } else {
+            table {
+                thead {
                     tr {
-                        td {
-                            +candidate
+                        th {
+                            +"candidates"
+                        }
+                    }
+                }
+                tbody {
+                    for (candidate in candidates) {
+                        tr {
+                            td {
+                                +candidate
+                            }
                         }
                     }
                 }
@@ -44,7 +52,11 @@ fun RBuilder.candidates(sendEvent: (CondorcetEvent) -> Unit,
         a(href = "#") {
             +"View candidates as text"
         }
-        textArea {}
+        textArea {
+            attrs {
+                placeholder = "Add one candidate per line here"
+            }
+        }
         button(type = ButtonType.button) { +"Update Candidates" }
         a(href = "#") {
             +"Election"

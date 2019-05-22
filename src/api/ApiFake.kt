@@ -5,17 +5,26 @@ import kotlin.js.Date
 import kotlin.js.Promise
 
 class ApiFake : Api {
-    private val users: MutableList<User> = mutableListOf(
-            User("Alice", "alice@email.com", "password", Standard),
-            User("Bob", "bob@email.com", "password", Standard),
-            User("Carol", "carol@email.com", "password", Standard),
-            User("Dave", "dave@email.com", "password", Standard),
-            User("foo", "foo@email.com", "bar", Standard))
-    private val elections: MutableList<Election> = mutableListOf(
-            Election("Alice", "Election 1"),
-            Election("Alice", "Election 2"),
-            Election("Bob", "Election 3"))
+    private val users = mutableListOf<User>()
+    private val elections = mutableListOf<Election>()
     private val allBallots: MutableList<Ballot> = mutableListOf()
+    private val candidatesByElection: MutableMap<String, List<String>> = mutableMapOf()
+
+    private data class ElectionAndIndex(val election: Election, val index: Int)
+
+    init {
+        val aliceCredentials = Credentials("Alice", "password")
+        val bobCredentials = Credentials("Bob", "password")
+        val iceCreamElectionName = "Favorite Ice Cream"
+        register(aliceCredentials.name, "alice@email.com", aliceCredentials.password)
+        register(bobCredentials.name, "bob@email.com", bobCredentials.password)
+        register("Carol", "carol@email.com", "password")
+        register("Dave", "dave@email.com", "password")
+        createElection(aliceCredentials.name, iceCreamElectionName)
+        updateCandidates(aliceCredentials, iceCreamElectionName, listOf("Chocolate", "Vanilla", "Strawberry"))
+        createElection(aliceCredentials, "Election 2")
+        createElection("Bob", "Election 3")
+    }
 
     override fun login(nameOrEmail: String, password: String): Promise<Credentials> =
             handleException {
@@ -57,7 +66,7 @@ class ApiFake : Api {
 
     override fun getElection(credentials: Credentials, electionName: String): Promise<Election> =
             handleException {
-                assertAllowedToGetElection(credentials, electionName)
+                assertAllowedToViewElection(credentials, electionName)
                 val election = findElectionByName(electionName)
                 election
             }
@@ -79,12 +88,19 @@ class ApiFake : Api {
 
     override fun listCandidates(credentials: Credentials, electionName: String): Promise<List<String>> =
             handleException {
-                TODO("not implemented - listCandidates")
+                assertAllowedToViewElection(credentials, electionName)
+                candidatesByElection.getValue(electionName)
             }
 
     override fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<Unit> =
             handleException {
-                TODO("not implemented - updateCandidates")
+                val election = findElectionByName(electionName)
+                assertAllowedToEditElection(credentials, election)
+                candidatesByElection[electionName] = candidates
+                updateElection(credentials, electionName) { election ->
+                    election.copy(candidateCount = candidates.size)
+                }
+                Unit
             }
 
     override fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<List<String>> =
@@ -125,32 +141,34 @@ class ApiFake : Api {
 
     override fun setStartDate(credentials: Credentials, electionName: String, isoStartDate: String?): Promise<Election> =
             handleException {
-                withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
+                updateElection(credentials, electionName) { election ->
                     val date = if (isoStartDate == null) null else Date(isoStartDate)
-                    val updatedElection = election.copy(start = date)
-                    elections[electionIndex] = updatedElection
-                    updatedElection
+                    election.copy(start = date)
                 }
             }
 
     override fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String?): Promise<Election> =
             handleException {
-                withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
+                updateElection(credentials, electionName) { election ->
                     val date = if (isoEndDate == null) null else Date(isoEndDate)
-                    val updatedElection = election.copy(end = date)
-                    elections[electionIndex] = updatedElection
-                    updatedElection
+                    election.copy(end = date)
                 }
             }
 
     override fun setSecretBallot(credentials: Credentials, electionName: String, secretBallot: Boolean): Promise<Election> =
             handleException {
-                withUserThatCanEditElectionWithIndex(credentials, electionName) { user, election, electionIndex ->
-                    val updatedElection = election.copy(secretBallot = secretBallot)
-                    elections[electionIndex] = updatedElection
-                    updatedElection
+                updateElection(credentials, electionName) { election ->
+                    election.copy(secretBallot = secretBallot)
                 }
             }
+
+    private fun updateElection(credentials: Credentials, electionName: String, update: (Election) -> Election): Election {
+        val (election, index) = findElectionAndIndexByName(electionName)
+        assertAllowedToEditElection(credentials, election)
+        val updatedElection = update(election)
+        elections[index] = updatedElection
+        return updatedElection
+    }
 
     private fun searchUser(nameOrEmail: String): User? =
             users.find { user -> user.name == nameOrEmail || user.email == nameOrEmail }
@@ -163,18 +181,16 @@ class ApiFake : Api {
     private fun findElectionByName(electionName: String): Election =
             searchElectionByName(electionName) ?: throw RuntimeException("Election with name '$electionName' not found")
 
-    private fun searchElectionByName(electionName: String): Election? {
-        val index = searchElectionIndexByName(electionName)
-        return if (index == null) null else elections[index]
-    }
+    private fun searchElectionByName(electionName: String): Election? =
+            searchElectionAndIndexByName(electionName)?.election
 
-    private fun searchElectionIndexByName(electionName: String): Int? {
+    private fun searchElectionAndIndexByName(electionName: String): ElectionAndIndex? {
         val index = elections.indexOfFirst { election -> election.name == electionName }
-        return if (index == -1) null else index
+        return if (index == -1) null else ElectionAndIndex(elections[index], index)
     }
 
-    private fun findElectionIndexByName(electionName: String): Int =
-            searchElectionIndexByName(electionName)
+    private fun findElectionAndIndexByName(electionName: String): ElectionAndIndex =
+            searchElectionAndIndexByName(electionName)
                     ?: throw RuntimeException("Election with name '$electionName' not found")
 
     private fun assertUserNameDoesNotExist(name: String) {
@@ -202,7 +218,7 @@ class ApiFake : Api {
         }
     }
 
-    private fun assertAllowedToGetElection(credentials: Credentials, electionName: String) {
+    private fun assertAllowedToViewElection(credentials: Credentials, electionName: String) {
         val user = authenticateUser(credentials)
         if (user.authorization.canViewAllElections) {
             return
@@ -214,9 +230,10 @@ class ApiFake : Api {
         }
     }
 
-    private fun assertAllowedToEditElection(user: User, election: Election) {
-        if (election.ownerName != user.name) {
-            throw RuntimeException("User '${user.name}' is not allowed to edit election '${election.name}' owned by ${election.ownerName}")
+    private fun assertAllowedToEditElection(credentials: Credentials, election: Election) {
+        assertCredentialsValid(credentials)
+        if (credentials.name != election.ownerName) {
+            throw RuntimeException("User '${credentials.name}' is not allowed to edit election '${election.name}' owned by ${election.ownerName}")
         }
     }
 
@@ -246,6 +263,8 @@ class ApiFake : Api {
     private fun createElection(ownerName: String, electionName: String): Election {
         val election = Election(ownerName, electionName)
         elections.add(election)
+        val candidates = mutableListOf<String>()
+        candidatesByElection[electionName] = candidates
         return election
     }
 
@@ -256,14 +275,6 @@ class ApiFake : Api {
             user.password == credentials.password -> return user
             else -> throw RuntimeException("Invalid credentials for user '${credentials.name}'")
         }
-    }
-
-    private fun withUserThatCanEditElectionWithIndex(credentials: Credentials, electionName: String, f: (User, Election, Int) -> Election): Election {
-        val user = authenticateUser(credentials)
-        val electionIndex = findElectionIndexByName(electionName)
-        val election = elections[electionIndex]
-        assertAllowedToEditElection(user, election)
-        return f(user, election, electionIndex)
     }
 
     private fun <T> handleException(f: () -> T): Promise<T> =
