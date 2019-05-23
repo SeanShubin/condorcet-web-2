@@ -42,7 +42,7 @@ fun RBuilder.prototype(sendEvent: (CondorcetEvent) -> Unit) {
     elections(sendEvent, sample.credentials(), sample.elections())
     election(sendEvent, ElectionPage.create(sample.credentials(), sample.election(), sample.errorMessage()))
     candidates(sendEvent, sample.credentials(), sample.electionName(), sample.candidates())
-    voters(sendEvent, sample.credentials(), sample.electionName(), sample.voters())
+    voters(sendEvent, sample.credentials(), sample.electionName(), sample.voters(), isAllVoters = false)
     ballots(sendEvent, sample.credentials(), sample.voterName(), sample.ballots())
     ballot(sendEvent, sample.credentials(), sample.ballot())
 }

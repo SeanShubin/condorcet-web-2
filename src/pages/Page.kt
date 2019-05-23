@@ -27,8 +27,13 @@ interface Page {
     fun startChanged(start: String): Page = unsupported("startChanged")
     fun endChanged(end: String): Page = unsupported("endChanged")
     fun secretBallotChanged(secretBallot: Boolean): Page = unsupported("secretBallotChanged")
-    fun navCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Page = CandidatesPage(credentials, electionName, candidates)
-    fun navVoters(credentials: Credentials, electionName: String, voters: List<String>): Page = VotersPage(credentials, electionName, voters)
+    fun navCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Page =
+            CandidatesPage(credentials, electionName, candidates)
+
+    fun navVoters(credentials: Credentials,
+                  electionName: String,
+                  voters: List<String>,
+                  isAllVoters: Boolean): Page = VotersPage(credentials, electionName, voters, isAllVoters)
 
     companion object {
         val initial = LoginPage(errorMessage = null)
@@ -101,7 +106,8 @@ data class ElectionsPage(val credentials: Credentials, val elections: List<Elect
 
 data class VotersPage(val credentials: Credentials,
                       val electionName: String,
-                      val voters: List<String>) : Page {
+                      val voters: List<String>,
+                      val isAllVoters: Boolean) : Page {
     override val name: String = "voters"
 }
 

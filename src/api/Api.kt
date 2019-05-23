@@ -3,6 +3,7 @@ package api
 import model.Ballot
 import model.Credentials
 import model.Election
+import model.Voters
 import kotlin.js.Promise
 
 interface Api {
@@ -17,9 +18,10 @@ interface Api {
     fun endElection(credentials: Credentials, electionName: String): Promise<Election>
     fun listCandidates(credentials: Credentials, electionName: String): Promise<List<String>>
     fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<List<String>>
-    fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<List<String>>
+    fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<Voters>
     fun listAllVoters(credentials: Credentials): Promise<List<String>>
-    fun updateEligibleVoters(credentials: Credentials, electionName: String, eligibleVoters: List<String>): Promise<Unit>
+    fun updateEligibleVoters(credentials: Credentials, electionName: String, eligibleVoters: List<String>): Promise<Voters>
+    fun updateEligibleVotersToAll(credentials: Credentials, electionName: String): Promise<Voters>
     fun listBallots(credentials: Credentials, voterName: String): Promise<List<Ballot>>
     fun getBallot(credentials: Credentials, electionName: String, voterName: String): Promise<Ballot>
     fun castBallot(credentials: Credentials, electionName: String, voterName: String, ballot: Ballot): Promise<Unit>

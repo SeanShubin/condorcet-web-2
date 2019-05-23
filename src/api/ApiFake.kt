@@ -1,10 +1,7 @@
 package api
 
-import model.Ballot
-import model.Credentials
-import model.Election
+import model.*
 import model.StringConversions.clean
-import model.User
 import kotlin.js.Date
 import kotlin.js.Promise
 
@@ -132,10 +129,12 @@ class ApiFake : Api {
                 cleanCandidates
             }
 
-    override fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<List<String>> =
+    override fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<Voters> =
             handleException {
                 assertCredentialsValid(credentials)
-                votersByElection.getValue(electionName)
+                val voterList = votersByElection.getValue(electionName)
+                val isAllVoters = voterList.size == users.size
+                Voters(voterList, isAllVoters)
             }
 
     override fun listAllVoters(credentials: Credentials): Promise<List<String>> =
@@ -144,12 +143,28 @@ class ApiFake : Api {
                 users.map { it.name }
             }
 
-    override fun updateEligibleVoters(credentials: Credentials, electionName: String, eligibleVoters: List<String>): Promise<Unit> =
+    override fun updateEligibleVoters(credentials: Credentials, electionName: String, eligibleVoters: List<String>): Promise<Voters> =
             handleException {
                 val user = assertCredentialsValid(credentials)
                 val election = findElectionByName(electionName)
                 assertUserOwnsElection(user, election)
-                TODO("not implemented - updateEligibleVoters")
+                val cleanVoters = eligibleVoters.clean()
+                votersByElection[electionName] = cleanVoters
+                updateElection(credentials, electionName) { it.copy(voterCount = cleanVoters.size) }
+                val isAllVoters = cleanVoters.size == users.size
+                Voters(cleanVoters, isAllVoters)
+            }
+
+    override fun updateEligibleVotersToAll(credentials: Credentials, electionName: String): Promise<Voters> =
+            handleException {
+                val user = assertCredentialsValid(credentials)
+                val election = findElectionByName(electionName)
+                assertUserOwnsElection(user, election)
+                val cleanVoters = users.map { it.name }.clean()
+                votersByElection[electionName] = cleanVoters
+                updateElection(credentials, electionName) { it.copy(voterCount = cleanVoters.size) }
+                val isAllVoters = cleanVoters.size == users.size
+                Voters(cleanVoters, isAllVoters)
             }
 
     override fun listBallots(credentials: Credentials, voterName: String): Promise<List<Ballot>> =

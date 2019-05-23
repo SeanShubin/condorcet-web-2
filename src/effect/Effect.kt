@@ -138,7 +138,7 @@ interface Effect {
     data class ListVoters(val credentials: Credentials, val electionName: String) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             environment.api.listEligibleVoters(credentials, electionName).then { voters ->
-                handleEvent(ListVotersSuccess(credentials, electionName, voters))
+                handleEvent(ListVotersSuccess(credentials, electionName, voters.list, voters.isAllVoters))
             }.catch { throwable ->
                 handleEvent(ListVotersFailure(throwable.message ?: "Unable to list eligible voters for $electionName"))
             }
@@ -187,6 +187,31 @@ interface Effect {
             }.catch { throwable ->
                 handleEvent(ListCandidatesFailure(throwable.message
                         ?: "Unable to list candidates for $electionName"))
+            }
+        }
+    }
+
+    data class SetVoters(val credentials: Credentials,
+                         val electionName: String,
+                         val voters: List<String>) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.updateEligibleVoters(credentials, electionName, voters).then { voters ->
+                handleEvent(ListVotersSuccess(credentials, electionName, voters.list, voters.isAllVoters))
+            }.catch { throwable ->
+                handleEvent(ListVotersFailure(throwable.message
+                        ?: "Unable to list eligible voters for $electionName"))
+            }
+        }
+    }
+
+    data class SetVotersToAll(val credentials: Credentials,
+                              val electionName: String) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.updateEligibleVotersToAll(credentials, electionName).then { voters ->
+                handleEvent(ListVotersSuccess(credentials, electionName, voters.list, voters.isAllVoters))
+            }.catch { throwable ->
+                handleEvent(ListVotersFailure(throwable.message
+                        ?: "Unable to list eligible voters for $electionName"))
             }
         }
     }
