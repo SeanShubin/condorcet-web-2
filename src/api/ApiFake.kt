@@ -26,6 +26,7 @@ class ApiFake : Api {
         updateCandidates(aliceCredentials, iceCreamElectionName, listOf("Chocolate", "Vanilla", "Strawberry"))
         createElection(aliceCredentials, "Election 2")
         createElection("Bob", "Election 3")
+        updateEligibleVoters(aliceCredentials, iceCreamElectionName, listOf("Alice", "Carol"))
     }
 
     override fun login(nameOrEmail: String, password: String): Promise<Credentials> =

@@ -37,6 +37,14 @@ class VotersComponent : RComponent<VotersProps, VotersState>() {
         }
     }
 
+    override fun componentDidMount() {
+        setState {
+            votersString = props.voters.joinToString("\n")
+            pendingEdits = false
+            allVoters = props.isAllVoters
+        }
+    }
+
     override fun RBuilder.render() {
         val electionName = props.electionName
         val voters = props.voters
