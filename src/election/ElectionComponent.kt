@@ -6,6 +6,8 @@ import kotlinx.html.InputType
 import kotlinx.html.js.onBlurFunction
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import model.Election
+import model.Election.ElectionStatus.*
 import org.w3c.dom.HTMLInputElement
 import pages.ElectionPage
 import react.RBuilder
@@ -40,28 +42,19 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                 }
             }
             div(classes = "two-column-grid") {
-                +"Election"
-                input(classes = "readonly") {
-                    attrs {
-                        value = electionName
-                        readonly = true
-                    }
+                +"Election:"
+                span {
+                    +electionName
                 }
-                +"Owner"
-                input(classes = "readonly") {
-                    attrs {
-                        value = ownerName
-                        readonly = true
-                    }
+                +"Owner:"
+                span {
+                    +ownerName
                 }
-                +"Status"
-                input(classes = "readonly") {
-                    attrs {
-                        value = status
-                        readonly = true
-                    }
+                +"Status:"
+                span {
+                    +status.description
                 }
-                +"Start"
+                +"Start:"
                 input {
                     attrs {
                         placeholder = "YYYY-MM-DD HH:MM"
@@ -75,7 +68,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                         }
                     }
                 }
-                +"End"
+                +"End:"
                 input {
                     attrs {
                         placeholder = "YYYY-MM-DD HH:MM"
@@ -119,27 +112,34 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                     }
                 }
             }
-            button {
-                +"Done Editing"
-                attrs {
-                    onClickFunction = {
-                        sendEvent(DoneEditingRequest(credentials, electionName))
+            if (status == EDITING) {
+                button {
+                    +"Lock for Editing"
+                    attrs {
+                        onClickFunction = {
+                            sendEvent(DoneEditingRequest(credentials, electionName))
+                        }
+                        disabled = status != Election.ElectionStatus.EDITING
                     }
                 }
             }
-            button {
-                +"Start Now"
-                attrs {
-                    onClickFunction = {
-                        sendEvent(StartNowRequest(credentials, electionName))
+            if (status == PENDING_MANUAL) {
+                button {
+                    +"Start Now"
+                    attrs {
+                        onClickFunction = {
+                            sendEvent(StartNowRequest(credentials, electionName))
+                        }
                     }
                 }
             }
-            button {
-                +"End Now"
-                attrs {
-                    onClickFunction = {
-                        sendEvent(EndNowRequest(credentials, electionName))
+            if (status == RUNNING_MANUAL) {
+                button {
+                    +"End Now"
+                    attrs {
+                        onClickFunction = {
+                            sendEvent(EndNowRequest(credentials, electionName))
+                        }
                     }
                 }
             }

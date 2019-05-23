@@ -5,7 +5,7 @@ import api.ApiFake
 import app.*
 import clock.Clock
 import clock.ClockImpl
-import event.CondorcetEvent.ListElectionsRequest
+import event.CondorcetEvent
 import kotlinext.js.require
 import kotlinext.js.requireAll
 import model.Credentials
@@ -14,7 +14,7 @@ import kotlin.browser.document
 
 fun main(args: Array<String>) {
     val aliceCredentials = Credentials("Alice", "password")
-    val initialEvents = listOf(ListElectionsRequest(aliceCredentials))
+    val initialEvents = listOf(CondorcetEvent.LoadElectionRequest(aliceCredentials, "Favorite Ice Cream"))
     val eventLoop: EventLoop = EventLoopImpl()
     val api: Api = ApiFake()
     val clock: Clock = ClockImpl()

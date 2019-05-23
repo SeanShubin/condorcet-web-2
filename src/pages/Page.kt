@@ -3,6 +3,7 @@ package pages
 import model.Ballot
 import model.Credentials
 import model.Election
+import model.Election.ElectionStatus
 
 interface Page {
     val name: String
@@ -65,7 +66,7 @@ data class CandidatesPage(val credentials: Credentials,
 data class ElectionPage(val credentials: Credentials,
                         val electionName: String,
                         val ownerName: String,
-                        val status: String,
+                        val status: ElectionStatus,
                         val start: String,
                         val end: String,
                         val secretBallot: Boolean,
@@ -83,7 +84,7 @@ data class ElectionPage(val credentials: Credentials,
                         credentials,
                         election.name,
                         election.ownerName,
-                        election.status.description,
+                        election.status,
                         election.startString,
                         election.endString,
                         election.secretBallot,
