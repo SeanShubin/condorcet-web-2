@@ -73,6 +73,7 @@ class ApiFake : Api {
                         voterCount = electionToCopy.voterCount)
                 candidatesByElection[newElectionName] = candidatesByElection.getValue(electionToCopyName)
                 votersByElection[newElectionName] = votersByElection.getValue(electionToCopyName)
+                elections.add(election)
                 election
             }
 
