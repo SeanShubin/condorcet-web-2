@@ -117,14 +117,14 @@ class ApiFake : Api {
                 candidatesByElection.getValue(electionName)
             }
 
-    override fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<Unit> =
+    override fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<List<String>> =
             handleException {
                 val user = assertCredentialsValid(credentials)
                 val election = findElectionByName(electionName)
                 assertUserOwnsElection(user, election)
                 candidatesByElection[electionName] = candidates
                 updateElection(credentials, electionName) { it.copy(candidateCount = candidates.size) }
-                Unit
+                candidates
             }
 
     override fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<List<String>> =

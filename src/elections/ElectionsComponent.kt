@@ -82,7 +82,10 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                 button {
                     +"Copy"
                     attrs.onClickFunction = {
-                        sendEvent(CopyElectionRequest(credentials, state.copiedElectionName, state.electionToCopyName))
+                        sendEvent(CopyElectionRequest(
+                                credentials,
+                                state.copiedElectionName,
+                                state.electionToCopyName))
                     }
                 }
             }

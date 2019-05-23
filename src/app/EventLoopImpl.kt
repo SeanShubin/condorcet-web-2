@@ -89,6 +89,7 @@ class EventLoopImpl : EventLoop {
                 is DoneEditingRequest -> effects(Effect.DoneEditing(event.credentials, event.electionName))
                 is StartNowRequest -> effects(Effect.StartElectionNow(event.credentials, event.electionName))
                 is EndNowRequest -> effects(Effect.EndElectionNow(event.credentials, event.electionName))
+                is UpdateCandidatesRequest -> effects(Effect.SetCandidates(event.credentials, event.electionName, event.candidates))
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {

@@ -177,4 +177,17 @@ interface Effect {
             }
         }
     }
+
+    data class SetCandidates(val credentials: Credentials,
+                             val electionName: String,
+                             val candidates: List<String>) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.updateCandidates(credentials, electionName, candidates).then { candidates ->
+                handleEvent(ListCandidatesSuccess(credentials, electionName, candidates))
+            }.catch { throwable ->
+                handleEvent(ListCandidatesFailure(throwable.message
+                        ?: "Unable to list candidates for $electionName"))
+            }
+        }
+    }
 }
