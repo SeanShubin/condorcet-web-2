@@ -43,17 +43,19 @@ class ApiFake : Api {
 
     override fun register(name: String, email: String, password: String): Promise<Credentials> =
             handleException {
-                assertUserNameDoesNotExist(name)
+                val cleanName = name.clean()
+                assertUserNameDoesNotExist(cleanName)
                 assertUserEmailDoesNotExist(email)
-                val user = createUser(name, email, password)
+                val user = createUser(cleanName, email, password)
                 Credentials(user.name, user.password)
             }
 
     override fun createElection(credentials: Credentials, electionName: String): Promise<Election> =
             handleException {
+                val cleanElectionName = electionName.clean()
                 assertCredentialsValid(credentials)
-                assertElectionNameDoesNotExist(electionName)
-                val election = createElection(credentials.name, electionName)
+                assertElectionNameDoesNotExist(cleanElectionName)
+                val election = createElection(credentials.name, cleanElectionName)
                 election
             }
 
@@ -61,19 +63,20 @@ class ApiFake : Api {
                               newElectionName: String,
                               electionToCopyName: String): Promise<Election> =
             handleException {
+                val cleanNewElectionName = newElectionName.clean()
                 val user = assertCredentialsValid(credentials)
                 val electionToCopy = findElectionByName(electionToCopyName)
                 val election = Election(
                         ownerName = user.name,
-                        name = newElectionName,
+                        name = cleanNewElectionName,
                         start = electionToCopy.start,
                         end = electionToCopy.end,
                         secretBallot = electionToCopy.secretBallot,
                         status = Election.ElectionStatus.EDITING,
                         candidateCount = electionToCopy.candidateCount,
                         voterCount = electionToCopy.voterCount)
-                candidatesByElection[newElectionName] = candidatesByElection.getValue(electionToCopyName)
-                votersByElection[newElectionName] = votersByElection.getValue(electionToCopyName)
+                candidatesByElection[cleanNewElectionName] = candidatesByElection.getValue(electionToCopyName)
+                votersByElection[cleanNewElectionName] = votersByElection.getValue(electionToCopyName)
                 elections.add(election)
                 election
             }
@@ -118,15 +121,15 @@ class ApiFake : Api {
                 candidatesByElection.getValue(electionName)
             }
 
-    override fun updateCandidates(credentials: Credentials, electionName: String, rawCandidates: List<String>): Promise<List<String>> =
+    override fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<List<String>> =
             handleException {
                 val user = assertCredentialsValid(credentials)
                 val election = findElectionByName(electionName)
                 assertUserOwnsElection(user, election)
-                val candidates = rawCandidates.clean()
-                candidatesByElection[electionName] = candidates
-                updateElection(credentials, electionName) { it.copy(candidateCount = candidates.size) }
-                candidates
+                val cleanCandidates = candidates.clean()
+                candidatesByElection[electionName] = cleanCandidates
+                updateElection(credentials, electionName) { it.copy(candidateCount = cleanCandidates.size) }
+                cleanCandidates
             }
 
     override fun listEligibleVoters(credentials: Credentials, electionName: String): Promise<List<String>> =
