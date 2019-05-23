@@ -6,7 +6,6 @@ import kotlinx.html.InputType
 import kotlinx.html.js.onBlurFunction
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
-import model.Election
 import model.Election.ElectionStatus.*
 import org.w3c.dom.HTMLInputElement
 import pages.ElectionPage
@@ -55,30 +54,50 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                     +status.description
                 }
                 +"Start:"
-                input {
-                    attrs {
-                        placeholder = "YYYY-MM-DD HH:MM"
-                        value = start
-                        onChangeFunction = { event ->
-                            val target = event.target as HTMLInputElement
-                            sendEvent(StartDateChanged(target.value))
+                if (status == EDITING) {
+                    input {
+                        attrs {
+                            placeholder = "YYYY-MM-DD HH:MM"
+                            value = start
+                            onChangeFunction = { event ->
+                                val target = event.target as HTMLInputElement
+                                sendEvent(StartDateChanged(target.value))
+                            }
+                            onBlurFunction = { event ->
+                                sendEvent(UpdateElectionStartDateRequest(credentials, electionName, start))
+                            }
                         }
-                        onBlurFunction = { event ->
-                            sendEvent(UpdateElectionStartDateRequest(credentials, electionName, start))
+                    }
+                } else {
+                    span {
+                        if (start.isBlank()) {
+                            +"manual start"
+                        } else {
+                            +start
                         }
                     }
                 }
                 +"End:"
-                input {
-                    attrs {
-                        placeholder = "YYYY-MM-DD HH:MM"
-                        value = end
-                        onChangeFunction = { event ->
-                            val target = event.target as HTMLInputElement
-                            sendEvent(EndDateChanged(target.value))
+                if (status == EDITING) {
+                    input {
+                        attrs {
+                            placeholder = "YYYY-MM-DD HH:MM"
+                            value = end
+                            onChangeFunction = { event ->
+                                val target = event.target as HTMLInputElement
+                                sendEvent(EndDateChanged(target.value))
+                            }
+                            onBlurFunction = { event ->
+                                sendEvent(UpdateElectionEndDateRequest(credentials, electionName, end))
+                            }
                         }
-                        onBlurFunction = { event ->
-                            sendEvent(UpdateElectionEndDateRequest(credentials, electionName, end))
+                    }
+                } else {
+                    span {
+                        if (end.isBlank()) {
+                            +"manual end"
+                        } else {
+                            +end
                         }
                     }
                 }
@@ -120,7 +139,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                         onClickFunction = {
                             sendEvent(DoneEditingRequest(credentials, electionName))
                         }
-                        disabled = status != Election.ElectionStatus.EDITING
+                        disabled = status != EDITING
                     }
                 }
             }
