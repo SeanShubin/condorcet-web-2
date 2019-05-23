@@ -3,6 +3,7 @@ package api
 import model.Ballot
 import model.Credentials
 import model.Election
+import model.StringConversions.clean
 import model.User
 import kotlin.js.Date
 import kotlin.js.Promise
@@ -117,11 +118,12 @@ class ApiFake : Api {
                 candidatesByElection.getValue(electionName)
             }
 
-    override fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<List<String>> =
+    override fun updateCandidates(credentials: Credentials, electionName: String, rawCandidates: List<String>): Promise<List<String>> =
             handleException {
                 val user = assertCredentialsValid(credentials)
                 val election = findElectionByName(electionName)
                 assertUserOwnsElection(user, election)
+                val candidates = rawCandidates.clean()
                 candidatesByElection[electionName] = candidates
                 updateElection(credentials, electionName) { it.copy(candidateCount = candidates.size) }
                 candidates

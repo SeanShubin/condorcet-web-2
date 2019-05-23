@@ -6,6 +6,7 @@ import kotlinx.html.ButtonType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import model.Credentials
+import model.StringConversions.toLines
 import org.w3c.dom.HTMLTextAreaElement
 import react.*
 import react.dom.*
@@ -70,7 +71,7 @@ class CandidatesComponent : RComponent<CandidatesProps, CandidatesState>() {
                             sendEvent(UpdateCandidatesRequest(
                                     credentials,
                                     electionName,
-                                    state.candidatesString.split("\n")))
+                                    state.candidatesString.toLines()))
                             setState {
                                 pendingEdits = false
                             }

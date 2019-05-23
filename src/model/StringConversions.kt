@@ -14,6 +14,12 @@ object StringConversions {
                 "$year-$month-$day $hours:$minutes"
             }
 
+    fun String.clean(): String = this.trim().replace(Regex("""\s+"""), " ")
+
+    fun String.toLines(): List<String> = this.split("\r\n", "\r", "\n")
+
+    fun List<String>.clean(): List<String> = this.map { it.clean() }.filter { !it.isBlank() }
+
     private val nonDigitRegex = Regex("""[^\d]+""")
 
     fun stringToDate(asString: String, defaultDate: Date): Date {
