@@ -49,7 +49,7 @@ fun RBuilder.ballots(sendEvent: (CondorcetEvent) -> Unit,
                         tr {
                             td {
                                 a(href = "#") {
-                                    +it.action.displayName
+                                    +"edit"
                                 }
                             }
                             td {

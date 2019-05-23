@@ -45,7 +45,7 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credential
                     tr {
                         td {
                             input {
-                                attrs["value"] = ranking.rank
+                                attrs["value"] = ranking.rank ?: ""
                                 attrs["size"] = 3
                             }
                         }

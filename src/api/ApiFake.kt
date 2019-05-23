@@ -95,6 +95,7 @@ class ApiFake : Api {
     override fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Election> =
             handleException {
                 updateElection(credentials, electionName) { election ->
+                    createBallots(electionName)
                     election.doneEditing()
                 }
             }
@@ -301,6 +302,23 @@ class ApiFake : Api {
         votersByElection[electionName] = emptyList()
         return election
     }
+
+    private fun createBallots(electionName: String) {
+        val voters = votersByElection.getValue(electionName)
+        val candidates = candidatesByElection.getValue(electionName)
+        for (voter in voters) {
+            createBallot(electionName, voter, candidates)
+        }
+    }
+
+    private fun createBallot(electionName: String, voterName: String, candidates: List<String>) {
+        val ballot = Ballot(electionName, voterName, rankings = createRankings(candidates))
+        allBallots.add(ballot)
+    }
+
+    private fun createRankings(candidates: List<String>): List<Ranking> = candidates.map(::createRanking)
+
+    private fun createRanking(candidateName: String): Ranking = Ranking(rank = null, candidateName = candidateName)
 
     private fun <T> handleException(f: () -> T): Promise<T> =
             try {

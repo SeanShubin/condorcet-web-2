@@ -37,7 +37,7 @@ class Sample {
     fun ranking(): Ranking =
             Ranking(rank(), candidateName())
     fun ballot(): Ballot =
-            Ballot(electionName(), voterName(), rankings(3), ballotAction())
+            Ballot(electionName(), voterName(), rankings(3))
     fun ballots(howMany: Int): List<Ballot> =
             ((1..howMany).map { ballot() })
 
