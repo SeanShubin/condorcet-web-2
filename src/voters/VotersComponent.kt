@@ -8,6 +8,7 @@ import kotlinx.html.js.onClickFunction
 import model.Credentials
 import react.RBuilder
 import react.dom.*
+import kotlin.math.max
 
 fun RBuilder.voters(sendEvent: (CondorcetEvent) -> Unit,
                     credentials: Credentials,
@@ -26,36 +27,25 @@ fun RBuilder.voters(sendEvent: (CondorcetEvent) -> Unit,
                 }
             }
         }
-        if (voters.isEmpty()) {
-            span { +"No Voters" }
-        } else {
-            table {
-                thead {
-                    tr {
-                        th {
-                            +"eligible voters"
-                        }
-                    }
-                }
-                tbody {
-                    for (voter in voters) {
-                        tr {
-                            td {
-                                +voter
-                            }
-                        }
-                    }
+        fieldSet(classes = "single-column-flex") {
+            legend { +"Eligible Voters" }
+            textArea {
+                attrs {
+                    placeholder = "Add one candidate per line here"
+                    rows = voters.size.toString()
+                    cols = max(20, voters.map { it.length }.max() ?: 1).toString()
                 }
             }
+            button(type = ButtonType.button) { +"Update Voters" }
+            button(type = ButtonType.button) { +"Add All Voters" }
         }
-        a(href = "#") {
-            +"View voters as text"
-        }
-        textArea {}
-        button(type = ButtonType.button) { +"Update Voters" }
-        button(type = ButtonType.button) { +"Add All Voters" }
         a(href = "#") {
             +"Election"
+            attrs {
+                onClickFunction = {
+                    sendEvent(CondorcetEvent.LoadElectionRequest(credentials, electionName))
+                }
+            }
         }
         a(href = "#") {
             +"Home"
