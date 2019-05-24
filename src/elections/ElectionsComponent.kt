@@ -93,7 +93,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                 thead {
                     tr {
                         th {
-                            +"edit"
+                            +"status"
                         }
                         th {
                             +"owner"
@@ -116,18 +116,18 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                     for (election in elections) {
                         tr {
                             td {
-                                a(href = "#") {
-                                    +"edit"
-                                    attrs.onClickFunction = {
-                                        sendEvent(LoadElectionRequest(credentials, election.name))
-                                    }
-                                }
+                                +election.status.name
                             }
                             td {
                                 +election.ownerName
                             }
                             td {
-                                +election.name
+                                a(href = "#") {
+                                    +election.name
+                                    attrs.onClickFunction = {
+                                        sendEvent(LoadElectionRequest(credentials, election.name))
+                                    }
+                                }
                             }
                             td {
                                 +election.startString

@@ -15,18 +15,50 @@ class ApiFake : Api {
     private data class ElectionAndIndex(val election: Election, val index: Int)
 
     init {
+        // credentials
         val aliceCredentials = Credentials("Alice", "password")
         val bobCredentials = Credentials("Bob", "password")
-        val iceCreamElectionName = "Favorite Ice Cream"
-        register(aliceCredentials.name, "alice@email.com", aliceCredentials.password)
-        register(bobCredentials.name, "bob@email.com", bobCredentials.password)
+        val carolCredentials = Credentials("Carol", "password")
+        val daveCredentials = Credentials("Dave", "password")
+
+        // users
+        register("Alice", "alice@email.com", "password")
+        register("Bob", "bob@email.com", "password")
         register("Carol", "carol@email.com", "password")
         register("Dave", "dave@email.com", "password")
-        createElection(aliceCredentials.name, iceCreamElectionName)
-        updateCandidates(aliceCredentials, iceCreamElectionName, listOf("Chocolate", "Vanilla", "Strawberry"))
-        createElection(aliceCredentials, "Election 2")
-        createElection("Bob", "Election 3")
-        updateEligibleVoters(aliceCredentials, iceCreamElectionName, listOf("Alice", "Carol"))
+
+        // Favorite Ice Cream
+        createElection(aliceCredentials, "Favorite Ice Cream")
+        updateCandidates(aliceCredentials, "Favorite Ice Cream", listOf("Chocolate", "Vanilla", "Strawberry"))
+        updateEligibleVoters(aliceCredentials, "Favorite Ice Cream", listOf("Alice", "Carol"))
+
+        // Government
+        createElection(aliceCredentials, "Government")
+        updateCandidates(aliceCredentials, "Government", listOf("Monarchy", "Aristocracy", "Democracy"))
+        updateEligibleVoters(aliceCredentials, "Government", listOf("Alice", "Bob", "Carol", "Dave"))
+        doneEditingElection(aliceCredentials, "Government")
+
+        // Dystopia
+        createElection(aliceCredentials, "Dystopia")
+        updateCandidates(aliceCredentials, "Dystopia", listOf("1984", "Fahrenheit 451", "Brave New World"))
+        updateEligibleVoters(aliceCredentials, "Dystopia", listOf("Alice", "Bob", "Carol", "Dave"))
+        doneEditingElection(aliceCredentials, "Dystopia")
+
+        // Pet
+        createElection(bobCredentials, "Pet")
+        updateCandidates(bobCredentials, "Pet", listOf("Cat", "Dog", "Bird", "Fish", "Reptile"))
+        updateEligibleVoters(bobCredentials, "Pet", listOf("Alice", "Bob", "Dave"))
+        doneEditingElection(bobCredentials, "Pet")
+
+        // Science Fiction
+        createElection(carolCredentials, "Science Fiction")
+        updateCandidates(carolCredentials, "Science Fiction", listOf("Babylon 5", "Star Trek", "Blake's 7", "Firefly"))
+        updateEligibleVoters(carolCredentials, "Science Fiction", listOf("Alice", "Bob", "Carol", "Dave"))
+
+        // Fantasy
+        createElection(daveCredentials, "Fantasy")
+        updateCandidates(daveCredentials, "Fantasy", listOf("Marvel Cinematic Universe", "Lord of the Rings", "Harry Potter"))
+        updateEligibleVoters(daveCredentials, "Fantasy", listOf("Alice", "Bob", "Carol", "Dave"))
     }
 
     override fun login(nameOrEmail: String, password: String): Promise<Credentials> =

@@ -89,6 +89,14 @@ class CandidatesComponent : RComponent<CandidatesProps, CandidatesState>() {
                 }
             }
             a(href = "#") {
+                +"Elections"
+                attrs {
+                    onClickFunction = {
+                        sendEvent(ListElectionsRequest(credentials))
+                    }
+                }
+            }
+            a(href = "#") {
                 +"Home"
                 attrs {
                     onClickFunction = {
