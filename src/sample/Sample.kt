@@ -48,7 +48,6 @@ class Sample {
             voterName(),
             electionName(),
             date(),
-            date(),
             boolean(),
             electionStatus(),
             candidateCount = 3,

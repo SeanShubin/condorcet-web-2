@@ -6,7 +6,8 @@ import kotlinx.html.InputType
 import kotlinx.html.js.onBlurFunction
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
-import model.Election.ElectionStatus.*
+import model.Election.ElectionStatus.EDITING
+import model.Election.ElectionStatus.LIVE
 import org.w3c.dom.HTMLInputElement
 import pages.ElectionPage
 import react.RBuilder
@@ -27,7 +28,6 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
         val electionName = props.page.electionName
         val ownerName = props.page.ownerName
         val status = props.page.status
-        val start = props.page.start
         val end = props.page.end
         val secretBallot = props.page.secretBallot
         val candidateCount = props.page.candidateCount
@@ -52,30 +52,6 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                 +"Status:"
                 span {
                     +status.description
-                }
-                +"Start:"
-                if (status == EDITING) {
-                    input {
-                        attrs {
-                            placeholder = "YYYY-MM-DD HH:MM"
-                            value = start
-                            onChangeFunction = { event ->
-                                val target = event.target as HTMLInputElement
-                                sendEvent(StartDateChanged(target.value))
-                            }
-                            onBlurFunction = { event ->
-                                sendEvent(UpdateElectionStartDateRequest(credentials, electionName, start))
-                            }
-                        }
-                    }
-                } else {
-                    span {
-                        if (start.isBlank()) {
-                            +"manual start"
-                        } else {
-                            +start
-                        }
-                    }
                 }
                 +"End:"
                 if (status == EDITING) {
@@ -134,7 +110,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
             }
             if (status == EDITING) {
                 button {
-                    +"Lock for Editing"
+                    +"Start Now"
                     attrs {
                         onClickFunction = {
                             sendEvent(DoneEditingRequest(credentials, electionName))
@@ -143,17 +119,7 @@ class ElectionComponent : RComponent<ElectionProps, RState>() {
                     }
                 }
             }
-            if (status == PENDING_MANUAL) {
-                button {
-                    +"Start Now"
-                    attrs {
-                        onClickFunction = {
-                            sendEvent(StartNowRequest(credentials, electionName))
-                        }
-                    }
-                }
-            }
-            if (status == RUNNING_MANUAL) {
+            if (status == LIVE) {
                 button {
                     +"End Now"
                     attrs {

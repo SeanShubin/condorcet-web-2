@@ -96,10 +96,6 @@ interface CondorcetEvent {
     data class EndNowRequest(val credentials: Credentials,
                              val electionName: String) : CondorcetEvent
 
-    data class UpdateElectionStartDateRequest(val credentials: Credentials,
-                                              val electionName: String,
-                                              val startDate: String) : CondorcetEvent
-
     data class UpdateElectionEndDateRequest(val credentials: Credentials,
                                             val electionName: String,
                                             val endDate: String) : CondorcetEvent

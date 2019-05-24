@@ -99,7 +99,6 @@ class ApiFake : Api {
                 val election = Election(
                         ownerName = user.name,
                         name = cleanNewElectionName,
-                        start = electionToCopy.start,
                         end = electionToCopy.end,
                         secretBallot = electionToCopy.secretBallot,
                         status = Election.ElectionStatus.EDITING,
@@ -128,7 +127,7 @@ class ApiFake : Api {
             handleException {
                 updateElection(credentials, electionName) { election ->
                     createBallots(electionName)
-                    election.doneEditing()
+                    election.startNow()
                 }
             }
 
@@ -226,14 +225,6 @@ class ApiFake : Api {
                 val voter = findUserByName(voterName)
                 assertUserIsVoter(user, voter)
                 TODO("not implemented - castBallot")
-            }
-
-    override fun setStartDate(credentials: Credentials, electionName: String, isoStartDate: String?): Promise<Election> =
-            handleException {
-                updateElection(credentials, electionName) { election ->
-                    val date = if (isoStartDate == null) null else Date(isoStartDate)
-                    election.copy(start = date)
-                }
             }
 
     override fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String?): Promise<Election> =

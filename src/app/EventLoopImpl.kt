@@ -69,7 +69,6 @@ class EventLoopImpl : EventLoop {
                 is LoadElectionSuccess -> updatePage {
                     page.navElection(event.credentials, event.election)
                 }
-                is UpdateElectionStartDateRequest -> effects(Effect.SetStartDate(event.credentials, event.electionName, event.startDate))
                 is UpdateElectionEndDateRequest -> effects(Effect.SetEndDate(event.credentials, event.electionName, event.endDate))
                 is StartDateChanged -> updatePage {
                     page.startChanged(event.startDate)

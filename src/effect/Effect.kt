@@ -90,18 +90,6 @@ interface Effect {
         }
     }
 
-    data class SetStartDate(val credentials: Credentials, val electionName: String, val startDateString: String) : Effect {
-        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
-            val now = environment.clock.now()
-            val isoStartDate = if (startDateString.isBlank()) null else stringToDate(startDateString, now).toISOString()
-            environment.api.setStartDate(credentials, electionName, isoStartDate).then { election ->
-                handleEvent(LoadElectionSuccess(credentials, election))
-            }.catch { throwable ->
-                handleEvent(LoadElectionFailure(throwable.message ?: "Unable to set start date for $electionName"))
-            }
-        }
-    }
-
     data class SetEndDate(val credentials: Credentials, val electionName: String, val endDateString: String) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             val now = environment.clock.now()

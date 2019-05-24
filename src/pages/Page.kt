@@ -72,14 +72,12 @@ data class ElectionPage(val credentials: Credentials,
                         val electionName: String,
                         val ownerName: String,
                         val status: ElectionStatus,
-                        val start: String,
                         val end: String,
                         val secretBallot: Boolean,
                         val candidateCount: Int,
                         val voterCount: Int,
                         val errorMessage: String?) : Page {
     override val name: String = "election"
-    override fun startChanged(start: String): Page = copy(start = start)
     override fun endChanged(end: String): Page = copy(end = end)
     override fun secretBallotChanged(secretBallot: Boolean): Page = copy(secretBallot = secretBallot)
 
@@ -90,7 +88,6 @@ data class ElectionPage(val credentials: Credentials,
                         election.name,
                         election.ownerName,
                         election.status,
-                        election.startString,
                         election.endString,
                         election.secretBallot,
                         election.candidateCount,

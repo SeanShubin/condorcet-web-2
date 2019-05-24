@@ -102,9 +102,6 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                             +"name"
                         }
                         th {
-                            +"start"
-                        }
-                        th {
                             +"end"
                         }
                         th {
@@ -116,7 +113,7 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                     for (election in elections) {
                         tr {
                             td {
-                                +election.status.name
+                                +election.status.description
                             }
                             td {
                                 +election.ownerName
@@ -128,9 +125,6 @@ class ElectionsComponent : RComponent<ElectionsProps, ElectionsState>() {
                                         sendEvent(LoadElectionRequest(credentials, election.name))
                                     }
                                 }
-                            }
-                            td {
-                                +election.startString
                             }
                             td {
                                 +election.endString

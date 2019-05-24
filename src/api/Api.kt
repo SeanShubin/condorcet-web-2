@@ -25,7 +25,6 @@ interface Api {
     fun listBallots(credentials: Credentials, voterName: String): Promise<List<Ballot>>
     fun getBallot(credentials: Credentials, electionName: String, voterName: String): Promise<Ballot>
     fun castBallot(credentials: Credentials, electionName: String, voterName: String, ballot: Ballot): Promise<Unit>
-    fun setStartDate(credentials: Credentials, electionName: String, isoStartDate: String?): Promise<Election>
     fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String?): Promise<Election>
     fun setSecretBallot(credentials: Credentials, electionName: String, secretBallot: Boolean): Promise<Election>
 }
