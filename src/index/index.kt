@@ -16,8 +16,8 @@ fun main(args: Array<String>) {
     val aliceCredentials = Credentials("Alice", "password")
     val initialEvents = listOf(CondorcetEvent.ListElectionsRequest(aliceCredentials))
     val eventLoop: EventLoop = EventLoopImpl()
-    val api: Api = ApiFake()
     val clock: Clock = ClockImpl()
+    val api: Api = ApiFake(clock)
     val environment: Environment = EnvironmentImpl(api, clock)
     requireAll(require.context("src", true, js("/\\.css$/")))
     render(document.getElementById("root")) {

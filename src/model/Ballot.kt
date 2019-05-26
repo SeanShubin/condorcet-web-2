@@ -1,9 +1,9 @@
 package model
 
+import kotlin.js.Date
+
 data class Ballot(val electionName: String,
                   val voterName: String,
-                  val rankings: List<Ranking>) {
-    enum class Action(val displayName: String) {
-        CAST("cast"), EDIT("edit"), VIEW("view")
-    }
-}
+                  val whenCast: Date?,
+                  val isActive: Boolean,
+                  val rankings: List<Ranking>)

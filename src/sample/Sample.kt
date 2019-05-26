@@ -37,7 +37,11 @@ class Sample {
     fun ranking(): Ranking =
             Ranking(rank(), candidateName())
     fun ballot(): Ballot =
-            Ballot(electionName(), voterName(), rankings(3))
+            Ballot(electionName(),
+                    voterName(),
+                    null,
+                    true,
+                    rankings(3))
     fun ballots(howMany: Int): List<Ballot> =
             ((1..howMany).map { ballot() })
 
@@ -67,11 +71,6 @@ class Sample {
     }
 
     fun electionStatus(): ElectionStatus {
-        index++
-        return enumValue(index)
-    }
-
-    fun ballotAction(): Ballot.Action {
         index++
         return enumValue(index)
     }

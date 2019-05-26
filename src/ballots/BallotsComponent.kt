@@ -37,9 +37,6 @@ fun RBuilder.ballots(sendEvent: (CondorcetEvent) -> Unit,
                 thead {
                     tr {
                         th {
-                            +"ballot"
-                        }
-                        th {
                             +"election"
                         }
                     }

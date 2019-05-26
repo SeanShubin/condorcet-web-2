@@ -1,11 +1,12 @@
 package api
 
+import clock.Clock
 import model.*
 import model.StringConversions.clean
 import kotlin.js.Date
 import kotlin.js.Promise
 
-class ApiFake : Api {
+class ApiFake(private val clock: Clock) : Api {
     private val users = mutableListOf<User>()
     private val elections = mutableListOf<Election>()
     private val allBallots: MutableList<Ballot> = mutableListOf()
@@ -329,13 +330,22 @@ class ApiFake : Api {
     private fun createBallots(electionName: String) {
         val voters = votersByElection.getValue(electionName)
         val candidates = candidatesByElection.getValue(electionName)
+        val election = findElectionByName(electionName)
         for (voter in voters) {
-            createBallot(electionName, voter, candidates)
+            createBallot(election, voter, candidates)
         }
     }
 
-    private fun createBallot(electionName: String, voterName: String, candidates: List<String>) {
-        val ballot = Ballot(electionName, voterName, rankings = createRankings(candidates))
+    private fun createBallot(election: Election, voterName: String, candidates: List<String>) {
+        val whenCast = null
+        val isActive = election.end == null || clock.now().getTime() < election.end.getTime()
+        val rankings = createRankings(candidates)
+        val ballot = Ballot(
+                election.name,
+                voterName,
+                whenCast,
+                isActive,
+                rankings)
         allBallots.add(ballot)
     }
 
