@@ -13,6 +13,7 @@ data class Election(val ownerName: String,
                     val voterCount: Int = 0) {
     val endString get() = dateToString(end)
     val secretBallotString get() = booleanToString(secretBallot)
+    fun isActiveAsOf(now: Date): Boolean = end == null || now.getTime() < end.getTime()
 
     fun startNow() = copy(status = status.start(this))
     fun endNow() = copy(status = status.end(this))

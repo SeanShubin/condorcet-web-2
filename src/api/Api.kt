@@ -1,9 +1,6 @@
 package api
 
-import model.Ballot
-import model.Credentials
-import model.Election
-import model.Voters
+import model.*
 import kotlin.js.Promise
 
 interface Api {
@@ -24,7 +21,7 @@ interface Api {
     fun updateEligibleVotersToAll(credentials: Credentials, electionName: String): Promise<Voters>
     fun listBallots(credentials: Credentials, voterName: String): Promise<List<Ballot>>
     fun getBallot(credentials: Credentials, electionName: String, voterName: String): Promise<Ballot>
-    fun castBallot(credentials: Credentials, electionName: String, voterName: String, ballot: Ballot): Promise<Unit>
+    fun castBallot(credentials: Credentials, electionName: String, voterName: String, rankings: List<Ranking>): Promise<Ballot>
     fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String?): Promise<Election>
     fun setSecretBallot(credentials: Credentials, electionName: String, secretBallot: Boolean): Promise<Election>
 }

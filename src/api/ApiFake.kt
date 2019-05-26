@@ -2,6 +2,7 @@ package api
 
 import clock.Clock
 import model.*
+import model.Ranking.Companion.normalize
 import model.StringConversions.clean
 import kotlin.js.Date
 import kotlin.js.Promise
@@ -14,6 +15,7 @@ class ApiFake(private val clock: Clock) : Api {
     private val votersByElection: MutableMap<String, List<String>> = mutableMapOf()
 
     private data class ElectionAndIndex(val election: Election, val index: Int)
+    private data class BallotAndIndex(val ballot: Ballot, val index: Int)
 
     init {
         // credentials
@@ -44,6 +46,7 @@ class ApiFake(private val clock: Clock) : Api {
         updateCandidates(aliceCredentials, "Dystopia", listOf("1984", "Fahrenheit 451", "Brave New World"))
         updateEligibleVoters(aliceCredentials, "Dystopia", listOf("Alice", "Bob", "Carol", "Dave"))
         doneEditingElection(aliceCredentials, "Dystopia")
+
 
         // Pet
         createElection(bobCredentials, "Pet")
@@ -127,7 +130,6 @@ class ApiFake(private val clock: Clock) : Api {
     override fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Election> =
             handleException {
                 updateElection(credentials, electionName) { election ->
-                    createBallots(electionName)
                     election.startNow()
                 }
             }
@@ -206,10 +208,9 @@ class ApiFake(private val clock: Clock) : Api {
                 val user = assertCredentialsValid(credentials)
                 val voter = findUserByName(voterName)
                 assertUserIsVoter(user, voter)
-                val ballotsForVoter = allBallots.filter { ballot ->
-                    ballot.voterName == voterName
-                }
-                ballotsForVoter
+                val elections = electionsEligibleForVoter(voter.name)
+                val ballots = elections.map { ballotForElectionAndVoter(it, voter.name) }
+                ballots
             }
 
     override fun getBallot(credentials: Credentials, electionName: String, voterName: String): Promise<Ballot> =
@@ -217,15 +218,30 @@ class ApiFake(private val clock: Clock) : Api {
                 val user = assertCredentialsValid(credentials)
                 val voter = findUserByName(voterName)
                 assertUserIsVoter(user, voter)
+
                 TODO("not implemented - getBallot")
             }
 
-    override fun castBallot(credentials: Credentials, electionName: String, voterName: String, ballot: Ballot): Promise<Unit> =
+    override fun castBallot(credentials: Credentials,
+                            electionName: String,
+                            voterName: String,
+                            rankings: List<Ranking>): Promise<Ballot> =
             handleException {
                 val user = assertCredentialsValid(credentials)
                 val voter = findUserByName(voterName)
                 assertUserIsVoter(user, voter)
-                TODO("not implemented - castBallot")
+                assertVoterIsEligibleToVoteInElection(voterName, electionName)
+                val existingBallotAndIndex = searchBallotAndIndex(electionName, voterName)
+                val now = clock.now()
+                val election = findElectionByName(electionName)
+                val ballot = Ballot(electionName, voterName, now, election.isActiveAsOf(now), rankings.normalize())
+                if (existingBallotAndIndex == null) {
+                    allBallots.add(ballot)
+                } else {
+                    val (_, index) = existingBallotAndIndex
+                    allBallots[index] = ballot
+                }
+                ballot
             }
 
     override fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String?): Promise<Election> =
@@ -275,6 +291,16 @@ class ApiFake(private val clock: Clock) : Api {
             searchElectionAndIndexByName(electionName)
                     ?: throw RuntimeException("Election with name '$electionName' not found")
 
+    private fun searchBallotAndIndex(electionName: String, voterName: String): BallotAndIndex? {
+        val index = allBallots.indexOfFirst { ballot ->
+            ballot.electionName == electionName && ballot.voterName == voterName
+        }
+        return if (index == -1) null else BallotAndIndex(allBallots[index], index)
+    }
+
+    private fun searchBallot(electionName: String, voterName: String): Ballot? =
+            searchBallotAndIndex(electionName, voterName)?.ballot
+
     private fun assertUserNameDoesNotExist(name: String) {
         if (users.find { it.name == name } != null) {
             throw RuntimeException("User named '$name' already exists")
@@ -296,6 +322,13 @@ class ApiFake(private val clock: Clock) : Api {
     private fun assertUserIsVoter(user: User, voter: User) {
         if (user.name != voter.name) {
             throw RuntimeException("User '${user.name}' is not allowed view details for '${voter.name}'")
+        }
+    }
+
+    private fun assertVoterIsEligibleToVoteInElection(voterName: String, electionName: String) {
+        val eligibleVoters = votersByElection.getValue(electionName)
+        if (!eligibleVoters.contains(voterName)) {
+            throw RuntimeException("Voter '$voterName' is not eligible to vote in election '$electionName'")
         }
     }
 
@@ -327,31 +360,27 @@ class ApiFake(private val clock: Clock) : Api {
         return election
     }
 
-    private fun createBallots(electionName: String) {
-        val voters = votersByElection.getValue(electionName)
-        val candidates = candidatesByElection.getValue(electionName)
-        val election = findElectionByName(electionName)
-        for (voter in voters) {
-            createBallot(election, voter, candidates)
-        }
-    }
+    private fun electionsEligibleForVoter(voterName: String): List<String> =
+            votersByElection.filterValues { voters ->
+                voters.contains(voterName)
+            }.map { it.key }
 
-    private fun createBallot(election: Election, voterName: String, candidates: List<String>) {
+    private fun ballotForElectionAndVoter(electionName: String, voterName: String): Ballot =
+            searchBallot(electionName, voterName) ?: createEmptyBallot(electionName, voterName)
+
+    private fun createEmptyBallot(electionName: String, voterName: String): Ballot {
+        val election = findElectionByName(electionName)
         val whenCast = null
         val isActive = election.end == null || clock.now().getTime() < election.end.getTime()
-        val rankings = createRankings(candidates)
+        val rankings = emptyList<Ranking>()
         val ballot = Ballot(
                 election.name,
                 voterName,
                 whenCast,
                 isActive,
                 rankings)
-        allBallots.add(ballot)
+        return ballot
     }
-
-    private fun createRankings(candidates: List<String>): List<Ranking> = candidates.map(::createRanking)
-
-    private fun createRanking(candidateName: String): Ranking = Ranking(rank = null, candidateName = candidateName)
 
     private fun <T> handleException(f: () -> T): Promise<T> =
             try {
