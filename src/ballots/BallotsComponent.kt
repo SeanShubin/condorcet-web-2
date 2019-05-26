@@ -6,6 +6,7 @@ import event.CondorcetEvent.NavHomeRequest
 import kotlinx.html.js.onClickFunction
 import model.Ballot
 import model.Credentials
+import model.StringConversions
 import react.RBuilder
 import react.dom.*
 
@@ -37,20 +38,33 @@ fun RBuilder.ballots(sendEvent: (CondorcetEvent) -> Unit,
                 thead {
                     tr {
                         th {
+                            +"status"
+                        }
+                        th {
                             +"election"
+                        }
+                        th {
+                            +"when cast"
                         }
                     }
                 }
                 tbody {
-                    ballots.forEach {
+                    ballots.forEach { ballot ->
                         tr {
                             td {
+                                +if (ballot.isActive) "active" else "completed"
+                            }
+                            td {
                                 a(href = "#") {
-                                    +"edit"
+                                    +ballot.electionName
                                 }
                             }
                             td {
-                                +it.electionName
+                                if (ballot.whenCast == null) {
+                                    +"not yet"
+                                } else {
+                                    +StringConversions.dateToString(ballot.whenCast)
+                                }
                             }
                         }
                     }
