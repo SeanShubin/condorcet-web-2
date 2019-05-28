@@ -16,7 +16,7 @@ import kotlin.browser.document
 
 fun main(args: Array<String>) {
     val aliceCredentials = Credentials("Alice", "password")
-    val initialEvents = listOf(CondorcetEvent.ListBallotsRequest(aliceCredentials))
+    val initialEvents = listOf(CondorcetEvent.ListCandidatesRequest(aliceCredentials, "Favorite Ice Cream"))
     val eventLoop: EventLoop = EventLoopImpl()
     val clock: Clock = ClockImpl()
     val db: Db = InMemoryDb()

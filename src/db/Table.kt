@@ -1,6 +1,6 @@
 package db
 
-interface Table<PkType, T : HasPrimaryKey<PkType>> {
+interface Table<PkType, T : TableRow<PkType>> {
     fun listAll():List<T>
     fun add(value: T)
     fun update(value: T)
