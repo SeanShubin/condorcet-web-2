@@ -4,7 +4,7 @@ import app.Environment
 import event.CondorcetEvent
 import event.CondorcetEvent.*
 import model.Credentials
-import model.StringConversions.stringToDate
+import util.StringConversions.stringToDate
 
 interface Effect {
     fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment)
@@ -140,17 +140,6 @@ interface Effect {
             }.catch { throwable ->
                 handleEvent(LoadElectionFailure(throwable.message
                         ?: "Unable to lock election $electionName for further edits"))
-            }
-        }
-    }
-
-    data class StartElectionNow(val credentials: Credentials, val electionName: String) : Effect {
-        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
-            environment.api.startElection(credentials, electionName).then { election ->
-                handleEvent(LoadElectionSuccess(credentials, election))
-            }.catch { throwable ->
-                handleEvent(LoadElectionFailure(throwable.message
-                        ?: "Unable to start election $electionName manually"))
             }
         }
     }

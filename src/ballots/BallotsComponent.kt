@@ -6,9 +6,9 @@ import event.CondorcetEvent.NavHomeRequest
 import kotlinx.html.js.onClickFunction
 import model.Ballot
 import model.Credentials
-import model.StringConversions
 import react.RBuilder
 import react.dom.*
+import util.StringConversions
 
 fun RBuilder.ballots(sendEvent: (CondorcetEvent) -> Unit,
                      credentials: Credentials,

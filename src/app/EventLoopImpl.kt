@@ -86,7 +86,6 @@ class EventLoopImpl : EventLoop {
                     page.navVoters(event.credentials, event.electionName, event.voters, event.isAllVoters)
                 }
                 is DoneEditingRequest -> effects(Effect.DoneEditing(event.credentials, event.electionName))
-                is StartNowRequest -> effects(Effect.StartElectionNow(event.credentials, event.electionName))
                 is EndNowRequest -> effects(Effect.EndElectionNow(event.credentials, event.electionName))
                 is UpdateCandidatesRequest -> effects(Effect.SetCandidates(event.credentials, event.electionName, event.candidates))
                 is UpdateVotersRequest -> effects(Effect.SetVoters(event.credentials, event.electionName, event.voters))

@@ -1,7 +1,7 @@
 package model
 
-import model.StringConversions.booleanToString
-import model.StringConversions.dateToString
+import util.StringConversions.booleanToString
+import util.StringConversions.dateToString
 import kotlin.js.Date
 
 data class Election(val ownerName: String,
