@@ -135,7 +135,7 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
     override fun listCandidates(credentials: Credentials, electionName: String): Promise<List<String>> =
             handleException {
                 assertCredentialsValid(credentials)
-                db.candidate.listWhere { election -> election.name == electionName }.map { it.name }
+                db.candidate.listWhere { it.electionName == electionName }.map { it.name }
             }
 
     override fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<List<String>> =

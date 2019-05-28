@@ -1,6 +1,6 @@
 package db
 
-class InMemoryTable<PkType, T : HasPrimaryKey<PkType>>(val name: String) : Table<PkType, T> {
+class InMemoryTable<PkType, T : TableRow<PkType>>(val name: String) : Table<PkType, T> {
     private val rows = mutableListOf<T>()
     private val pkIndex = mutableMapOf<PkType, T>()
 

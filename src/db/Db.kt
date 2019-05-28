@@ -15,53 +15,58 @@ interface Db {
 
     data class User(val name: String,
                     val email: String,
-                    val password: String) : HasPrimaryKey<String> {
+                    val password: String) : TableRow<String> {
         override val primaryKey: String get() = name
+        override val cells: List<Any?> = listOf(name, email, password)
     }
 
     data class Election(val owner: String,
                         val name: String,
                         val end: String?,
                         val secret: Boolean,
-                        val status: Status) : HasPrimaryKey<String> {
+                        val status: Status) : TableRow<String> {
         override val primaryKey: String get() = name
+        override val cells: List<Any?> = listOf(owner, name, end, secret, status)
     }
 
     data class Candidate(val name: String,
-                         val electionName: String) : HasPrimaryKey<Candidate> {
+                         val electionName: String) : TableRow<Candidate> {
         override val primaryKey: Candidate get() = this
+        override val cells: List<Any?> = listOf(name, electionName)
     }
 
     data class Voter(val userName: String,
-                     val electionName: String) : HasPrimaryKey<Voter> {
+                     val electionName: String) : TableRow<Voter> {
         override val primaryKey: Voter get() = this
+        override val cells: List<Any?> = listOf(userName, electionName)
     }
 
     data class Ballot(val voterName: String,
                       val electionName: String,
-                      val whenCast: String?) : HasPrimaryKey<Voter> {
+                      val whenCast: String?) : TableRow<Voter> {
         override val primaryKey: Voter get() = Voter(voterName, electionName)
+        override val cells: List<Any?> = listOf(voterName, electionName, whenCast)
     }
 
     data class Ranking(val voterName: String,
                        val electionName: String,
                        val candidateName: String,
-                       val rank: Int) : HasPrimaryKey<Ranking.RankingPrimaryKey> {
+                       val rank: Int) : TableRow<Ranking.RankingPrimaryKey> {
         data class RankingPrimaryKey(val userName: String,
                                      val electionName: String,
                                      val candidateName: String)
 
-        override val primaryKey: RankingPrimaryKey
-            get() =
-                RankingPrimaryKey(voterName, electionName, candidateName)
+        override val primaryKey: RankingPrimaryKey = RankingPrimaryKey(voterName, electionName, candidateName)
+        override val cells: List<Any?> = listOf(voterName, electionName, candidateName, rank)
     }
 
     data class Tally(val electionName: String,
                      val candidateName: String,
-                     val rank: Int) : HasPrimaryKey<Tally.TallyPrimaryKey> {
+                     val rank: Int) : TableRow<Tally.TallyPrimaryKey> {
         data class TallyPrimaryKey(val electionName: String,
                                    val candidateName: String)
 
         override val primaryKey: TallyPrimaryKey get() = TallyPrimaryKey(electionName, candidateName)
+        override val cells: List<Any?> = listOf(electionName, candidateName, rank)
     }
 }
