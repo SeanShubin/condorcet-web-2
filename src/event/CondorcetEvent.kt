@@ -90,9 +90,6 @@ interface CondorcetEvent {
     data class DoneEditingRequest(val credentials: Credentials,
                                   val electionName: String) : CondorcetEvent
 
-    data class StartNowRequest(val credentials: Credentials,
-                               val electionName: String) : CondorcetEvent
-
     data class EndNowRequest(val credentials: Credentials,
                              val electionName: String) : CondorcetEvent
 

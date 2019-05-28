@@ -6,10 +6,10 @@ import kotlinx.html.ButtonType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import model.Credentials
-import model.StringConversions.toLines
 import org.w3c.dom.HTMLTextAreaElement
 import react.*
 import react.dom.*
+import util.StringConversions.toLines
 import kotlin.math.max
 
 interface CandidatesProps : RProps {

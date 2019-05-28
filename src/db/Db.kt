@@ -37,13 +37,13 @@ interface Db {
         override val primaryKey: Voter get() = this
     }
 
-    data class Ballot(val userName: String,
+    data class Ballot(val voterName: String,
                       val electionName: String,
                       val whenCast: String?) : HasPrimaryKey<Voter> {
-        override val primaryKey: Voter get() = Voter(userName, electionName)
+        override val primaryKey: Voter get() = Voter(voterName, electionName)
     }
 
-    data class Ranking(val userName: String,
+    data class Ranking(val voterName: String,
                        val electionName: String,
                        val candidateName: String,
                        val rank: Int) : HasPrimaryKey<Ranking.RankingPrimaryKey> {
@@ -53,7 +53,7 @@ interface Db {
 
         override val primaryKey: RankingPrimaryKey
             get() =
-                RankingPrimaryKey(userName, electionName, candidateName)
+                RankingPrimaryKey(voterName, electionName, candidateName)
     }
 
     data class Tally(val electionName: String,

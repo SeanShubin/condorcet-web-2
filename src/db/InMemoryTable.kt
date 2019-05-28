@@ -1,8 +1,8 @@
 package db
 
-class MemTable<PkType, T : HasPrimaryKey<PkType>>(val name: String) : Table<PkType, T> {
-    val rows = mutableListOf<T>()
-    val pkIndex = mutableMapOf<PkType, T>()
+class InMemoryTable<PkType, T : HasPrimaryKey<PkType>>(val name: String) : Table<PkType, T> {
+    private val rows = mutableListOf<T>()
+    private val pkIndex = mutableMapOf<PkType, T>()
 
     override fun add(value: T) {
         if (pkIndex.containsKey(value.primaryKey))
@@ -11,7 +11,7 @@ class MemTable<PkType, T : HasPrimaryKey<PkType>>(val name: String) : Table<PkTy
         pkIndex[value.primaryKey] = value
     }
 
-    override fun list(): List<T> = rows
+    override fun listAll(): List<T> = rows
     override fun remove(key: PkType) {
         rows.removeAll { it.primaryKey == key }
         pkIndex.remove(key)
@@ -23,13 +23,5 @@ class MemTable<PkType, T : HasPrimaryKey<PkType>>(val name: String) : Table<PkTy
             throw RuntimeException("Primary key $value does not exist for table $name")
         rows[index] = value
         pkIndex[value.primaryKey] = value
-    }
-
-    override fun addOrUpdate(value: T) {
-        if (pkIndex.containsKey(value.primaryKey)) {
-            update(value)
-        } else {
-            add(value)
-        }
     }
 }

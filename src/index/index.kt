@@ -5,6 +5,8 @@ import api.ApiFake
 import app.*
 import clock.Clock
 import clock.ClockImpl
+import db.Db
+import db.InMemoryDb
 import event.CondorcetEvent
 import kotlinext.js.require
 import kotlinext.js.requireAll
@@ -17,7 +19,8 @@ fun main(args: Array<String>) {
     val initialEvents = listOf(CondorcetEvent.ListBallotsRequest(aliceCredentials))
     val eventLoop: EventLoop = EventLoopImpl()
     val clock: Clock = ClockImpl()
-    val api: Api = ApiFake(clock)
+    val db: Db = InMemoryDb()
+    val api: Api = ApiFake(clock, db)
     val environment: Environment = EnvironmentImpl(api, clock)
     requireAll(require.context("src", true, js("/\\.css$/")))
     render(document.getElementById("root")) {

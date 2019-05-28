@@ -11,7 +11,6 @@ interface Api {
     fun listElections(credentials: Credentials): Promise<List<Election>>
     fun getElection(credentials: Credentials, electionName: String): Promise<Election>
     fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Election>
-    fun startElection(credentials: Credentials, electionName: String): Promise<Election>
     fun endElection(credentials: Credentials, electionName: String): Promise<Election>
     fun listCandidates(credentials: Credentials, electionName: String): Promise<List<String>>
     fun updateCandidates(credentials: Credentials, electionName: String, candidates: List<String>): Promise<List<String>>
