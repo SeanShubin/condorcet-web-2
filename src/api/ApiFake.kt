@@ -206,14 +206,16 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
                 assertCredentialsValid(credentials)
                 assertUserIsVoter(credentials.name, voterName)
                 val ballots = db.ballot.listWhere { it.voterName == voterName }
-                ballots.map { it.toApi() }
+                val now = clock.now()
+                ballots.map { it.toApi(now) }
             }
 
     override fun getBallot(credentials: Credentials, electionName: String, voterName: String): Promise<Ballot> =
             handleException {
                 assertCredentialsValid(credentials)
                 assertUserIsVoter(credentials.name, voterName)
-                db.ballot.find(Db.Voter(voterName, electionName)).toApi()
+                val now = clock.now()
+                db.ballot.find(Db.Voter(voterName, electionName)).toApi(now)
             }
 
     override fun castBallot(credentials: Credentials,
@@ -224,13 +226,14 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
                 assertCredentialsValid(credentials)
                 assertUserIsVoter(credentials.name, voterName)
                 assertVoterIsEligibleToVoteInElection(voterName, electionName)
+                assertElectionIsActive(electionName, clock.now())
                 val now = clock.now()
                 db.ranking.removeWhere { it.electionName === electionName && it.voterName == voterName }
                 val newRankings = rankings.map { it.toDb(electionName, voterName) }
                 db.ranking.addAll(newRankings)
                 val ballot = Db.Ballot(voterName, electionName, now.toISOString())
                 db.ballot.addOrUpdate(ballot)
-                ballot.toApi()
+                ballot.toApi(now)
             }
 
     override fun setEndDate(credentials: Credentials, electionName: String, isoEndDate: String?): Promise<Election> =
@@ -291,10 +294,10 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
                     voterCount = db.voter.countWhere { it.electionName == name }
             )
 
-    private fun Db.Ballot.toApi(): Ballot {
-        val isActive = isElectionActive(electionName, clock.now())
+    private fun Db.Ballot.toApi(asOf: Date): Ballot {
         val rankings = db.ranking.listWhere { it.electionName == this.electionName && it.voterName == this.voterName }
         val apiRankings = rankings.map { it.toApi() }
+        val isActive = isElectionActive(electionName, asOf)
         return Ballot(electionName, voterName, whenCast?.toDate(), isActive, apiRankings)
     }
 
@@ -375,22 +378,28 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
         db.voter.addAll(newVoters)
     }
 
-    private fun isElectionActive(electionName: String, asOf: Date): Boolean {
+    private fun assertElectionIsActive(electionName: String, asOf: Date) {
+        updateActive(electionName, asOf)
+        if (!isElectionActive(electionName, asOf)) {
+            throw RuntimeException("Election $electionName is not active")
+        }
+    }
+
+    private fun updateActive(electionName: String, asOf: Date) {
         val election = db.election.find(electionName)
-        return if (election.status == Db.Status.LIVE) {
+        if (election.status == Db.Status.LIVE) {
             val electionEndTime = election.end
-            if (electionEndTime == null) {
-                true
-            } else {
-                if (asOf.getTime() < electionEndTime.toDate().getTime()) {
-                    true
-                } else {
+            if (electionEndTime != null) {
+                if (asOf.getTime() > electionEndTime.toDate().getTime()) {
                     db.election.update(election.copy(status = Db.Status.COMPLETE))
-                    false
                 }
             }
-        } else {
-            false
         }
+    }
+
+    private fun isElectionActive(electionName: String, asOf: Date): Boolean {
+        updateActive(electionName, asOf)
+        val election = db.election.find(electionName)
+        return election.status == Db.Status.LIVE
     }
 }
