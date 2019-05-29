@@ -28,36 +28,32 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credential
                 attrs["value"] = ballot.voterName
             }
         }
-        table {
-            thead {
-                tr {
-                    th {
-                        +"rank"
-                    }
-                    th {
-
-                        +"candidate"
-                    }
+        fieldSet(classes = "single-column-flex") {
+            div(classes = "two-column-grid") {
+                span {
+                    +"rank"
                 }
-            }
-            tbody {
+                span {
+                    +"candidate"
+                }
                 for (ranking in ballot.rankings) {
-                    tr {
-                        td {
-                            input {
-                                attrs["value"] = ranking.rank ?: ""
-                                attrs["size"] = 3
+                    span {
+                        input {
+                            attrs {
+                                value = ranking.rank.toString()
+                                size = "3"
                             }
                         }
-                        td {
-                            +ranking.candidateName
-                        }
+                    }
+                    span {
+                        +ranking.candidateName
                     }
                 }
+
             }
-        }
-        button {
-            +"Cast Ballot"
+            button {
+                +"Cast Ballot"
+            }
         }
         a(href = "#") {
             +"Ballots"
