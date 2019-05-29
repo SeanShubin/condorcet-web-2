@@ -193,4 +193,17 @@ interface Effect {
             }
         }
     }
+
+    data class LoadBallot(val credentials: Credentials, val electionName: String, val voterName: String) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.getBallot(credentials, electionName, voterName).then { ballot ->
+                handleEvent(LoadBallotSuccess(credentials, ballot))
+            }.catch { throwable ->
+                handleEvent(LoadBallotFailure(throwable.message
+                        ?: "Unable to load ballot for election $electionName and voter $voterName"))
+
+            }
+        }
+    }
+
 }
