@@ -57,11 +57,13 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
         updateEligibleVoters(daveCredentials, "Fantasy", listOf("Alice", "Bob", "Carol", "Dave"))
 
         // Voting
+        doneEditingElection(aliceCredentials, "Favorite Ice Cream")
         castBallot(aliceCredentials, "Favorite Ice Cream", "Alice", listOf(
                 Ranking(1, "Vanilla"),
                 Ranking(2, "Chocolate"),
                 Ranking(3, "Strawberry")
         ))
+        doneEditingElection(aliceCredentials, "Government")
         castBallot(aliceCredentials, "Government", "Alice", listOf(
                 Ranking(1, "Aristocracy"),
                 Ranking(2, "Monarchy"),
