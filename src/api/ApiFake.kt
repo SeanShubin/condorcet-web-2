@@ -55,6 +55,18 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
         createElection(daveCredentials, "Fantasy")
         updateCandidates(daveCredentials, "Fantasy", listOf("Marvel Cinematic Universe", "Lord of the Rings", "Harry Potter"))
         updateEligibleVoters(daveCredentials, "Fantasy", listOf("Alice", "Bob", "Carol", "Dave"))
+
+        // Voting
+        castBallot(aliceCredentials, "Favorite Ice Cream", "Alice", listOf(
+                Ranking(1, "Vanilla"),
+                Ranking(2, "Chocolate"),
+                Ranking(3, "Strawberry")
+        ))
+        castBallot(aliceCredentials, "Government", "Alice", listOf(
+                Ranking(1, "Aristocracy"),
+                Ranking(2, "Monarchy"),
+                Ranking(3, "Democracy")
+        ))
     }
 
     override fun login(nameOrEmail: String, password: String): Promise<Credentials> =
@@ -251,7 +263,7 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
     }
 
     private fun assertVoterIsEligibleToVoteInElection(voterName: String, electionName: String) {
-        val eligibleVoters = db.voter.listWhere { it.electionName == voterName }.map { it.userName }
+        val eligibleVoters = db.voter.listWhere { it.electionName == electionName }.map { it.userName }
         if (!eligibleVoters.contains(voterName)) {
             throw RuntimeException("Voter '$voterName' is not eligible to vote in election '$electionName'")
         }
