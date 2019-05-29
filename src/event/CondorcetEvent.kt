@@ -31,16 +31,19 @@ interface CondorcetEvent {
     object NavPrototypeRequest : CondorcetEvent {
         override fun toString(): String = "NavPrototypeRequest"
     }
+
     data class Error(val message: String) : CondorcetEvent
     data class ListElectionsRequest(val credentials: Credentials) : CondorcetEvent
     data class ListElectionsSuccess(val credentials: Credentials,
                                     val elections: List<Election>) : CondorcetEvent
+
     data class ListElectionsFailure(val message: String) : CondorcetEvent
     data class CreateElectionRequest(val credentials: Credentials,
                                      val electionName: String) : CondorcetEvent
 
     data class CreateElectionSuccess(val credentials: Credentials,
                                      val election: Election) : CondorcetEvent
+
     data class CreateElectionFailure(val message: String) : CondorcetEvent
     data class CopyElectionRequest(val credentials: Credentials,
                                    val newElectionName: String,
@@ -51,11 +54,13 @@ interface CondorcetEvent {
 
     data class LoadElectionSuccess(val credentials: Credentials,
                                    val election: Election) : CondorcetEvent
+
     data class LoadElectionFailure(val message: String) : CondorcetEvent
     data class ListBallotsRequest(val credentials: Credentials) : CondorcetEvent
     data class ListBallotsSuccess(val credentials: Credentials,
                                   val voterName: String,
                                   val ballots: List<Ballot>) : CondorcetEvent
+
     data class ListBallotsFailure(val message: String) : CondorcetEvent
     data class ListCandidatesRequest(val credentials: Credentials,
                                      val electionName: String) : CondorcetEvent
@@ -63,6 +68,7 @@ interface CondorcetEvent {
     data class ListCandidatesSuccess(val credentials: Credentials,
                                      val electionName: String,
                                      val candidates: List<String>) : CondorcetEvent
+
     data class ListCandidatesFailure(val message: String) : CondorcetEvent
     data class ListVotersRequest(val credentials: Credentials,
                                  val electionName: String) : CondorcetEvent
@@ -100,6 +106,15 @@ interface CondorcetEvent {
     data class UpdateElectionSecretBallotRequest(val credentials: Credentials,
                                                  val electionName: String,
                                                  val checked: Boolean) : CondorcetEvent
+
     data class StartDateChanged(val startDate: String) : CondorcetEvent
     data class EndDateChanged(val endDate: String) : CondorcetEvent
+    data class LoadBallotRequest(val credentials: Credentials,
+                                 val electionName: String,
+                                 val voterName: String) : CondorcetEvent
+
+    data class LoadBallotSuccess(val credentials: Credentials,
+                                 val ballot: Ballot) : CondorcetEvent
+
+    data class LoadBallotFailure(val message: String) : CondorcetEvent
 }

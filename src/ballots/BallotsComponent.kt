@@ -57,6 +57,12 @@ fun RBuilder.ballots(sendEvent: (CondorcetEvent) -> Unit,
                             td {
                                 a(href = "#") {
                                     +ballot.electionName
+                                    attrs.onClickFunction = {
+                                        sendEvent(CondorcetEvent.LoadBallotRequest(
+                                                credentials,
+                                                ballot.electionName,
+                                                voterName))
+                                    }
                                 }
                             }
                             td {

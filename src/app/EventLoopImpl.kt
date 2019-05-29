@@ -90,6 +90,10 @@ class EventLoopImpl : EventLoop {
                 is UpdateCandidatesRequest -> effects(Effect.SetCandidates(event.credentials, event.electionName, event.candidates))
                 is UpdateVotersRequest -> effects(Effect.SetVoters(event.credentials, event.electionName, event.voters))
                 is UpdateToAllVotersRequest -> effects(Effect.SetVotersToAll(event.credentials, event.electionName))
+                is LoadBallotRequest -> effects(Effect.LoadBallot(event.credentials, event.electionName, event.voterName))
+                is LoadBallotSuccess -> updatePage {
+                    page.navBallot(event.credentials, event.ballot)
+                }
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {

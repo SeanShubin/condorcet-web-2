@@ -35,6 +35,8 @@ interface Page {
                   voters: List<String>,
                   isAllVoters: Boolean): Page = VotersPage(credentials, electionName, voters, isAllVoters)
 
+    fun navBallot(credentials: Credentials, ballot: Ballot): Page = BallotPage(credentials, ballot)
+
     companion object {
         val initial = LoginPage(errorMessage = null)
     }
