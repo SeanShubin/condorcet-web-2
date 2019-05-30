@@ -13,7 +13,6 @@ interface Page {
     fun navLogin(): Page = LoginPage(errorMessage = null)
     fun navRegister(): Page = RegisterPage(errorMessage = null)
     fun navHome(credentials: Credentials): Page = HomePage(credentials)
-    fun navPrototype(): Page = PrototypePage
     fun navError(message: String): Page = UnexpectedErrorPage(message)
     fun loginFailure(message: String): Page = LoginPage(errorMessage = message)
     fun registerFailure(message: String): Page = RegisterPage(errorMessage = message)
@@ -108,10 +107,6 @@ data class VotersPage(val credentials: Credentials,
                       val voters: List<String>,
                       val isAllVoters: Boolean) : Page {
     override val name: String = "voters"
-}
-
-object PrototypePage : Page {
-    override val name: String = "prototype"
 }
 
 data class UnexpectedErrorPage(val message: String) : Page {

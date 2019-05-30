@@ -4,6 +4,7 @@ import api.Api
 import ballot.ballot
 import ballots.ballots
 import candidates.candidates
+import debug.debug
 import election.election
 import elections.elections
 import error.errorPage
@@ -11,7 +12,6 @@ import event.CondorcetEvent
 import home.home
 import login.login
 import pages.*
-import prototype.prototype
 import react.*
 import register.register
 import state.Model
@@ -63,9 +63,8 @@ class App : RComponent<AppProps, AppState>() {
             is VotersPage -> voters(::handleEvent, page.credentials, page.electionName, page.voters, page.isAllVoters)
             is BallotsPage -> ballots(::handleEvent, page.credentials, page.voterName, page.ballots)
             is BallotPage -> ballot(::handleEvent, page.credentials, page.ballot)
-            is PrototypePage -> prototype(::handleEvent)
             is UnexpectedErrorPage -> errorPage(::handleEvent, page.message)
-            else -> prototype(::handleEvent)
+            else -> debug(::handleEvent, state.model)
         }
     }
 }
