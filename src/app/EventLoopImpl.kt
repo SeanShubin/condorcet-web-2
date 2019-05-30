@@ -40,9 +40,6 @@ class EventLoopImpl : EventLoop {
                 is NavHomeRequest -> updatePage {
                     page.navHome(event.credentials)
                 }
-                is NavPrototypeRequest -> updatePage {
-                    page.navPrototype()
-                }
                 is Error -> updatePage {
                     page.navError(event.message)
                 }
