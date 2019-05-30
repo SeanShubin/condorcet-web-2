@@ -6,7 +6,7 @@ import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import model.Ballot
 import model.Credentials
-import org.w3c.dom.HTMLTextAreaElement
+import org.w3c.dom.HTMLInputElement
 import react.RBuilder
 import react.dom.*
 
@@ -50,7 +50,7 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credential
                                 value = ranking.rank?.toString() ?: ""
                                 size = "3"
                                 onChangeFunction = { event ->
-                                    val target = event.target as HTMLTextAreaElement
+                                    val target = event.target as HTMLInputElement
                                     sendEvent(RankChanged(target.value, ranking.candidateName))
                                 }
                             }
