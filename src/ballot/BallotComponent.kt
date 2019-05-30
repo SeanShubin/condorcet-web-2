@@ -4,13 +4,13 @@ import event.CondorcetEvent
 import event.CondorcetEvent.*
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
-import model.Ballot
 import model.Credentials
 import org.w3c.dom.HTMLInputElement
+import pages.BallotPage
 import react.RBuilder
 import react.dom.*
 
-fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credentials, ballot: Ballot) {
+fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credentials, ballot: BallotPage) {
     div(classes = "single-column-flex") {
         h1 {
             +"Ballot"
@@ -43,15 +43,17 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credential
                 span {
                     +"candidate"
                 }
-                for (ranking in ballot.rankings) {
+
+                for (rankingWithIndex in ballot.rankings.withIndex()) {
+                    val (index, ranking) = rankingWithIndex
                     span {
                         input {
                             attrs {
-                                value = ranking.rank?.toString() ?: ""
+                                value = ranking.rank
                                 size = "3"
                                 onChangeFunction = { event ->
                                     val target = event.target as HTMLInputElement
-                                    sendEvent(RankChanged(target.value, ranking.candidateName))
+                                    sendEvent(RankChanged(index, target.value))
                                 }
                             }
                         }
@@ -70,7 +72,7 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credential
             +"Ballots"
             attrs {
                 onClickFunction = {
-                    sendEvent(CondorcetEvent.ListBallotsRequest(credentials))
+                    sendEvent(ListBallotsRequest(credentials))
                 }
             }
         }
@@ -78,7 +80,7 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credential
             +"Election"
             attrs {
                 onClickFunction = {
-                    sendEvent(CondorcetEvent.LoadElectionRequest(credentials, ballot.electionName))
+                    sendEvent(LoadElectionRequest(credentials, ballot.electionName))
                 }
             }
         }
@@ -86,7 +88,7 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credential
             +"Elections"
             attrs {
                 onClickFunction = {
-                    sendEvent(CondorcetEvent.ListElectionsRequest(credentials))
+                    sendEvent(ListElectionsRequest(credentials))
                 }
             }
         }

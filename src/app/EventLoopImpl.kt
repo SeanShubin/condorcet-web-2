@@ -91,6 +91,9 @@ class EventLoopImpl : EventLoop {
                 is LoadBallotSuccess -> updatePage {
                     page.navBallot(event.credentials, event.ballot)
                 }
+                is RankChanged -> updatePage {
+                    page.rankChanged(event.index, event.rank)
+                }
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {
