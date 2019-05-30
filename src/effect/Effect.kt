@@ -116,7 +116,6 @@ interface Effect {
     data class ListCandidates(val credentials: Credentials, val electionName: String) : Effect {
         override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
             environment.api.listCandidates(credentials, electionName).then { candidates ->
-                console.log("ListCandidates.candidates", candidates)
                 handleEvent(ListCandidatesSuccess(credentials, electionName, candidates))
             }.catch { throwable ->
                 handleEvent(ListCandidatesFailure(throwable.message ?: "Unable to list candidates for $electionName"))

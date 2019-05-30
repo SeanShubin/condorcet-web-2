@@ -1,11 +1,12 @@
 package ballot
 
 import event.CondorcetEvent
-import event.CondorcetEvent.LogoutRequest
-import event.CondorcetEvent.NavHomeRequest
+import event.CondorcetEvent.*
+import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import model.Ballot
 import model.Credentials
+import org.w3c.dom.HTMLTextAreaElement
 import react.RBuilder
 import react.dom.*
 
@@ -19,13 +20,19 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credential
                 +"Election"
             }
             input {
-                attrs["value"] = ballot.electionName
+                attrs {
+                    value = ballot.electionName
+                    readonly = true
+                }
             }
             span {
                 +"Voter"
             }
             input {
-                attrs["value"] = ballot.voterName
+                attrs {
+                    value = ballot.voterName
+                    readonly = true
+                }
             }
         }
         fieldSet(classes = "single-column-flex") {
@@ -40,8 +47,12 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, credentials: Credential
                     span {
                         input {
                             attrs {
-                                value = ranking.rank.toString()
+                                value = ranking.rank?.toString() ?: ""
                                 size = "3"
+                                onChangeFunction = { event ->
+                                    val target = event.target as HTMLTextAreaElement
+                                    sendEvent(RankChanged(target.value, ranking.candidateName))
+                                }
                             }
                         }
                     }

@@ -4,6 +4,7 @@ import model.*
 import kotlin.js.Promise
 
 interface Api {
+    fun initialize(): Promise<Unit>
     fun login(nameOrEmail: String, password: String): Promise<Credentials>
     fun register(name: String, email: String, password: String): Promise<Credentials>
     fun createElection(credentials: Credentials, electionName: String): Promise<Election>
