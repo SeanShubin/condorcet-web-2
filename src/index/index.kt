@@ -23,7 +23,9 @@ fun main(args: Array<String>) {
     val api: Api = ApiFake(clock, db)
     val environment: Environment = EnvironmentImpl(api, clock)
     requireAll(require.context("src", true, js("/\\.css$/")))
-    render(document.getElementById("root")) {
-        app(eventLoop, environment, api, initialEvents)
+    api.initialize().then {
+        render(document.getElementById("root")) {
+            app(eventLoop, environment, api, initialEvents)
+        }
     }
 }

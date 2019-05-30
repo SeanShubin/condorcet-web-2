@@ -9,7 +9,7 @@ import kotlin.js.Date
 import kotlin.js.Promise
 
 class ApiFake(private val clock: Clock, private val db: Db) : Api {
-    init {
+    override fun initialize(): Promise<Unit> {
         // credentials
         val aliceCredentials = Credentials("Alice", "password")
         val bobCredentials = Credentials("Bob", "password")
@@ -31,20 +31,17 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
         createElection(aliceCredentials, "Government")
         updateCandidates(aliceCredentials, "Government", listOf("Monarchy", "Aristocracy", "Democracy"))
         updateEligibleVoters(aliceCredentials, "Government", listOf("Alice", "Bob", "Carol", "Dave"))
-        doneEditingElection(aliceCredentials, "Government")
 
         // Dystopia
         createElection(aliceCredentials, "Dystopia")
         updateCandidates(aliceCredentials, "Dystopia", listOf("1984", "Fahrenheit 451", "Brave New World"))
         updateEligibleVoters(aliceCredentials, "Dystopia", listOf("Alice", "Bob", "Carol", "Dave"))
-        doneEditingElection(aliceCredentials, "Dystopia")
 
 
         // Pet
         createElection(bobCredentials, "Pet")
         updateCandidates(bobCredentials, "Pet", listOf("Cat", "Dog", "Bird", "Fish", "Reptile"))
         updateEligibleVoters(bobCredentials, "Pet", listOf("Alice", "Bob", "Dave"))
-        doneEditingElection(bobCredentials, "Pet")
 
         // Science Fiction
         createElection(carolCredentials, "Science Fiction")
@@ -57,18 +54,29 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
         updateEligibleVoters(daveCredentials, "Fantasy", listOf("Alice", "Bob", "Carol", "Dave"))
 
         // Voting
-        doneEditingElection(aliceCredentials, "Favorite Ice Cream")
-        castBallot(aliceCredentials, "Favorite Ice Cream", "Alice", listOf(
-                Ranking(1, "Vanilla"),
-                Ranking(2, "Chocolate"),
-                Ranking(3, "Strawberry")
-        ))
-        doneEditingElection(aliceCredentials, "Government")
-        castBallot(aliceCredentials, "Government", "Alice", listOf(
-                Ranking(1, "Aristocracy"),
-                Ranking(2, "Monarchy"),
-                Ranking(3, "Democracy")
-        ))
+        val doneEditingElectionPromises = listOf(
+                doneEditingElection(aliceCredentials, "Favorite Ice Cream"),
+                doneEditingElection(aliceCredentials, "Government"),
+                doneEditingElection(bobCredentials, "Pet"),
+                doneEditingElection(aliceCredentials, "Dystopia"))
+        val finalPromise = Promise.all(doneEditingElectionPromises.toTypedArray()).then {
+            castBallot(aliceCredentials, "Favorite Ice Cream", "Alice", listOf(
+                    Ranking(1, "Vanilla"),
+                    Ranking(2, "Chocolate"),
+                    Ranking(3, "Strawberry")
+            ))
+            castBallot(aliceCredentials, "Government", "Alice", listOf(
+                    Ranking(1, "Aristocracy"),
+                    Ranking(2, "Monarchy"),
+                    Ranking(3, "Democracy")
+            ))
+            castBallot(aliceCredentials, "Pet", "Alice", listOf(
+                    Ranking(1, "Cat"),
+                    Ranking(2, "Dog"),
+                    Ranking(3, "Bird")
+            ))
+        }
+        return finalPromise.then {}
     }
 
     override fun login(nameOrEmail: String, password: String): Promise<Credentials> =
@@ -135,6 +143,10 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
     override fun doneEditingElection(credentials: Credentials, electionName: String): Promise<Election> =
             handleException {
                 updateElection(credentials, electionName) { election ->
+                    val voters = db.voter.listWhere { it.electionName == electionName }.map { it.userName }
+                    voters.forEach { voterName ->
+                        createEmptyBallot(electionName, voterName)
+                    }
                     election.copy(status = Db.Status.LIVE)
                 }
             }
@@ -231,10 +243,12 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
                 assertElectionIsActive(electionName, clock.now())
                 val now = clock.now()
                 db.ranking.removeWhere { it.electionName === electionName && it.voterName == voterName }
-                val newRankings = rankings.map { it.toDb(electionName, voterName) }
+                val newRankings = rankings.filter { it.rank != null }.map { ranking ->
+                    Db.Ranking(voterName, electionName, ranking.candidateName, ranking.rank!!)
+                }
                 db.ranking.addAll(newRankings)
                 val ballot = Db.Ballot(voterName, electionName, now.toISOString())
-                db.ballot.addOrUpdate(ballot)
+                db.ballot.update(ballot)
                 ballot.toApi(now)
             }
 
@@ -298,18 +312,16 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
 
     private fun Db.Ballot.toApi(asOf: Date): Ballot {
         val rankings = db.ranking.listWhere { it.electionName == this.electionName && it.voterName == this.voterName }
-        val apiRankings = rankings.map { it.toApi() }
+        val candidates = db.candidate.listWhere { it.electionName == this.electionName }.map { it.name }
+        val rankingsByCandidate: Map<String, Db.Ranking> = rankings.map { Pair(it.candidateName, it) }.toMap()
+        val apiRankings = candidates.map { candidate: String ->
+            val ranking: Db.Ranking? = rankingsByCandidate[candidate]
+            val rank: Int? = ranking?.rank
+            Ranking(rank, candidate)
+        }
         val isActive = isElectionActive(electionName, asOf)
         return Ballot(electionName, voterName, whenCast?.toDate(), isActive, apiRankings)
     }
-
-    private fun Db.Ranking.toApi(): Ranking = Ranking(rank, candidateName)
-
-    private fun Ranking.toDb(electionName: String, voterName: String): Db.Ranking = Db.Ranking(
-            voterName,
-            electionName,
-            candidateName,
-            rank)
 
     private fun Db.Status.toApiStatus(): Election.ElectionStatus =
             when (this) {
@@ -403,5 +415,10 @@ class ApiFake(private val clock: Clock, private val db: Db) : Api {
         updateActive(electionName, asOf)
         val election = db.election.find(electionName)
         return election.status == Db.Status.LIVE
+    }
+
+    private fun createEmptyBallot(electionName: String, voterName: String) {
+        val ballot = Db.Ballot(voterName, electionName, whenCast = null)
+        db.ballot.add(ballot)
     }
 }
