@@ -4,6 +4,8 @@ import model.Ballot
 import model.Credentials
 import model.Election
 import model.Election.ElectionStatus
+import model.Ranking
+import kotlin.js.Date
 
 interface Page {
     val name: String
@@ -34,12 +36,18 @@ interface Page {
                   voters: List<String>,
                   isAllVoters: Boolean): Page = VotersPage(credentials, electionName, voters, isAllVoters)
 
-    fun navBallot(credentials: Credentials, ballot: Ballot): Page = BallotPage(credentials, ballot)
+    fun navBallot(credentials: Credentials, ballot: Ballot): Page = ballot.toFrontEnd(credentials)
+    fun rankChanged(index: Int, rank: String): Page = unsupported("rankChanged")
 
     companion object {
         val initial = LoginPage(errorMessage = null)
     }
 }
+
+fun Ballot.toFrontEnd(credentials: Credentials): BallotPage =
+        BallotPage(credentials, electionName, voterName, whenCast, isActive, rankings.map { it.toFrontEnd() })
+
+fun Ranking.toFrontEnd(): BallotPage.Ranking = BallotPage.Ranking(rank?.toString() ?: "", candidateName)
 
 data class LoginPage(val errorMessage: String?) : Page {
     override val name: String = "login"
@@ -53,8 +61,26 @@ data class HomePage(val credentials: Credentials) : Page {
     override val name: String = "home"
 }
 
-data class BallotPage(val credentials: Credentials, val ballot: Ballot) : Page {
+data class BallotPage(val credentials: Credentials,
+                      val electionName: String,
+                      val voterName: String,
+                      val whenCast: Date?,
+                      val isActive: Boolean,
+                      val rankings: List<Ranking>) : Page {
     override val name: String = "ballot"
+
+    data class Ranking(val rank: String, val candidateName: String)
+
+    override fun rankChanged(index: Int, rank: String): Page = copy(rankings = updateRankings(index, rank))
+
+    private fun updateRankings(index: Int, rank: String): List<Ranking> =
+            rankings.mapIndexed { mapIndex, value ->
+                if (mapIndex == index) {
+                    value.copy(rank = rank)
+                } else {
+                    value
+                }
+            }
 }
 
 data class BallotsPage(val credentials: Credentials,

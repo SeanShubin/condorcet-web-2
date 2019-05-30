@@ -117,5 +117,5 @@ interface CondorcetEvent {
                                  val ballot: Ballot) : CondorcetEvent
 
     data class LoadBallotFailure(val message: String) : CondorcetEvent
-    data class RankChanged(val rank: String, val candidate: String) : CondorcetEvent
+    data class RankChanged(val index: Int, val rank: String) : CondorcetEvent
 }
