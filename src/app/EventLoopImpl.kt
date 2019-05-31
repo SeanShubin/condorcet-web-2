@@ -94,6 +94,7 @@ class EventLoopImpl : EventLoop {
                 is RankChanged -> updatePage {
                     page.rankChanged(event.index, event.rank)
                 }
+                is CastBallotRequest -> effects(Effect.CastBallot(event.credentials, event.electionName, event.voterName, event.rankings))
                 else -> effects(Effect.Dispatch(Error("unknown event $event")))
             }
         } catch (ex: Exception) {

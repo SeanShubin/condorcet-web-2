@@ -1,7 +1,7 @@
 package model
 
-import util.StringConversions.booleanToString
-import util.StringConversions.dateToString
+import conversion.StringConversions.booleanToString
+import conversion.StringConversions.toStringMinute
 import kotlin.js.Date
 
 data class Election(val ownerName: String,
@@ -11,7 +11,7 @@ data class Election(val ownerName: String,
                     val status: ElectionStatus = ElectionStatus.EDITING,
                     val candidateCount: Int = 0,
                     val voterCount: Int = 0) {
-    val endString get() = dateToString(end)
+    val endString get() = end.toStringMinute()
     val secretBallotString get() = booleanToString(secretBallot)
     fun isActiveAsOf(now: Date): Boolean = end == null || now.getTime() < end.getTime()
 

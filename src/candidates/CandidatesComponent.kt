@@ -1,5 +1,6 @@
 package candidates
 
+import conversion.StringConversions.toLines
 import event.CondorcetEvent
 import event.CondorcetEvent.*
 import kotlinx.html.ButtonType
@@ -9,7 +10,6 @@ import model.Credentials
 import org.w3c.dom.HTMLTextAreaElement
 import react.*
 import react.dom.*
-import util.StringConversions.toLines
 import kotlin.math.max
 
 interface CandidatesProps : RProps {

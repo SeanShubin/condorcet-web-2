@@ -1,17 +1,29 @@
-package util
+package conversion
 
 import kotlin.js.Date
 
 object StringConversions {
-    fun dateToString(date: Date?) =
-            if (date == null) ""
+    fun Date?.toStringMinute() =
+            if (this == null) ""
             else {
-                val year = date.getFullYear().toString()
-                val month = pad2(date.getMonth() + 1)
-                val day = pad2(date.getDate())
-                val hours = pad2(date.getHours())
-                val minutes = pad2(date.getMinutes())
+                val year = getFullYear().toString()
+                val month = pad2(getMonth() + 1)
+                val day = pad2(getDate())
+                val hours = pad2(getHours())
+                val minutes = pad2(getMinutes())
                 "$year-$month-$day $hours:$minutes"
+            }
+
+    fun Date?.toStringSecond() =
+            if (this == null) ""
+            else {
+                val year = getFullYear().toString()
+                val month = pad2(getMonth() + 1)
+                val day = pad2(getDate())
+                val hours = pad2(getHours())
+                val minutes = pad2(getMinutes())
+                val seconds = pad2(getSeconds())
+                "$year-$month-$day $hours:$minutes:$seconds"
             }
 
     fun String.clean(): String = this.trim().replace(Regex("""\s+"""), " ")

@@ -1,10 +1,11 @@
 package effect
 
 import app.Environment
+import conversion.StringConversions.stringToDate
 import event.CondorcetEvent
 import event.CondorcetEvent.*
 import model.Credentials
-import util.StringConversions.stringToDate
+import model.Ranking
 
 interface Effect {
     fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment)
@@ -201,6 +202,20 @@ interface Effect {
                 handleEvent(LoadBallotFailure(throwable.message
                         ?: "Unable to load ballot for election $electionName and voter $voterName"))
 
+            }
+        }
+    }
+
+    data class CastBallot(val credentials: Credentials,
+                          val electionName: String,
+                          val voterName: String,
+                          val rankings: List<Ranking>) : Effect {
+        override fun apply(handleEvent: (CondorcetEvent) -> Unit, environment: Environment) {
+            environment.api.castBallot(credentials, electionName, voterName, rankings).then { ballot ->
+                handleEvent(LoadBallotSuccess(credentials, ballot))
+            }.catch { throwable ->
+                handleEvent(LoadBallotFailure(throwable.message
+                        ?: "Unable to load ballot for election $electionName and voter $voterName"))
             }
         }
     }

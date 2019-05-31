@@ -1,5 +1,7 @@
 package ballot
 
+import conversion.FrontEndToApi.toApi
+import conversion.StringConversions.toStringSecond
 import event.CondorcetEvent
 import event.CondorcetEvent.*
 import kotlinx.html.js.onChangeFunction
@@ -30,6 +32,15 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, ballot: BallotPage) {
             input {
                 attrs {
                     value = ballot.voterName
+                    readonly = true
+                }
+            }
+            span {
+                +"When Cast"
+            }
+            input {
+                attrs {
+                    value = ballot.whenCast.toStringSecond()
                     readonly = true
                 }
             }
@@ -65,6 +76,14 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, ballot: BallotPage) {
             }
             button {
                 +"Cast Ballot"
+                attrs {
+                    onClickFunction = {
+                        val apiBallot = ballot.toApi()
+                        sendEvent(CastBallotRequest(
+                                ballot.credentials, ballot.electionName, ballot.voterName, apiBallot.rankings))
+                    }
+                }
+
             }
         }
         a(href = "#") {

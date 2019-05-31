@@ -3,6 +3,7 @@ package event
 import model.Ballot
 import model.Credentials
 import model.Election
+import model.Ranking
 
 interface CondorcetEvent {
     object NavLoginRequest : CondorcetEvent {
@@ -118,4 +119,8 @@ interface CondorcetEvent {
 
     data class LoadBallotFailure(val message: String) : CondorcetEvent
     data class RankChanged(val index: Int, val rank: String) : CondorcetEvent
+    data class CastBallotRequest(val credentials: Credentials,
+                                 val electionName: String,
+                                 val voterName: String,
+                                 val rankings: List<Ranking>) : CondorcetEvent
 }

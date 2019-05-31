@@ -1,5 +1,6 @@
 package ballots
 
+import conversion.StringConversions.toStringSecond
 import event.CondorcetEvent
 import event.CondorcetEvent.LogoutRequest
 import event.CondorcetEvent.NavHomeRequest
@@ -8,7 +9,6 @@ import model.Ballot
 import model.Credentials
 import react.RBuilder
 import react.dom.*
-import util.StringConversions
 
 fun RBuilder.ballots(sendEvent: (CondorcetEvent) -> Unit,
                      credentials: Credentials,
@@ -69,7 +69,7 @@ fun RBuilder.ballots(sendEvent: (CondorcetEvent) -> Unit,
                                 if (ballot.whenCast == null) {
                                     +"not yet"
                                 } else {
-                                    +StringConversions.dateToString(ballot.whenCast)
+                                    +ballot.whenCast.toStringSecond()
                                 }
                             }
                         }
