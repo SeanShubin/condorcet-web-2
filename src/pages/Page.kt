@@ -45,7 +45,13 @@ interface Page {
 }
 
 fun Ballot.toFrontEnd(credentials: Credentials): BallotPage =
-        BallotPage(credentials, electionName, voterName, whenCast, isActive, rankings.map { it.toFrontEnd() })
+        BallotPage(credentials,
+                electionName,
+                voterName,
+                whenCast,
+                isActive,
+                rankings.map { it.toFrontEnd() },
+                isEdited = false)
 
 fun Ranking.toFrontEnd(): BallotPage.Ranking = BallotPage.Ranking(rank?.toString() ?: "", candidateName)
 
@@ -66,12 +72,13 @@ data class BallotPage(val credentials: Credentials,
                       val voterName: String,
                       val whenCast: Date?,
                       val isActive: Boolean,
-                      val rankings: List<Ranking>) : Page {
+                      val rankings: List<Ranking>,
+                      val isEdited: Boolean) : Page {
     override val name: String = "ballot"
 
     data class Ranking(val rank: String, val candidateName: String)
 
-    override fun rankChanged(index: Int, rank: String): Page = copy(rankings = updateRankings(index, rank))
+    override fun rankChanged(index: Int, rank: String): Page = copy(rankings = updateRankings(index, rank), isEdited = true)
 
     private fun updateRankings(index: Int, rank: String): List<Ranking> =
             rankings.mapIndexed { mapIndex, value ->

@@ -82,8 +82,8 @@ fun RBuilder.ballot(sendEvent: (CondorcetEvent) -> Unit, ballot: BallotPage) {
                         sendEvent(CastBallotRequest(
                                 ballot.credentials, ballot.electionName, ballot.voterName, apiBallot.rankings))
                     }
+                    disabled = !ballot.isEdited
                 }
-
             }
         }
         a(href = "#") {
