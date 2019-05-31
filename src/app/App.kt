@@ -62,7 +62,7 @@ class App : RComponent<AppProps, AppState>() {
             is CandidatesPage -> candidates(::handleEvent, page.credentials, page.electionName, page.candidates)
             is VotersPage -> voters(::handleEvent, page.credentials, page.electionName, page.voters, page.isAllVoters)
             is BallotsPage -> ballots(::handleEvent, page.credentials, page.voterName, page.ballots)
-            is BallotPage -> ballot(::handleEvent, page.credentials, page)
+            is BallotPage -> ballot(::handleEvent, page)
             is UnexpectedErrorPage -> errorPage(::handleEvent, page.message)
             else -> debug(::handleEvent, state.model)
         }
